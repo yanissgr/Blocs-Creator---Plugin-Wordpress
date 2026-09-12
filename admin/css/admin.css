@@ -1,0 +1,1148 @@
+/*
+ * L'habillage de l'administration.
+ *
+ * Écrit avec les variables de WordPress (--wp-admin-theme-color, les gris de
+ * l'interface) plutôt qu'avec des couleurs à nous : le plugin s'accorde aux
+ * huit thèmes d'administration que l'utilisateur peut choisir, et à ses
+ * variantes sombres, sans qu'on ait à les connaître.
+ */
+
+.bc-wrap {
+	--bc-bord: #dcdcde;
+	--bc-fond: #fff;
+	--bc-fond-doux: #f6f7f7;
+	--bc-encre-douce: #646970;
+	--bc-rayon: 4px;
+}
+
+.bc-chapo {
+	max-width: 46rem;
+	margin: .5em 0 1.5em;
+	color: var(--bc-encre-douce);
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------- *
+ * L'écran de liste
+ * ---------------------------------------------------------------- */
+
+.bc-liste__icone {
+	float: left;
+	margin: 2px 8px 0 0;
+	color: var(--bc-encre-douce);
+}
+
+.bc-liste__description {
+	clear: both;
+	padding-top: 2px;
+	color: var(--bc-encre-douce);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.bc-liste__origine {
+	margin-top: 3px;
+	color: var(--bc-encre-douce);
+	font-size: 11px;
+}
+
+.bc-etiquette {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.7;
+	white-space: nowrap;
+}
+
+.bc-etiquette--genere {
+	background: #e6f2fb;
+	color: #0a4b78;
+}
+
+.bc-etiquette--code {
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.bc-etiquette--brouillon {
+	background: #fcf9e8;
+	color: #8a6d1e;
+}
+
+.bc-code,
+.bc-chemin {
+	font-family: Consolas, Monaco, monospace;
+	font-size: 11px;
+}
+
+.bc-chemin {
+	color: var(--bc-encre-douce);
+	word-break: break-all;
+}
+
+.bc-chemin--bloc {
+	display: block;
+	padding: 6px 8px;
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond-doux);
+	line-height: 1.5;
+}
+
+.bc-vide {
+	color: #8c8f94;
+}
+
+.bc-oui {
+	color: #007017;
+	font-size: 16px;
+	vertical-align: text-bottom;
+}
+
+.bc-non {
+	color: #b32d2e;
+	font-size: 16px;
+	vertical-align: text-bottom;
+}
+
+/* ---------------------------------------------------------------- *
+ * L'écran d'édition
+ * ---------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------ *
+ * Le parcours d'un bloc
+ *
+ * Trois étapes en haut de l'écran d'édition : nommer, déclarer, dessiner.
+ * La troisième est la seule qui surprend — un bloc créé ici ne montre rien
+ * tant que son fichier de dessin n'existe pas —, elle est donc écrite noir
+ * sur blanc plutôt que découverte en publiant.
+ * ------------------------------------------------------------------ */
+
+.bc-parcours {
+	display: grid;
+	gap: 1px;
+	grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+	margin: 12px 0 4px;
+	padding: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #dcdcde;
+	list-style: none;
+	overflow: hidden;
+}
+
+.bc-parcours__etape {
+	display: flex;
+	gap: 10px;
+	margin: 0;
+	padding: 12px 14px;
+	background: #fff;
+}
+
+.bc-parcours__rang {
+	flex: 0 0 auto;
+	width: 22px;
+	height: 22px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #50575e;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 22px;
+	text-align: center;
+}
+
+.bc-parcours__etape.est-fait .bc-parcours__rang {
+	background: #edf6ed;
+	color: #1f5c32;
+}
+
+.bc-parcours__etape.est-alerte .bc-parcours__rang {
+	background: #fcf0f1;
+	color: #a3161a;
+}
+
+.bc-parcours__texte {
+	display: block;
+	min-width: 0;
+}
+
+.bc-parcours__titre {
+	display: block;
+	color: #1d2327;
+}
+
+.bc-parcours__quoi {
+	display: block;
+	margin-top: 2px;
+	color: #646970;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.bc-parcours__quoi code {
+	font-size: 11px;
+	word-break: break-all;
+}
+
+.bc-parcours__etape.est-alerte .bc-parcours__quoi {
+	color: #a3161a;
+}
+
+/* ------------------------------------------------------------------ *
+ * Le pont entre les deux moitiés : comment le gabarit lit ce champ
+ * ------------------------------------------------------------------ */
+
+.bc-copie-faite {
+	margin-left: 8px;
+	color: #1f5c32;
+	font-size: 12px;
+}
+
+[data-bc-copier] .dashicons {
+	margin: 3px 4px 0 -4px;
+	font-size: 15px;
+	width: 15px;
+	height: 15px;
+}
+
+.bc-champ-ligne__appel {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 12px 0 0;
+	padding: 8px 10px;
+	border-radius: 3px;
+	background: #f6f7f7;
+}
+
+.bc-champ-ligne__appel code {
+	background: none;
+	color: #1d2327;
+	font-size: 12px;
+	padding: 0;
+}
+
+.bc-champ-ligne__copier {
+	margin-left: auto;
+	font-size: 12px;
+}
+
+.bc-sous-titre {
+	margin: -6px 0 12px;
+	color: var(--bc-encre-douce);
+	font-size: 13px;
+}
+
+.bc-sous-titre code {
+	padding: 2px 6px;
+	background: var(--bc-fond-doux);
+	font-size: 12px;
+}
+
+.bc-metabox .bc-champ {
+	margin: 0 0 14px;
+}
+
+.bc-metabox label,
+.bc-controle__libelle {
+	display: block;
+	margin-bottom: 4px;
+	font-weight: 600;
+}
+
+.bc-aide {
+	display: block;
+	margin-top: 4px;
+	color: var(--bc-encre-douce);
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
+.bc-avertissement {
+	display: flex;
+	gap: 8px;
+	margin: 0 0 14px;
+	padding: 10px 12px;
+	border-left: 3px solid #dba617;
+	border-radius: 0 var(--bc-rayon) var(--bc-rayon) 0;
+	background: #fcf9e8;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.bc-avertissement .dashicons {
+	flex: 0 0 auto;
+	color: #8a6d1e;
+}
+
+.bc-gabarit-etat {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 8px;
+	font-weight: 600;
+}
+
+.bc-gabarit-etat--ok .dashicons {
+	color: #007017;
+}
+
+.bc-gabarit-etat--manquant .dashicons {
+	color: #dba617;
+}
+
+.bc-details summary {
+	cursor: pointer;
+	color: var(--bc-encre-douce);
+	font-size: 12px;
+}
+
+.bc-code-depart {
+	width: 100%;
+	margin-top: 8px;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 11px;
+	line-height: 1.5;
+	white-space: pre;
+}
+
+.bc-cases {
+	display: grid;
+	gap: 10px;
+}
+
+/*
+ * `.bc-metabox label` passe les libellés en bloc : il faut la même
+ * spécificité pour remettre la case et son texte côte à côte.
+ */
+.bc-metabox .bc-case,
+.bc-case {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	font-weight: 400;
+}
+
+.bc-case input {
+	margin-top: 2px;
+}
+
+.bc-case strong {
+	display: block;
+	font-weight: 600;
+}
+
+.bc-usage-liste {
+	margin: 0;
+	font-size: 13px;
+}
+
+.bc-usage-liste li {
+	margin: 0 0 8px;
+}
+
+/* Le sélecteur d'icône */
+
+.bc-icone-choix {
+	display: flex;
+	gap: 6px;
+}
+
+.bc-icone-valeur {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.bc-icone-ouvrir {
+	display: inline-flex !important;
+	gap: 4px;
+	align-items: center;
+}
+
+/*
+ * `display: grid` l'emporterait sur l'attribut `hidden`, et la grille
+ * s'afficherait toujours. On ne la met en grille que lorsqu'elle est visible.
+ */
+.bc-icone-grille[hidden] {
+	display: none;
+}
+
+.bc-icone-grille {
+	display: grid;
+	max-height: 220px;
+	margin-top: 8px;
+	padding: 8px;
+	overflow-y: auto;
+	border: 1px solid var(--bc-bord);
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond-doux);
+	gap: 2px;
+	grid-template-columns: repeat(8, 1fr);
+}
+
+.bc-icone-bouton {
+	display: flex;
+	width: 28px;
+	height: 28px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid transparent;
+	border-radius: var(--bc-rayon);
+	background: none;
+	color: var(--bc-encre-douce);
+	cursor: pointer;
+}
+
+.bc-icone-bouton:hover,
+.bc-icone-bouton.est-actif {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+	background: var(--bc-fond);
+	color: var(--wp-admin-theme-color, #2271b1);
+}
+
+/* ---------------------------------------------------------------- *
+ * Le constructeur de champs
+ * ---------------------------------------------------------------- */
+
+.bc-constructeur__liste {
+	display: grid;
+	gap: 8px;
+}
+
+.bc-constructeur__vide {
+	padding: 28px 20px;
+	border: 1px dashed var(--bc-bord);
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond-doux);
+	text-align: center;
+}
+
+.bc-constructeur__vide p:first-child {
+	margin-top: 0;
+	font-weight: 600;
+}
+
+.bc-constructeur__pied {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+	margin-top: 14px;
+	padding-top: 14px;
+	border-top: 1px solid var(--bc-bord);
+}
+
+.bc-constructeur__pied .button .dashicons {
+	margin: 3px 2px 0 -4px;
+}
+
+.bc-constructeur__aide {
+	flex: 1 1 18rem;
+	margin: 0;
+}
+
+.bc-champ-ligne {
+	border: 1px solid var(--bc-bord);
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond);
+}
+
+.bc-champ-ligne.est-ouvert {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+}
+
+.bc-champ-ligne__entete {
+	display: flex;
+	align-items: stretch;
+	background: var(--bc-fond-doux);
+	border-radius: var(--bc-rayon);
+}
+
+.bc-champ-ligne.est-ouvert .bc-champ-ligne__entete {
+	border-bottom: 1px solid var(--bc-bord);
+	border-radius: var(--bc-rayon) var(--bc-rayon) 0 0;
+}
+
+.bc-champ-ligne__bascule {
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	gap: 10px;
+	align-items: center;
+	padding: 10px 12px;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	text-align: left;
+}
+
+.bc-champ-ligne__fleche {
+	flex: 0 0 auto;
+	color: var(--bc-encre-douce);
+}
+
+.bc-champ-ligne__titre {
+	overflow: hidden;
+	flex: 1 1 auto;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.bc-champ-ligne__cle {
+	flex: 0 0 auto;
+	padding: 2px 6px;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, .05);
+	color: var(--bc-encre-douce);
+	font-size: 11px;
+}
+
+.bc-champ-ligne__type {
+	flex: 0 0 auto;
+	min-width: 7rem;
+	color: var(--bc-encre-douce);
+	font-size: 12px;
+	text-align: right;
+}
+
+.bc-champ-ligne__outils {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	padding-right: 6px;
+}
+
+.bc-outil {
+	display: flex;
+	width: 30px;
+	height: 30px;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: var(--bc-rayon);
+	background: none;
+	color: var(--bc-encre-douce);
+	cursor: pointer;
+}
+
+.bc-outil:hover:not(:disabled) {
+	background: rgba(0, 0, 0, .06);
+	color: #1d2327;
+}
+
+.bc-outil:disabled {
+	cursor: default;
+	opacity: .35;
+}
+
+.bc-outil.est-destructif:hover:not(:disabled) {
+	color: #b32d2e;
+}
+
+.bc-champ-ligne__corps {
+	padding: 16px;
+}
+
+.bc-grille {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.bc-controle {
+	margin-bottom: 14px;
+}
+
+.bc-grille > .bc-controle {
+	margin-bottom: 0;
+}
+
+.bc-controle--case label {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	font-weight: 400;
+}
+
+.bc-controle__cases {
+	display: grid;
+	max-height: 12rem;
+	padding: 8px;
+	overflow-y: auto;
+	border: 1px solid var(--bc-bord);
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond-doux);
+	gap: 4px;
+}
+
+.bc-controle__case {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	font-weight: 400;
+}
+
+/* Les sous-champs d'un répéteur */
+
+.bc-sous-champs {
+	margin-top: 16px;
+	padding: 14px;
+	border: 1px solid var(--bc-bord);
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond-doux);
+}
+
+.bc-sous-champs__titre {
+	margin: 0 0 10px;
+	color: var(--bc-encre-douce);
+	font-size: 12px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+}
+
+.bc-sous-champs__liste {
+	display: grid;
+	margin-bottom: 10px;
+	gap: 6px;
+}
+
+.bc-sous-champs__vide {
+	margin: 0 0 10px;
+}
+
+.bc-champ-ligne.est-enfant .bc-champ-ligne__entete {
+	background: var(--bc-fond);
+}
+
+/* ---------------------------------------------------------------- *
+ * Réglages, outils et aide
+ * ---------------------------------------------------------------- */
+
+.bc-colonnes {
+	display: grid;
+	gap: 20px;
+	grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+	align-items: start;
+}
+
+.bc-carte {
+	max-width: 60rem;
+	margin-bottom: 20px;
+	padding: 20px;
+	border: 1px solid var(--bc-bord);
+	border-radius: var(--bc-rayon);
+	background: var(--bc-fond);
+}
+
+.bc-carte h2 {
+	margin-top: 0;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--bc-bord);
+	font-size: 15px;
+}
+
+.bc-exemple {
+	max-height: 32rem;
+	margin: 0;
+	padding: 16px;
+	overflow: auto;
+	border-radius: var(--bc-rayon);
+	background: #1d2327;
+	color: #e2e4e7;
+	font-size: 12px;
+	line-height: 1.7;
+}
+
+.bc-table-aide td {
+	vertical-align: top;
+	line-height: 1.6;
+}
+
+.bc-table-aide__code code {
+	display: inline-block;
+	background: var(--bc-fond-doux);
+	font-size: 12px;
+	white-space: pre-wrap;
+}
+
+.bc-aide-page .bc-carte {
+	max-width: 68rem;
+}
+
+/*
+ * Les largeurs du tableau.
+ *
+ * En pourcentages, et non en rem : la somme reste juste quelle que soit la
+ * largeur de l'écran, et le nom du bloc récupère toujours ce qui reste. Avec
+ * des largeurs fixes, un écran étroit finissait par afficher le titre à la
+ * verticale, une lettre par ligne.
+ */
+
+.bc-wrap .column-nom {
+	width: 15%;
+}
+
+.bc-wrap .column-source {
+	width: 9%;
+}
+
+.bc-wrap .column-champs {
+	width: 8%;
+}
+
+.bc-wrap .column-gabarit {
+	width: 17%;
+}
+
+.bc-wrap .column-usage {
+	width: 10%;
+}
+
+.bc-wrap .column-titre {
+	min-width: 14rem;
+}
+
+.bc-wrap .column-nom .bc-code {
+	display: inline-block;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+}
+
+.bc-wrap .column-gabarit .bc-chemin {
+	display: inline-block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: nowrap;
+	word-break: normal;
+}
+
+.bc-liste__description {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reprise d'un bloc codé
+ * ------------------------------------------------------------------ */
+
+.bc-etiquette--repris {
+	background: #edf6ed;
+	color: #1f5c32;
+}
+
+.bc-repris {
+	margin: 12px 0 0;
+	padding: 10px 12px;
+	border-left: 3px solid #1f5c32;
+	background: #f6faf6;
+}
+
+.bc-repris p {
+	margin: 0 0 6px;
+}
+
+.bc-repris p:last-child {
+	margin-bottom: 0;
+}
+
+.bc-reprise {
+	max-width: 52rem;
+}
+
+.bc-reprise h2 {
+	margin: 2em 0 0.5em;
+	font-size: 1.05rem;
+}
+
+.bc-liste-puces {
+	margin: 0 0 0 1.2em;
+	list-style: disc;
+}
+
+.bc-liste-puces li {
+	margin: 0 0 6px;
+}
+
+.bc-table-reprise {
+	margin: 0 0 12px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Réglages : onglets, liste des blocs, variantes
+ * ------------------------------------------------------------------ */
+
+.bc-onglets {
+	margin: 1.5em 0 1.5em;
+}
+
+.bc-onglets .nav-tab {
+	cursor: pointer;
+	background: #f0f0f1;
+	border-bottom: 0;
+	font-size: 14px;
+}
+
+.bc-onglets .nav-tab-active {
+	background: #fff;
+}
+
+.bc-pastille {
+	display: inline-block;
+	min-width: 18px;
+	margin-left: 6px;
+	padding: 0 5px;
+	border-radius: 999px;
+	background: #d63638;
+	color: #fff;
+	font-size: 11px;
+	line-height: 18px;
+	text-align: center;
+}
+
+.bc-etiquette-champ {
+	display: inline-block;
+	margin: 6px 8px 0 0;
+	font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ *
+ * Réglages : la barre de la liste des blocs
+ *
+ * La liste dépasse la centaine d'entrées. Sans un bilan en tête, un filtre et
+ * un tri par état, on ne sait ni ce qu'on regarde, ni ce qu'on a changé.
+ * ------------------------------------------------------------------ */
+
+.bc-dispo-barre {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 0 0 1.25em;
+	padding: 12px 14px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.bc-dispo-bilan {
+	margin: 0;
+	color: #50575e;
+}
+
+.bc-dispo-bilan strong {
+	color: #1d2327;
+}
+
+.bc-dispo-outils {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+.bc-dispo-outils input[type="search"] {
+	width: 15rem;
+	max-width: 100%;
+}
+
+.bc-segments {
+	display: inline-flex;
+	overflow: hidden;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.bc-segment {
+	margin: 0;
+	padding: 4px 12px;
+	border: 0;
+	border-left: 1px solid #c3c4c7;
+	background: #f6f7f7;
+	color: #50575e;
+	cursor: pointer;
+	font-size: 13px;
+	line-height: 1.8;
+}
+
+.bc-segment:first-child {
+	border-left: 0;
+}
+
+.bc-segment:hover {
+	background: #f0f0f1;
+	color: #1d2327;
+}
+
+.bc-segment.est-actif {
+	background: #2271b1;
+	color: #fff;
+}
+
+/* ------------------------------------------------------------------ *
+ * Réglages : les groupes de blocs
+ * ------------------------------------------------------------------ */
+
+.bc-groupe-blocs {
+	margin: 0 0 1.5em;
+	padding: 0 0 1em;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.bc-groupe-blocs__titre {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 0.6em;
+	font-size: 1rem;
+}
+
+.bc-groupe-blocs__compte {
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #50575e;
+	font-size: 11px;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.bc-groupe-blocs__actions {
+	margin-left: auto;
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.bc-groupe-blocs__actions .button-link {
+	margin-left: 10px;
+}
+
+.bc-groupe-blocs__plier {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+}
+
+.bc-groupe-blocs__plier:hover .bc-groupe-blocs__nom {
+	color: #2271b1;
+}
+
+.bc-groupe-blocs__chevron {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #787c82;
+}
+
+.bc-groupe-blocs.est-plie .bc-blocs,
+.bc-groupe-blocs.est-plie .bc-groupe-blocs__actions,
+.bc-groupe-blocs.est-plie .bc-groupe-blocs__vide {
+	display: none;
+}
+
+.bc-groupe-blocs__vide {
+	margin: 0;
+	color: #646970;
+	font-style: italic;
+}
+
+/*
+ * Trois colonnes sur un écran large, une sur un écran étroit. La liste
+ * dépasse la centaine d'entrées : en colonne unique, on ne verrait jamais
+ * deux extensions à la fois.
+ */
+.bc-blocs {
+	display: grid;
+	gap: 2px 16px;
+	grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+	margin: 0;
+}
+
+.bc-blocs__item {
+	margin: 0;
+}
+
+.bc-blocs__item label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 8px;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.bc-blocs__item label:hover {
+	background: #f0f6fc;
+}
+
+.bc-blocs__item.est-protege label {
+	cursor: default;
+}
+
+.bc-blocs__item.est-protege label:hover {
+	background: none;
+}
+
+.bc-blocs__item.est-protege {
+	opacity: 0.6;
+}
+
+/*
+ * Un bloc écarté reste lisible : on doit pouvoir le retrouver pour le
+ * remettre. C'est la barre qui le signale, pas un texte grisé de plus.
+ */
+.bc-blocs__item[data-bc-etat="ecarte"] label {
+	box-shadow: inset 3px 0 0 #d63638;
+	background: #fcf9f9;
+}
+
+.bc-blocs__nom {
+	display: flex;
+	flex: 1 1 auto;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 2px 8px;
+	min-width: 0;
+}
+
+.bc-blocs__titre {
+	font-weight: 500;
+}
+
+.bc-blocs__meta {
+	flex: 0 0 auto;
+}
+
+.bc-blocs__usage,
+.bc-blocs__protege {
+	color: #646970;
+	font-size: 11px;
+	font-style: italic;
+	white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ *
+ * Réglages : la barre d'enregistrement
+ *
+ * Elle colle au bas de la fenêtre : la liste des blocs est longue, et un
+ * bouton qu'il faut aller chercher tout en bas est un bouton qu'on croit
+ * absent.
+ * ------------------------------------------------------------------ */
+
+.bc-diagnostic {
+	margin: 2em 0 0;
+	padding: 12px 14px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.bc-diagnostic summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.bc-diagnostic .bc-code-depart {
+	width: 100%;
+	font-family: Menlo, Consolas, monospace;
+	font-size: 11px;
+}
+
+.bc-barre-envoi {
+	position: sticky;
+	bottom: 0;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 1.5em 0 0;
+	padding: 12px 0;
+	border-top: 1px solid #dcdcde;
+	background: #f0f0f1;
+}
+
+.bc-barre-envoi__note {
+	color: #646970;
+	font-size: 12px;
+}
+
+.bc-barre-envoi__aide {
+	margin-left: auto;
+	font-size: 12px;
+}
+
+.bc-variantes {
+	display: grid;
+	gap: 2px 20px;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	margin: 0 0 8px;
+	max-width: 44rem;
+}
+
+.bc-variantes li {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin: 0;
+}
+
+.bc-variantes__nom {
+	font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ *
+ * Apparitions
+ * ------------------------------------------------------------------ */
+
+.bc-table-apparitions {
+	margin: 0 0 1.5em;
+	max-width: 50rem;
+}
+
+.bc-table-apparitions td {
+	vertical-align: middle;
+}
+
+.bc-variantes {
+	grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+	max-width: 60rem;
+}
+
+.bc-variantes li {
+	display: block;
+	margin: 0 0 8px;
+}
+
+.bc-variantes__quoi {
+	display: block;
+	color: #646970;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.bc-apparition {
+	max-width: 26rem;
+}
+
+.bc-metabox .bc-apparition {
+	max-width: none;
+}

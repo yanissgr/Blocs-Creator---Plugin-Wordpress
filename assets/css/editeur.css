@@ -1,0 +1,215 @@
+/*
+ * Ce que l'éditeur ajoute autour d'un bloc généré.
+ *
+ * Volontairement discret : ce qu'on veut voir dans le canevas, c'est le bloc
+ * tel qu'il sera sur le site, pas l'habillage du plugin. Les seuls décors
+ * posés ici entourent le formulaire — c'est-à-dire le moment où l'on saisit,
+ * pas celui où l'on regarde.
+ */
+
+.bc-editeur--apercu > .bc-editeur__formulaire {
+	display: none;
+}
+
+.bc-editeur__formulaire {
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.bc-editeur__entete {
+	margin-bottom: 14px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.bc-editeur__nom {
+	color: #646970;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.bc-editeur__vide {
+	margin: 0;
+	color: #646970;
+	font-style: italic;
+}
+
+.bc-editeur__chargement {
+	display: flex;
+	justify-content: center;
+	padding: 32px;
+}
+
+.bc-editeur__note {
+	margin: 0 0 14px;
+	padding: 10px 12px;
+	border-left: 3px solid #2271b1;
+	border-radius: 0 4px 4px 0;
+	background: #f0f6fc;
+	color: #1d2327;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.bc-editeur__etiquette {
+	display: block;
+	margin-bottom: 4px;
+	color: #1d2327;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.bc-editeur__riche {
+	margin-bottom: 16px;
+}
+
+.bc-editeur__aide {
+	display: block;
+	margin-top: 4px;
+	color: #646970;
+	font-size: 12px;
+}
+
+.bc-editeur__boutons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.bc-editeur__icone {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+
+.bc-editeur__icone-grille {
+	display: grid;
+	width: 15rem;
+	max-height: 16rem;
+	padding: 8px;
+	overflow-y: auto;
+	gap: 2px;
+	grid-template-columns: repeat(6, 1fr);
+}
+
+.bc-editeur__media {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.bc-editeur__media-apercu {
+	max-width: 9rem;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: none;
+	cursor: pointer;
+	line-height: 0;
+}
+
+.bc-editeur__media-apercu img {
+	width: 100%;
+	height: auto;
+}
+
+.bc-editeur__media-outils {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	align-items: flex-start;
+}
+
+.bc-editeur__lien,
+.bc-editeur__groupe {
+	display: grid;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	gap: 8px;
+}
+
+.bc-editeur__groupe {
+	margin: 0 0 16px;
+}
+
+.bc-editeur__legende {
+	padding: 0 4px;
+	color: #646970;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.bc-editeur__contenus {
+	display: grid;
+	max-height: 14rem;
+	padding: 8px;
+	overflow-y: auto;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	gap: 4px;
+}
+
+/* Le répéteur */
+
+.bc-editeur__repeteur {
+	display: grid;
+	gap: 10px;
+	justify-items: start;
+}
+
+.bc-editeur__ligne {
+	width: 100%;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.bc-editeur__ligne-entete {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 6px 6px 12px;
+	border-bottom: 1px solid #f0f0f1;
+	background: #f6f7f7;
+	border-radius: 4px 4px 0 0;
+}
+
+.bc-editeur__ligne-titre {
+	color: #646970;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+}
+
+.bc-editeur__ligne-outils {
+	display: flex;
+	gap: 2px;
+}
+
+.bc-editeur__ligne-corps {
+	padding: 12px;
+}
+
+.bc-editeur__ligne-corps > *:last-child {
+	margin-bottom: 0;
+}
+
+/* La surface d'attente d'une image absente, côté éditeur comme côté site. */
+
+.bc-attente {
+	display: block;
+	width: 100%;
+	min-height: 8rem;
+	border-radius: 4px;
+	background: #f0f0f1;
+}

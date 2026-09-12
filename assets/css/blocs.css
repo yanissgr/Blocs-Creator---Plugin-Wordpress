@@ -1,0 +1,64 @@
+/*
+ * Le strict minimum côté site.
+ *
+ * L'apparence d'un bloc appartient à son gabarit et au thème : ce fichier ne
+ * dessine rien de ce que le visiteur est venu lire. Il ne couvre que deux cas
+ * qui, sans lui, seraient illisibles — une image qui manque, et un rappel
+ * adressé à la rédaction.
+ */
+
+.bc-attente {
+	display: block;
+	width: 100%;
+	min-height: 8rem;
+	border-radius: 4px;
+	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.bc-rappel {
+	padding: .75em 1em;
+	border-left: 3px solid #d63638;
+	border-radius: 0 4px 4px 0;
+	background: #fcf0f1;
+	color: #3c434a;
+	font-size: .9em;
+	line-height: 1.5;
+}
+
+/*
+ * Le rendu de secours — celui d'un bloc qui n'a pas encore de gabarit. Il
+ * disparaît du site dès que le fichier de rendu existe, mais tant qu'il est
+ * là, autant qu'il soit lisible.
+ */
+
+.bc-secours {
+	padding: 1.25em;
+	border: 1px dashed color-mix(in srgb, currentColor 25%, transparent);
+	border-radius: 4px;
+}
+
+.bc-secours__champ {
+	padding: .6em 0;
+	border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.bc-secours__champ:first-of-type {
+	border-top: 0;
+}
+
+.bc-secours__libelle {
+	display: block;
+	font-size: .75em;
+	letter-spacing: .05em;
+	opacity: .6;
+	text-transform: uppercase;
+}
+
+.bc-secours__valeur {
+	margin-top: .2em;
+}
+
+.bc-secours__image {
+	max-width: 12rem;
+	height: auto;
+}

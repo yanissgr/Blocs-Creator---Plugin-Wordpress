@@ -1,0 +1,434 @@
+/*
+ * Les apparitions.
+ *
+ * Un scénario n'est pas un geste : c'est une SCÈNE. Chacun décrit ce que fait
+ * le bloc, et ce que font ses parties — son titre, son texte, ses images —
+ * avec un décalage entre elles. C'est ce décalage qui fait la différence entre
+ * une page qui s'allume d'un bloc et une page qui se compose sous les yeux.
+ *
+ * La mécanique tient en deux règles, et les neuf scénarios ne font que poser
+ * des variables :
+ *
+ *   --bc-a-*  l'état de départ du BLOC     (a comme « animation »)
+ *   --bc-a-repose  la scène ne bouge pas le bloc : tout est dans ses parties
+ *   --bc-p-*  l'état de départ de ses PARTIES
+ *
+ * L'état d'arrivée est le même pour tous : opacité pleine, aucune
+ * transformation. C'est ce qui permet à deux blocs voisins aux scénarios
+ * différents de se poser d'un même mouvement.
+ *
+ * Rien n'est caché tant que `bc-anim-prete` n'est pas sur <html> : c'est le
+ * script d'en-tête qui la pose, et il s'en abstient quand l'appareil demande
+ * moins d'animations. Sans JavaScript, la page s'affiche entière.
+ *
+ * Les parties sont désignées par assets/js/animations.js, qui pose
+ * `data-bc-part` et le rang `--bc-anim-rang`. Il écarte de lui-même les
+ * éléments qui portent déjà une transformation ou un filtre : les leur
+ * reprendre les ferait sauter de leur place.
+ */
+
+:root {
+	--bc-anim-duree: 720ms;
+	--bc-anim-courbe: cubic-bezier(0.22, 0.68, 0.36, 1);
+	/* Le déplacement d'entrée : assez pour se voir, trop peu pour sauter. */
+	--bc-anim-ecart: 1.75rem;
+}
+
+/* ------------------------------------------------------------------ *
+ * La mécanique
+ *
+ * Chaque scène déclare ELLE-MÊME sa transformation, son masque et son flou.
+ * C'est plus bavard qu'une transformation composée de variables, et c'est
+ * voulu : `transform: translate3d(0,0,0)` n'est pas `transform: none`. Une
+ * transformation, même identité, fait du bloc le référent de ses enfants
+ * positionnés en absolu — et le cercle de la bannière, l'aplat peint d'une
+ * carte, tomberaient de leur place. Un scénario qui ne déplace pas le bloc ne
+ * doit donc rien lui poser du tout.
+ *
+ * Le socle ne gère que ce qui est commun : l'opacité, la transition, et le
+ * décalage des parties.
+ * ------------------------------------------------------------------ */
+
+.bc-anim-prete .bc-anim[data-bc-anim] {
+	opacity: 0;
+	transition:
+		opacity var(--bc-anim-duree) var(--bc-anim-courbe),
+		transform var(--bc-anim-duree) var(--bc-anim-courbe),
+		clip-path var(--bc-anim-duree) var(--bc-anim-courbe),
+		filter var(--bc-anim-duree) var(--bc-anim-courbe);
+	will-change: opacity, transform;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part] {
+	transition:
+		opacity var(--bc-anim-duree) var(--bc-p-courbe, var(--bc-anim-courbe)) var(--bc-p-delai),
+		transform var(--bc-anim-duree) var(--bc-p-courbe, var(--bc-anim-courbe)) var(--bc-p-delai);
+
+	/*
+	 * Le rang est posé par le script. Le départ commun laisse au bloc le temps
+	 * d'entrer avant que son contenu ne s'anime : sans lui, les deux gestes se
+	 * superposent et on ne lit plus ni l'un ni l'autre.
+	 */
+	--bc-p-delai: calc(var(--bc-anim-rang, 0) * var(--bc-p-cadence, 0ms) + var(--bc-p-depart, 0ms));
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim].is-vu,
+.bc-anim-prete .bc-anim[data-bc-anim].is-vu [data-bc-part] {
+	opacity: 1;
+	transform: none;
+	clip-path: none;
+	filter: none;
+	will-change: auto;
+}
+
+/* ------------------------------------------------------------------ *
+ * Les neuf scènes
+ *
+ * Rangées de la plus sobre à la plus appuyée, dans le même ordre que le
+ * menu. Ajouter une scène, c'est ajouter un bloc ici et une entrée dans
+ * BC_Animations::scenarios().
+ *
+ * Une scène qui laisse le bloc en place lui rend son opacité (`opacity: 1`)
+ * et ne pose aucune transformation : c'est son contenu qui travaille.
+ * ------------------------------------------------------------------ */
+
+/* 1. Montée — le bloc entier, et rien d'autre. */
+.bc-anim-prete .bc-anim[data-bc-anim="montee"] {
+	transform: translate3d(0, var(--bc-anim-ecart), 0);
+}
+
+/*
+ * 2. Cascade — le bloc ne bouge pas, son contenu monte l'un après l'autre.
+ *    C'est le geste d'une section qui se lit de haut en bas : le titre, puis
+ *    le chapô, puis le bouton.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="cascade"] {
+	opacity: 1;
+
+	--bc-a-repose: 1;
+	--bc-p-cadence: 90ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="cascade"] [data-bc-part] {
+	opacity: 0;
+	transform: translate3d(0, 1.1rem, 0);
+}
+
+/*
+ * 3. Croisement — une partie sur deux vient de la gauche, l'autre de la
+ *    droite. Pour un bloc en deux moitiés : un texte et une image, un titre
+ *    et un bandeau.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="croisement"] {
+	opacity: 1;
+
+	--bc-a-repose: 1;
+	--bc-p-cadence: 60ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="croisement"] [data-bc-part] {
+	opacity: 0;
+	transform: translate3d(calc(-1 * var(--bc-anim-ecart)), 0, 0);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="croisement"] [data-bc-part]:nth-child(even) {
+	transform: translate3d(var(--bc-anim-ecart), 0, 0);
+}
+
+/*
+ * 4. Déploiement — un store qu'on déroule. Le masque garde la place du bloc
+ *    pendant toute son entrée, ce qui compte quand ses voisins sont déjà là.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="deploiement"] {
+	opacity: 1;
+	clip-path: inset(0 0 100% 0);
+
+	--bc-a-repose: 1;
+	--bc-p-cadence: 70ms;
+	--bc-p-depart: 160ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="deploiement"] [data-bc-part] {
+	opacity: 0;
+	transform: translate3d(0, 0.8rem, 0);
+}
+
+/*
+ * 5. Signature — un balayage de la gauche vers la droite, comme le coup de
+ *    pinceau du menu. Sa courbe lui est propre : franche au départ, elle
+ *    s'arrête net, là où la courbe commune se déposerait mollement. Elle passe
+ *    par la variable, et non par `transition-timing-function` : le socle est
+ *    plus spécifique, il gagnerait.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="signature"] {
+	opacity: 1;
+	clip-path: inset(0 100% 0 0);
+
+	--bc-anim-courbe: cubic-bezier(0.65, 0.02, 0.28, 1);
+	--bc-p-courbe: cubic-bezier(0.22, 0.68, 0.36, 1);
+	--bc-a-repose: 1;
+	--bc-p-cadence: 60ms;
+	--bc-p-depart: 220ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="signature"] [data-bc-part] {
+	opacity: 0;
+}
+
+/*
+ * 6. Pastilles — chaque partie apparaît petite et se pose, vite. Une grille
+ *    de cartes se remplit alors au lieu de s'allumer d'un coup.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="pastilles"] {
+	opacity: 1;
+
+	--bc-a-repose: 1;
+	--bc-p-cadence: 55ms;
+	--bc-p-courbe: cubic-bezier(0.34, 1.42, 0.64, 1);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="pastilles"] [data-bc-part] {
+	opacity: 0;
+	transform: translate3d(0, 0.6rem, 0) scale(0.88);
+}
+
+/*
+ * 7. Souffle — le bloc arrive flou et trop grand, et se pose net. Le flou est
+ *    le seul endroit du fichier où l'on pose un `filter` : il fait du bloc le
+ *    référent de ses enfants en absolu, le temps de l'entrée seulement.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="souffle"] {
+	transform: scale(1.06);
+	filter: blur(8px);
+
+	--bc-p-cadence: 110ms;
+	--bc-p-depart: 150ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="souffle"] [data-bc-part] {
+	opacity: 0;
+}
+
+/*
+ * 8. Bascule — le bloc pivote vers vous depuis sa base. La perspective est
+ *    posée sur le bloc, donc la bascule reste douce quelle que soit sa
+ *    hauteur.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="bascule"] {
+	transform: perspective(900px) translate3d(0, 0.6rem, 0) rotateX(14deg);
+	transform-origin: center bottom;
+
+	--bc-p-cadence: 70ms;
+	--bc-p-depart: 120ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="bascule"] [data-bc-part] {
+	opacity: 0;
+	transform: translate3d(0, 0.7rem, 0);
+}
+
+/*
+ * 9. Ressort — le bloc dépasse sa place et y revient. C'est la courbe qui le
+ *    fait, pas une image-clé : la courbe commune, qui se dépose sans
+ *    rebondir, annulerait tout l'effet.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="ressort"] {
+	transform: translate3d(0, 1.4rem, 0) scale(0.94);
+
+	--bc-anim-courbe: cubic-bezier(0.34, 1.5, 0.64, 1);
+	--bc-p-cadence: 60ms;
+	--bc-p-depart: 140ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="ressort"] [data-bc-part] {
+	opacity: 0;
+	transform: translate3d(0, 0.6rem, 0);
+}
+
+/*
+ * 10. Composée — le gabarit distribue les rôles.
+ *
+ *     Les neuf scènes d'au-dessus décident pour tout le monde : un même geste
+ *     pour toutes les parties, décalé dans le temps. C'est ce qu'il faut la
+ *     plupart du temps, et c'est insuffisant dès qu'un bloc est fait de deux
+ *     moitiés qui n'entrent pas de la même façon — un texte qui monte et une
+ *     image qui s'installe, deux colonnes qui se croisent, un coup de pinceau
+ *     qui se peint.
+ *
+ *     Ici, chaque partie porte sa propre variante dans la valeur de
+ *     `data-bc-part` : `data-bc-part="zoom"` sur l'image, `data-bc-part="haut"`
+ *     sur le texte. Le gabarit compose donc sa scène, et le réglage du bloc
+ *     reste libre : on peut toujours lui préférer une des neuf autres.
+ *
+ *     Les variantes ne décrivent que l'état de DÉPART. L'arrivée est commune —
+ *     c'est ce qui garantit qu'aucune ne laisse un élément décalé.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] {
+	opacity: 1;
+
+	--bc-a-repose: 1;
+	--bc-p-cadence: 70ms;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part] {
+	/*
+	 * Remises à zéro d'abord : une propriété personnalisée se transmet aux
+	 * descendants, et une partie imbriquée dans une autre hériterait sinon du
+	 * déplacement de son aînée — un trait au milieu d'un texte qui vient de la
+	 * gauche partirait de la gauche lui aussi.
+	 */
+	--bc-p-x: 0;
+	--bc-p-y: 0;
+	--bc-p-echelle: 1;
+
+	opacity: 0;
+	transform: translate3d(var(--bc-p-x, 0), var(--bc-p-y, 0), 0) scale(var(--bc-p-echelle, 1));
+}
+
+/* Le fondu seul : pour ce qui ne doit pas attirer l'œil en bougeant. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="fondu"] {
+	--bc-p-y: 0;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="haut"] {
+	--bc-p-y: var(--bc-anim-ecart);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="bas"] {
+	--bc-p-y: calc(-1 * var(--bc-anim-ecart));
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="gauche"] {
+	--bc-p-x: calc(-1 * var(--bc-anim-ecart));
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="droite"] {
+	--bc-p-x: var(--bc-anim-ecart);
+}
+
+/* Une image qui s'installe : elle grandit d'un rien en arrivant. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="zoom"] {
+	--bc-p-echelle: 0.94;
+}
+
+/*
+ * Les cartes : elles montent en se dépliant. Le déplacement est plus court
+ * que partout ailleurs — une grille entière qui parcourt deux centimètres
+ * donne le mal de mer.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="pastille"] {
+	--bc-p-y: 0.75rem;
+	--bc-p-echelle: 0.9;
+
+	--bc-p-courbe: cubic-bezier(0.34, 1.42, 0.64, 1);
+}
+
+/*
+ * Le coup de pinceau se peint, il n'apparaît pas : une découpe inclinée qui
+ * balaie la largeur. Il ne prend donc ni opacité ni déplacement.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="pinceau"] {
+	opacity: 1;
+	transform: none;
+	clip-path: polygon(-30% 0%, -2% 0%, -18% 100%, -30% 100%);
+	transition: clip-path 560ms var(--bc-anim-courbe) var(--bc-p-delai);
+}
+
+/* Après la règle commune d'arrivée, qui remettrait `clip-path: none`. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="pinceau"] {
+	clip-path: polygon(-30% 0%, 118% 0%, 102% 100%, -30% 100%);
+}
+
+/* ------------------------------------------------------------------ *
+ * Moins d'animations
+ *
+ * Le script d'en-tête ne pose déjà pas `bc-anim-prete` dans ce cas, et il
+ * n'y a donc rien à révéler. Cette règle est la ceinture de la bretelle :
+ * un réglage changé dans l'onglet ouvert ne doit pas laisser un bloc caché.
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+	.bc-anim-prete .bc-anim[data-bc-anim],
+	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part] {
+		opacity: 1;
+		clip-path: none;
+		filter: none;
+		transform: none;
+		transition: none;
+	}
+}
+
+/* ------------------------------------------------------------------ *
+ * L'aperçu du back-office
+ *
+ * Une scène de quatre parties — un titre, deux lignes, une rangée de
+ * pastilles — qui rejoue le scénario choisi. Elle vit ici, et non dans la
+ * feuille de l'administration, pour une raison : c'est cette feuille-ci qui
+ * décrit les scénarios, et l'aperçu doit en dépendre. Une scène stylée
+ * ailleurs finirait par montrer autre chose que le site.
+ * ------------------------------------------------------------------ */
+
+.bc-apercu {
+	margin: 10px 0 0;
+}
+
+.bc-apercu__scene {
+	padding: 14px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+	overflow: hidden;
+}
+
+.bc-apercu__bloc {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px;
+	border-radius: 4px;
+	background: #f6f7f7;
+}
+
+.bc-apercu__titre {
+	display: block;
+	width: 60%;
+	height: 12px;
+	border-radius: 3px;
+	background: #2271b1;
+}
+
+.bc-apercu__ligne {
+	display: block;
+	height: 7px;
+	border-radius: 3px;
+	background: #c3c4c7;
+}
+
+.bc-apercu__ligne--courte {
+	width: 70%;
+}
+
+.bc-apercu__grille {
+	display: grid;
+	gap: 6px;
+	grid-template-columns: repeat(3, 1fr);
+	margin-top: 2px;
+}
+
+.bc-apercu__grille > span {
+	height: 26px;
+	border-radius: 3px;
+	background: #dcdcde;
+}
+
+.bc-apercu [data-bc-apercu-rejouer] {
+	margin-top: 8px;
+}
+
+.bc-apercu [data-bc-apercu-rejouer] .dashicons {
+	margin: 3px 2px 0 -2px;
+	font-size: 14px;
+	line-height: 1;
+	width: 14px;
+	height: 14px;
+}
