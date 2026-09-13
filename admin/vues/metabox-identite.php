@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bc_usages = BC_Usage::compter( BC_Definition::nom( $definition ) );
+$blocs_creator_usages = Blocs_Creator_Usage::compter( Blocs_Creator_Definition::nom( $definition ) );
 ?>
 <div class="bc-metabox">
 
@@ -36,7 +36,7 @@ $bc_usages = BC_Usage::compter( BC_Definition::nom( $definition ) );
 		<span class="bc-aide"><?php esc_html_e( 'Déduit du nom si vous le laissez vide.', 'blocs-creator' ); ?></span>
 	</p>
 
-	<?php if ( $bc_usages > 0 ) : ?>
+	<?php if ( $blocs_creator_usages > 0 ) : ?>
 		<div class="bc-avertissement">
 			<span class="dashicons dashicons-warning" aria-hidden="true"></span>
 			<?php
@@ -46,11 +46,11 @@ $bc_usages = BC_Usage::compter( BC_Definition::nom( $definition ) );
 					_n(
 						'Ce bloc est posé dans %d publication. Changer son espace de noms ou son identifiant l\'y rendrait méconnaissable.',
 						'Ce bloc est posé dans %d publications. Changer son espace de noms ou son identifiant l\'y rendrait méconnaissable.',
-						$bc_usages,
+						$blocs_creator_usages,
 						'blocs-creator'
 					)
 				),
-				(int) $bc_usages
+				(int) $blocs_creator_usages
 			);
 			?>
 		</div>
@@ -73,11 +73,11 @@ $bc_usages = BC_Usage::compter( BC_Definition::nom( $definition ) );
 			</button>
 		</div>
 		<div class="bc-icone-grille" hidden>
-			<?php foreach ( BC_Reglages::dashicons() as $bc_icone ) : ?>
-				<button type="button" class="bc-icone-bouton<?php echo $bc_icone === $definition['icone'] ? ' est-actif' : ''; ?>"
-					data-icone="<?php echo esc_attr( $bc_icone ); ?>"
-					title="<?php echo esc_attr( $bc_icone ); ?>">
-					<span class="dashicons dashicons-<?php echo esc_attr( $bc_icone ); ?>" aria-hidden="true"></span>
+			<?php foreach ( Blocs_Creator_Reglages::dashicons() as $blocs_creator_icone ) : ?>
+				<button type="button" class="bc-icone-bouton<?php echo $blocs_creator_icone === $definition['icone'] ? ' est-actif' : ''; ?>"
+					data-icone="<?php echo esc_attr( $blocs_creator_icone ); ?>"
+					title="<?php echo esc_attr( $blocs_creator_icone ); ?>">
+					<span class="dashicons dashicons-<?php echo esc_attr( $blocs_creator_icone ); ?>" aria-hidden="true"></span>
 				</button>
 			<?php endforeach; ?>
 		</div>
@@ -93,20 +93,20 @@ $bc_usages = BC_Usage::compter( BC_Definition::nom( $definition ) );
 			 * packs. C'est ce qui permet de ranger un bloc dans une section
 			 * qui existe déjà plutôt que d'en créer une jumelle.
 			 */
-			$bc_categories = BC_Reglages::categories_connues();
+			$blocs_creator_categories = Blocs_Creator_Reglages::categories_connues();
 
-			if ( ! isset( $bc_categories[ blocs_creator()->reglages->get( 'categorie' ) ] ) ) {
-				$bc_categories[ blocs_creator()->reglages->get( 'categorie' ) ] = blocs_creator()->reglages->get( 'categorie_titre' );
+			if ( ! isset( $blocs_creator_categories[ blocs_creator()->reglages->get( 'categorie' ) ] ) ) {
+				$blocs_creator_categories[ blocs_creator()->reglages->get( 'categorie' ) ] = blocs_creator()->reglages->get( 'categorie_titre' );
 			}
 
-			if ( ! isset( $bc_categories[ $definition['categorie'] ] ) ) {
-				$bc_categories[ $definition['categorie'] ] = $definition['categorie'];
+			if ( ! isset( $blocs_creator_categories[ $definition['categorie'] ] ) ) {
+				$blocs_creator_categories[ $definition['categorie'] ] = $definition['categorie'];
 			}
 
-			foreach ( $bc_categories as $bc_slug => $bc_titre ) :
+			foreach ( $blocs_creator_categories as $blocs_creator_slug => $blocs_creator_titre ) :
 				?>
-				<option value="<?php echo esc_attr( $bc_slug ); ?>" <?php selected( $definition['categorie'], $bc_slug ); ?>>
-					<?php echo esc_html( $bc_titre ); ?>
+				<option value="<?php echo esc_attr( $blocs_creator_slug ); ?>" <?php selected( $definition['categorie'], $blocs_creator_slug ); ?>>
+					<?php echo esc_html( $blocs_creator_titre ); ?>
 				</option>
 			<?php endforeach; ?>
 		</select>
@@ -123,7 +123,7 @@ $bc_usages = BC_Usage::compter( BC_Definition::nom( $definition ) );
 					/* translators: 1: origine du bloc, 2: chemin du dossier. */
 					esc_html__( 'Ce bloc était écrit à la main dans %1$s (%2$s). Son dossier est toujours là : « Rendre au code », dans la liste des blocs, lui redonne la main.', 'blocs-creator' ),
 					esc_html( (string) $definition['adoption']['origine'] ),
-					'<code>' . esc_html( BC_Gabarits::chemin_court( (string) $definition['adoption']['dossier'] ) ) . '</code>'
+					'<code>' . esc_html( Blocs_Creator_Gabarits::chemin_court( (string) $definition['adoption']['dossier'] ) ) . '</code>'
 				);
 				?>
 			</p>

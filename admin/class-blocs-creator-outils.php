@@ -8,7 +8,7 @@
  * copie comme n'importe quel fichier de thème.
  *
  * Le JSON importé est traité comme une saisie d'utilisateur : il repasse
- * entièrement par BC_Definition::normaliser(), qui jette ce qu'il ne connaît
+ * entièrement par Blocs_Creator_Definition::normaliser(), qui jette ce qu'il ne connaît
  * pas. Un fichier trafiqué ne peut donc pas déclarer autre chose que des
  * champs du catalogue.
  *
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Les outils d'import et d'export.
  */
-class BC_Outils {
+class Blocs_Creator_Outils {
 
 	/**
 	 * Branche les hooks.
@@ -34,7 +34,7 @@ class BC_Outils {
 	 * Affiche l'écran des outils.
 	 */
 	public static function page() {
-		$definitions = BC_Definition::toutes();
+		$definitions = Blocs_Creator_Definition::toutes();
 
 		include BLOCS_CREATOR_DIR . 'admin/vues/outils.php';
 	}
@@ -43,7 +43,7 @@ class BC_Outils {
 	 * Envoie un fichier JSON au navigateur.
 	 */
 	public function exporter() {
-		if ( ! current_user_can( BC_Admin::CAP ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ?? '' ), 'bc_exporter' ) ) {
+		if ( ! current_user_can( Blocs_Creator_Admin::CAP ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ?? '' ), 'bc_exporter' ) ) {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
@@ -53,19 +53,19 @@ class BC_Outils {
 
 		$blocs = array();
 
-		foreach ( BC_Definition::toutes() as $definition ) {
+		foreach ( Blocs_Creator_Definition::toutes() as $definition ) {
 			if ( ! empty( $demandes ) && ! in_array( (int) $definition['id'], $demandes, true ) ) {
 				continue;
 			}
 
-			$blocs[] = BC_Definition::vers_tableau( $definition );
+			$blocs[] = Blocs_Creator_Definition::vers_tableau( $definition );
 		}
 
 		if ( empty( $blocs ) ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'       => BC_Admin::PAGE . '-outils',
+						'page'       => Blocs_Creator_Admin::PAGE . '-outils',
 						'bc_message' => 'erreur',
 						'bc_texte'   => rawurlencode( __( 'Aucun bloc à exporter.', 'blocs-creator' ) ),
 					),
@@ -101,13 +101,13 @@ class BC_Outils {
 	 * Lit un fichier ou un collage JSON, et crée les blocs.
 	 */
 	public function importer() {
-		if ( ! current_user_can( BC_Admin::CAP ) || ! wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ?? '' ), 'bc_importer' ) ) {
+		if ( ! current_user_can( Blocs_Creator_Admin::CAP ) || ! wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ?? '' ), 'bc_importer' ) ) {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
 		$json = '';
 
-		if ( ! empty( $_FILES['fichier']['tmp_name'] ) && UPLOAD_ERR_OK === (int) $_FILES['fichier']['error'] ) {
+		if ( ! empty( $_FILES['fichier']['tmp_name'] ) && isset( $_FILES['fichier']['error'] ) && UPLOAD_ERR_OK === (int) $_FILES['fichier']['error'] ) {
 			$chemin = sanitize_text_field( $_FILES['fichier']['tmp_name'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 
 			if ( is_uploaded_file( $chemin ) ) {
@@ -146,7 +146,7 @@ class BC_Outils {
 				continue;
 			}
 
-			$definition = BC_Definition::normaliser( $brut );
+			$definition = Blocs_Creator_Definition::normaliser( $brut );
 			$existant   = $this->existant( $definition );
 
 			if ( $existant > 0 && ! $ecrase ) {
@@ -154,7 +154,7 @@ class BC_Outils {
 				continue;
 			}
 
-			$resultat = BC_Definition::enregistrer( $definition, $existant );
+			$resultat = Blocs_Creator_Definition::enregistrer( $definition, $existant );
 
 			if ( is_wp_error( $resultat ) ) {
 				++$sautes;
@@ -189,10 +189,10 @@ class BC_Outils {
 	 * @return int
 	 */
 	private function existant( $definition ) {
-		$nom = BC_Definition::nom( $definition );
+		$nom = Blocs_Creator_Definition::nom( $definition );
 
-		foreach ( BC_Definition::toutes() as $autre ) {
-			if ( BC_Definition::nom( $autre ) === $nom ) {
+		foreach ( Blocs_Creator_Definition::toutes() as $autre ) {
+			if ( Blocs_Creator_Definition::nom( $autre ) === $nom ) {
 				return (int) $autre['id'];
 			}
 		}
@@ -210,7 +210,7 @@ class BC_Outils {
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'       => BC_Admin::PAGE . '-outils',
+					'page'       => Blocs_Creator_Admin::PAGE . '-outils',
 					'bc_message' => $type,
 					'bc_texte'   => rawurlencode( $texte ),
 				),

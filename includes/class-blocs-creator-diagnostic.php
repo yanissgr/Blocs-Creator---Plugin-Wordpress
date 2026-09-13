@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Journal et relevé de l'enregistrement des réglages.
  */
-class BC_Diagnostic {
+class Blocs_Creator_Diagnostic {
 
 	/**
 	 * Option qui porte le journal. Jamais autochargée : on ne la lit qu'ici.
@@ -90,6 +90,7 @@ class BC_Diagnostic {
 
 		$brut = maybe_serialize( $valeur );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- C'est le but : écrire quand update_option() se tait. Le cache est vidé plus bas.
 		$touche = $wpdb->update(
 			$wpdb->options,
 			array( 'option_value' => $brut ),
@@ -97,6 +98,7 @@ class BC_Diagnostic {
 		);
 
 		if ( 0 === $touche || false === $touche ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Idem : la ligne n'existait pas encore.
 			$touche = $wpdb->insert(
 				$wpdb->options,
 				array(
@@ -127,6 +129,7 @@ class BC_Diagnostic {
 	public static function ligne( $option ) {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Lire la ligne telle qu'elle est en base est précisément ce qu'on demande ici : un cache la masquerait.
 		$ligne = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT option_value, autoload FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
@@ -175,8 +178,8 @@ class BC_Diagnostic {
 	public static function releve() {
 		global $wp_version;
 
-		$reglages   = self::ligne( BC_Reglages::OPTION );
-		$animations = self::ligne( BC_Animations::OPTION );
+		$reglages   = self::ligne( Blocs_Creator_Reglages::OPTION );
+		$animations = self::ligne( Blocs_Creator_Animations::OPTION );
 		$declarees  = get_registered_settings();
 
 		$lignes = array();
@@ -201,15 +204,15 @@ class BC_Diagnostic {
 		$lignes[] = '';
 		$lignes[] = sprintf(
 			'- `%s` : %s, autoload=%s, %d octets, déclarée=%s',
-			BC_Reglages::OPTION,
+			Blocs_Creator_Reglages::OPTION,
 			$reglages['existe'] ? 'la ligne existe' : 'LIGNE ABSENTE',
 			$reglages['autocharge'],
 			$reglages['octets'],
-			isset( $declarees[ BC_Reglages::OPTION ] ) ? 'oui' : 'non'
+			isset( $declarees[ Blocs_Creator_Reglages::OPTION ] ) ? 'oui' : 'non'
 		);
 		$lignes[] = sprintf(
 			'- `%s` : %s, autoload=%s, %d octets',
-			BC_Animations::OPTION,
+			Blocs_Creator_Animations::OPTION,
 			$animations['existe'] ? 'la ligne existe' : 'LIGNE ABSENTE',
 			$animations['autocharge'],
 			$animations['octets']
@@ -220,7 +223,7 @@ class BC_Diagnostic {
 
 		$inventaire = 0;
 
-		foreach ( BC_Disponibilite::inventaire() as $groupe ) {
+		foreach ( Blocs_Creator_Disponibilite::inventaire() as $groupe ) {
 			$inventaire += count( $groupe['blocs'] );
 		}
 

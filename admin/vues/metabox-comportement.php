@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bc_supports = array(
+$blocs_creator_supports = array(
 	'anchor'          => array(
 		__( 'Ancre HTML', 'blocs-creator' ),
 		__( 'Pour pointer un lien vers ce bloc.', 'blocs-creator' ),
@@ -54,13 +54,13 @@ $bc_supports = array(
 	<fieldset class="bc-cases">
 		<legend class="screen-reader-text"><?php esc_html_e( 'Réglages fournis par Gutenberg', 'blocs-creator' ); ?></legend>
 
-		<?php foreach ( $bc_supports as $bc_cle => $bc_libelle ) : ?>
+		<?php foreach ( $blocs_creator_supports as $blocs_creator_cle => $blocs_creator_libelle ) : ?>
 			<label class="bc-case">
-				<input type="checkbox" name="bc[supports][<?php echo esc_attr( $bc_cle ); ?>]" value="1"
-					<?php checked( ! empty( $definition['supports'][ $bc_cle ] ) ); ?>>
+				<input type="checkbox" name="bc[supports][<?php echo esc_attr( $blocs_creator_cle ); ?>]" value="1"
+					<?php checked( ! empty( $definition['supports'][ $blocs_creator_cle ] ) ); ?>>
 				<span>
-					<strong><?php echo esc_html( $bc_libelle[0] ); ?></strong>
-					<span class="bc-aide"><?php echo esc_html( $bc_libelle[1] ); ?></span>
+					<strong><?php echo esc_html( $blocs_creator_libelle[0] ); ?></strong>
+					<span class="bc-aide"><?php echo esc_html( $blocs_creator_libelle[1] ); ?></span>
 				</span>
 			</label>
 		<?php endforeach; ?>

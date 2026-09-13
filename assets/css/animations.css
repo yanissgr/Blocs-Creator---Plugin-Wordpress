@@ -86,7 +86,7 @@
  *
  * Rangées de la plus sobre à la plus appuyée, dans le même ordre que le
  * menu. Ajouter une scène, c'est ajouter un bloc ici et une entrée dans
- * BC_Animations::scenarios().
+ * Blocs_Creator_Animations::scenarios().
  *
  * Une scène qui laisse le bloc en place lui rend son opacité (`opacity: 1`)
  * et ne pose aucune transformation : c'est son contenu qui travaille.

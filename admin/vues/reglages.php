@@ -13,7 +13,7 @@
  *      envoyé à `options.php` — qui fait dépendre l'enregistrement de quatre
  *      choses qu'on ne voit pas, et se tait quand l'une lâche — mais à notre
  *      propre gestionnaire, qui écrit, relit, compare, et revient sur l'onglet
- *      qu'on avait sous les yeux. Voir BC_Admin::action_reglages().
+ *      qu'on avait sous les yeux. Voir Blocs_Creator_Admin::action_reglages().
  *   2. L'ONGLET DES BLOCS N'ENVOIE PAS CENT TRENTE CHAMPS. Il en envoie un seul,
  *      la liste des blocs écartés, composée au moment de l'envoi. Un champ par
  *      bloc dépasserait `max_input_vars` sur un site fourni, et le formulaire
@@ -22,29 +22,30 @@
  *
  * @package BlocsCreator
  *
- * @var BC_Reglages $reglages Les réglages.
+ * @var Blocs_Creator_Reglages $reglages Les réglages.
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$bc_valeurs    = $reglages->tout();
-$bc_dossier    = get_stylesheet_directory() . '/' . trim( (string) $bc_valeurs['dossier_gabarits'], '/' );
-$bc_option     = BC_Reglages::OPTION;
-$bc_categories = BC_Reglages::categories_connues();
-$bc_inventaire = BC_Disponibilite::inventaire();
-$bc_ecartes    = count( BC_Disponibilite::ecartes() );
+$blocs_creator_valeurs    = $reglages->tout();
+$blocs_creator_dossier    = get_stylesheet_directory() . '/' . trim( (string) $blocs_creator_valeurs['dossier_gabarits'], '/' );
+$blocs_creator_option     = Blocs_Creator_Reglages::OPTION;
+$blocs_creator_categories = Blocs_Creator_Reglages::categories_connues();
+$blocs_creator_inventaire = Blocs_Creator_Disponibilite::inventaire();
+$blocs_creator_ecartes    = count( Blocs_Creator_Disponibilite::ecartes() );
 
 // L'onglet qu'on avait sous les yeux. Il voyage dans l'adresse : c'est ce qui
 // permet à l'enregistrement de revenir là où l'on était, et à un signet de
 // pointer sur la bonne section.
-$bc_onglets = array( 'general', 'disponibilite', 'animations' );
-$bc_onglet  = isset( $_GET['bc_onglet'] ) ? sanitize_key( wp_unslash( $_GET['bc_onglet'] ) ) : 'general';
-$bc_onglet  = in_array( $bc_onglet, $bc_onglets, true ) ? $bc_onglet : 'general';
+$blocs_creator_onglets = array( 'general', 'disponibilite', 'animations' );
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Simple état d'affichage.
+$blocs_creator_onglet = isset( $_GET['bc_onglet'] ) ? sanitize_key( wp_unslash( $_GET['bc_onglet'] ) ) : 'general';
+$blocs_creator_onglet = in_array( $blocs_creator_onglet, $blocs_creator_onglets, true ) ? $blocs_creator_onglet : 'general';
 
-$bc_total = 0;
+$blocs_creator_total = 0;
 
-foreach ( $bc_inventaire as $bc_groupe_total ) {
-	$bc_total += count( $bc_groupe_total['blocs'] );
+foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
+	$blocs_creator_total += count( $blocs_creator_groupe_total['blocs'] );
 }
 ?>
 <div class="wrap bc-wrap bc-reglages">
@@ -52,27 +53,27 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 	<h1><?php esc_html_e( 'Réglages', 'blocs-creator' ); ?></h1>
 
 	<nav class="nav-tab-wrapper bc-onglets" aria-label="<?php esc_attr_e( 'Sections des réglages', 'blocs-creator' ); ?>">
-		<button type="button" class="nav-tab<?php echo 'general' === $bc_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="general">
+		<button type="button" class="nav-tab<?php echo 'general' === $blocs_creator_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="general">
 			<?php esc_html_e( 'Général', 'blocs-creator' ); ?>
 		</button>
-		<button type="button" class="nav-tab<?php echo 'disponibilite' === $bc_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="disponibilite">
+		<button type="button" class="nav-tab<?php echo 'disponibilite' === $blocs_creator_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="disponibilite">
 			<?php esc_html_e( 'Blocs disponibles', 'blocs-creator' ); ?>
-			<?php if ( $bc_ecartes > 0 ) : ?>
-				<span class="bc-pastille"><?php echo esc_html( (string) $bc_ecartes ); ?></span>
+			<?php if ( $blocs_creator_ecartes > 0 ) : ?>
+				<span class="bc-pastille"><?php echo esc_html( (string) $blocs_creator_ecartes ); ?></span>
 			<?php endif; ?>
 		</button>
-		<button type="button" class="nav-tab<?php echo 'animations' === $bc_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="animations">
+		<button type="button" class="nav-tab<?php echo 'animations' === $blocs_creator_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="animations">
 			<?php esc_html_e( 'Apparitions', 'blocs-creator' ); ?>
 		</button>
 	</nav>
 
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="bc-formulaire" data-bc-formulaire>
 		<input type="hidden" name="action" value="bc_reglages">
-		<input type="hidden" name="bc_onglet" value="<?php echo esc_attr( $bc_onglet ); ?>" data-bc-onglet-champ>
+		<input type="hidden" name="bc_onglet" value="<?php echo esc_attr( $blocs_creator_onglet ); ?>" data-bc-onglet-champ>
 		<?php wp_nonce_field( 'bc_reglages' ); ?>
 
 		<!-- ---------------------------------------------------------- -->
-		<section class="bc-onglet" data-bc-panneau="general" <?php echo 'general' === $bc_onglet ? '' : 'hidden'; ?>>
+		<section class="bc-onglet" data-bc-panneau="general" <?php echo 'general' === $blocs_creator_onglet ? '' : 'hidden'; ?>>
 
 			<p class="bc-chapo">
 				<?php esc_html_e( 'Ces réglages valent pour les blocs à venir. Les blocs déjà créés gardent ce qu\'ils ont : un identifiant de bloc ne change pas sans casser les pages qui s\'en servent.', 'blocs-creator' ); ?>
@@ -86,15 +87,15 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 					</th>
 					<td>
 						<input type="text" id="bc-r-espace" class="regular-text"
-							name="<?php echo esc_attr( $bc_option ); ?>[espace]"
-							value="<?php echo esc_attr( $bc_valeurs['espace'] ); ?>"
+							name="<?php echo esc_attr( $blocs_creator_option ); ?>[espace]"
+							value="<?php echo esc_attr( $blocs_creator_valeurs['espace'] ); ?>"
 							pattern="[a-z0-9-]+">
 						<p class="description">
 							<?php
 							printf(
 								/* translators: %s: exemple de nom de bloc. */
 								esc_html__( 'Le préfixe des blocs que vous créerez : %s. En minuscules, sans espace.', 'blocs-creator' ),
-								'<code>' . esc_html( $bc_valeurs['espace'] ) . '/temoignages</code>'
+								'<code>' . esc_html( $blocs_creator_valeurs['espace'] ) . '/temoignages</code>'
 							);
 							?>
 						</p>
@@ -106,25 +107,25 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 						<label for="bc-r-categorie"><?php esc_html_e( 'Catégorie dans l\'inséreur', 'blocs-creator' ); ?></label>
 					</th>
 					<td>
-						<select id="bc-r-categorie" name="<?php echo esc_attr( $bc_option ); ?>[categorie]" class="regular-text">
+						<select id="bc-r-categorie" name="<?php echo esc_attr( $blocs_creator_option ); ?>[categorie]" class="regular-text">
 							<?php
-							$bc_liste = $bc_categories;
+							$blocs_creator_liste = $blocs_creator_categories;
 
-							if ( ! isset( $bc_liste[ $bc_valeurs['categorie'] ] ) ) {
-								$bc_liste[ $bc_valeurs['categorie'] ] = $bc_valeurs['categorie_titre'];
+							if ( ! isset( $blocs_creator_liste[ $blocs_creator_valeurs['categorie'] ] ) ) {
+								$blocs_creator_liste[ $blocs_creator_valeurs['categorie'] ] = $blocs_creator_valeurs['categorie_titre'];
 							}
 
-							foreach ( $bc_liste as $bc_slug => $bc_titre ) :
+							foreach ( $blocs_creator_liste as $blocs_creator_slug => $blocs_creator_titre ) :
 								?>
-								<option value="<?php echo esc_attr( $bc_slug ); ?>"
-									data-bc-titre="<?php echo esc_attr( $bc_titre ); ?>"
-									<?php selected( $bc_valeurs['categorie'], $bc_slug ); ?>>
+								<option value="<?php echo esc_attr( $blocs_creator_slug ); ?>"
+									data-bc-titre="<?php echo esc_attr( $blocs_creator_titre ); ?>"
+									<?php selected( $blocs_creator_valeurs['categorie'], $blocs_creator_slug ); ?>>
 									<?php
 									printf(
 										/* translators: 1: titre de la catégorie, 2: identifiant. */
 										esc_html__( '%1$s (%2$s)', 'blocs-creator' ),
-										esc_html( $bc_titre ),
-										esc_html( $bc_slug )
+										esc_html( $blocs_creator_titre ),
+										esc_html( $blocs_creator_slug )
 									);
 									?>
 								</option>
@@ -140,8 +141,8 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 								<?php esc_html_e( 'Ou créez la vôtre :', 'blocs-creator' ); ?>
 							</label>
 							<input type="text" id="bc-r-categorie-titre" class="regular-text"
-								name="<?php echo esc_attr( $bc_option ); ?>[categorie_titre]"
-								value="<?php echo esc_attr( $bc_valeurs['categorie_titre'] ); ?>">
+								name="<?php echo esc_attr( $blocs_creator_option ); ?>[categorie_titre]"
+								value="<?php echo esc_attr( $blocs_creator_valeurs['categorie_titre'] ); ?>">
 						</p>
 						<p class="description">
 							<?php esc_html_e( 'Ce titre n\'est utilisé que si l\'identifiant choisi au-dessus n\'existe encore nulle part.', 'blocs-creator' ); ?>
@@ -155,17 +156,17 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 					</th>
 					<td>
 						<input type="text" id="bc-r-dossier" class="regular-text"
-							name="<?php echo esc_attr( $bc_option ); ?>[dossier_gabarits]"
-							value="<?php echo esc_attr( $bc_valeurs['dossier_gabarits'] ); ?>">
+							name="<?php echo esc_attr( $blocs_creator_option ); ?>[dossier_gabarits]"
+							value="<?php echo esc_attr( $blocs_creator_valeurs['dossier_gabarits'] ); ?>">
 						<p class="description">
 							<?php esc_html_e( 'Relatif au thème actif. Les fichiers de rendu y sont cherchés, et créés.', 'blocs-creator' ); ?>
 						</p>
 						<p class="description">
-							<code><?php echo esc_html( BC_Gabarits::chemin_court( $bc_dossier ) ); ?></code>
-							<?php if ( is_dir( $bc_dossier ) ) : ?>
+							<code><?php echo esc_html( Blocs_Creator_Gabarits::chemin_court( $blocs_creator_dossier ) ); ?></code>
+							<?php if ( is_dir( $blocs_creator_dossier ) ) : ?>
 								<span class="bc-oui dashicons dashicons-yes-alt" aria-hidden="true"></span>
 								<?php
-								echo is_writable( $bc_dossier )
+								echo wp_is_writable( $blocs_creator_dossier )
 									? esc_html__( 'existe, accessible en écriture', 'blocs-creator' )
 									: esc_html__( 'existe, mais verrouillé en écriture', 'blocs-creator' );
 								?>
@@ -182,8 +183,8 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 					<td>
 						<label>
 							<input type="checkbox" value="1"
-								name="<?php echo esc_attr( $bc_option ); ?>[creer_gabarit]"
-								<?php checked( ! empty( $bc_valeurs['creer_gabarit'] ) ); ?>>
+								name="<?php echo esc_attr( $blocs_creator_option ); ?>[creer_gabarit]"
+								<?php checked( ! empty( $blocs_creator_valeurs['creer_gabarit'] ) ); ?>>
 							<?php esc_html_e( 'Créer le fichier de gabarit automatiquement', 'blocs-creator' ); ?>
 						</label>
 						<p class="description">
@@ -197,8 +198,8 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 					<td>
 						<label>
 							<input type="checkbox" value="1"
-								name="<?php echo esc_attr( $bc_option ); ?>[supprimer_donnees]"
-								<?php checked( ! empty( $bc_valeurs['supprimer_donnees'] ) ); ?>>
+								name="<?php echo esc_attr( $blocs_creator_option ); ?>[supprimer_donnees]"
+								<?php checked( ! empty( $blocs_creator_valeurs['supprimer_donnees'] ) ); ?>>
 							<?php esc_html_e( 'Supprimer les définitions de blocs et les réglages', 'blocs-creator' ); ?>
 						</label>
 						<p class="description">
@@ -211,35 +212,41 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 		</section>
 
 		<!-- ---------------------------------------------------------- -->
-		<section class="bc-onglet" data-bc-panneau="disponibilite" <?php echo 'disponibilite' === $bc_onglet ? '' : 'hidden'; ?>>
+		<section class="bc-onglet" data-bc-panneau="disponibilite" <?php echo 'disponibilite' === $blocs_creator_onglet ? '' : 'hidden'; ?>>
 
 			<p class="bc-chapo">
 				<?php esc_html_e( 'Ce que le « + » de l\'éditeur a le droit de proposer. Décocher un bloc ne touche à aucune page : les blocs déjà posés continuent de s\'afficher et de se modifier — ils ne s\'insèrent simplement plus.', 'blocs-creator' ); ?>
 			</p>
 
 			<?php
-			$bc_connus = array();
+			$blocs_creator_connus = array();
 
-			foreach ( $bc_inventaire as $bc_groupe_connu ) {
-				foreach ( $bc_groupe_connu['blocs'] as $bc_bloc_connu ) {
-					$bc_connus[] = $bc_bloc_connu['nom'];
+			foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_connu ) {
+				foreach ( $blocs_creator_groupe_connu['blocs'] as $blocs_creator_bloc_connu ) {
+					$blocs_creator_connus[] = $blocs_creator_bloc_connu['nom'];
 				}
 			}
+
+			/* translators: 1: nombre total de blocs, 2: nombre de blocs écartés. */
+			$blocs_creator_modele_un = __( '%1$s blocs en tout, %2$s écarté.', 'blocs-creator' );
+
+			/* translators: 1: nombre total de blocs, 2: nombre de blocs écartés. */
+			$blocs_creator_modele_plusieurs = __( '%1$s blocs en tout, %2$s écartés.', 'blocs-creator' );
 			?>
 
 			<div class="bc-dispo-barre">
 
 				<p class="bc-dispo-bilan" data-bc-bilan
-					data-bc-modele-un="<?php esc_attr_e( '%1$s blocs en tout, %2$s écarté.', 'blocs-creator' ); ?>"
-					data-bc-modele-plusieurs="<?php esc_attr_e( '%1$s blocs en tout, %2$s écartés.', 'blocs-creator' ); ?>">
+					data-bc-modele-un="<?php echo esc_attr( $blocs_creator_modele_un ); ?>"
+					data-bc-modele-plusieurs="<?php echo esc_attr( $blocs_creator_modele_plusieurs ); ?>">
 					<?php
 					printf(
 						esc_html(
 							/* translators: 1: nombre total de blocs, 2: nombre de blocs écartés. */
-							_n( '%1$s blocs en tout, %2$s écarté.', '%1$s blocs en tout, %2$s écartés.', $bc_ecartes, 'blocs-creator' )
+							_n( '%1$s blocs en tout, %2$s écarté.', '%1$s blocs en tout, %2$s écartés.', $blocs_creator_ecartes, 'blocs-creator' )
 						),
-						'<strong>' . esc_html( number_format_i18n( $bc_total ) ) . '</strong>',
-						'<strong>' . esc_html( number_format_i18n( $bc_ecartes ) ) . '</strong>'
+						'<strong>' . esc_html( number_format_i18n( $blocs_creator_total ) ) . '</strong>',
+						'<strong>' . esc_html( number_format_i18n( $blocs_creator_ecartes ) ) . '</strong>'
 					);
 					?>
 				</p>
@@ -264,28 +271,28 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 			 * les cases, elles, sont alors mises hors circuit. Voir l'en-tête.
 			 */
 			?>
-			<input type="hidden" name="<?php echo esc_attr( $bc_option ); ?>[blocs_connus]"
-				value="<?php echo esc_attr( implode( ',', $bc_connus ) ); ?>">
+			<input type="hidden" name="<?php echo esc_attr( $blocs_creator_option ); ?>[blocs_connus]"
+				value="<?php echo esc_attr( implode( ',', $blocs_creator_connus ) ); ?>">
 
-			<?php foreach ( $bc_inventaire as $bc_espace => $bc_groupe ) : ?>
+			<?php foreach ( $blocs_creator_inventaire as $blocs_creator_espace => $blocs_creator_groupe ) : ?>
 				<?php
-				$bc_ecartes_groupe = 0;
+				$blocs_creator_ecartes_groupe = 0;
 
-				foreach ( $bc_groupe['blocs'] as $bc_bloc_compte ) {
-					if ( $bc_bloc_compte['ecarte'] && ! $bc_bloc_compte['protege'] ) {
-						++$bc_ecartes_groupe;
+				foreach ( $blocs_creator_groupe['blocs'] as $blocs_creator_bloc_compte ) {
+					if ( $blocs_creator_bloc_compte['ecarte'] && ! $blocs_creator_bloc_compte['protege'] ) {
+						++$blocs_creator_ecartes_groupe;
 					}
 				}
 
-				$bc_id_groupe = 'bc-groupe-' . sanitize_key( $bc_espace );
+				$blocs_creator_id_groupe = 'bc-groupe-' . sanitize_key( $blocs_creator_espace );
 				?>
-				<div class="bc-groupe-blocs" data-bc-groupe="<?php echo esc_attr( $bc_espace ); ?>">
+				<div class="bc-groupe-blocs" data-bc-groupe="<?php echo esc_attr( $blocs_creator_espace ); ?>">
 
 					<h2 class="bc-groupe-blocs__titre">
 						<button type="button" class="bc-groupe-blocs__plier" data-bc-plier
-							aria-expanded="true" aria-controls="<?php echo esc_attr( $bc_id_groupe ); ?>">
+							aria-expanded="true" aria-controls="<?php echo esc_attr( $blocs_creator_id_groupe ); ?>">
 							<span class="bc-groupe-blocs__chevron dashicons dashicons-arrow-up-alt2" aria-hidden="true"></span>
-							<span class="bc-groupe-blocs__nom"><?php echo esc_html( $bc_groupe['titre'] ); ?></span>
+							<span class="bc-groupe-blocs__nom"><?php echo esc_html( $blocs_creator_groupe['titre'] ); ?></span>
 						</button>
 
 						<span class="bc-groupe-blocs__compte" data-bc-compte>
@@ -293,8 +300,8 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 							printf(
 								/* translators: 1: nombre de blocs disponibles, 2: nombre total. */
 								esc_html__( '%1$s sur %2$s', 'blocs-creator' ),
-								esc_html( number_format_i18n( count( $bc_groupe['blocs'] ) - $bc_ecartes_groupe ) ),
-								esc_html( number_format_i18n( count( $bc_groupe['blocs'] ) ) )
+								esc_html( number_format_i18n( count( $blocs_creator_groupe['blocs'] ) - $blocs_creator_ecartes_groupe ) ),
+								esc_html( number_format_i18n( count( $blocs_creator_groupe['blocs'] ) ) )
 							);
 							?>
 						</span>
@@ -305,41 +312,41 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 						</span>
 					</h2>
 
-					<ul class="bc-blocs" id="<?php echo esc_attr( $bc_id_groupe ); ?>">
-						<?php foreach ( $bc_groupe['blocs'] as $bc_bloc ) : ?>
-							<li class="bc-blocs__item<?php echo $bc_bloc['protege'] ? ' est-protege' : ''; ?>"
-								data-bc-cherche="<?php echo esc_attr( strtolower( $bc_bloc['titre'] . ' ' . $bc_bloc['nom'] ) ); ?>"
-								data-bc-etat="<?php echo esc_attr( $bc_bloc['ecarte'] && ! $bc_bloc['protege'] ? 'ecarte' : 'disponible' ); ?>">
+					<ul class="bc-blocs" id="<?php echo esc_attr( $blocs_creator_id_groupe ); ?>">
+						<?php foreach ( $blocs_creator_groupe['blocs'] as $blocs_creator_bloc ) : ?>
+							<li class="bc-blocs__item<?php echo $blocs_creator_bloc['protege'] ? ' est-protege' : ''; ?>"
+								data-bc-cherche="<?php echo esc_attr( strtolower( $blocs_creator_bloc['titre'] . ' ' . $blocs_creator_bloc['nom'] ) ); ?>"
+								data-bc-etat="<?php echo esc_attr( $blocs_creator_bloc['ecarte'] && ! $blocs_creator_bloc['protege'] ? 'ecarte' : 'disponible' ); ?>">
 
 								<label>
 									<input type="checkbox"
-										name="<?php echo esc_attr( $bc_option ); ?>[blocs_actifs][]"
-										value="<?php echo esc_attr( $bc_bloc['nom'] ); ?>"
-										<?php checked( ! $bc_bloc['ecarte'] || $bc_bloc['protege'] ); ?>
-										<?php disabled( $bc_bloc['protege'] ); ?>>
+										name="<?php echo esc_attr( $blocs_creator_option ); ?>[blocs_actifs][]"
+										value="<?php echo esc_attr( $blocs_creator_bloc['nom'] ); ?>"
+										<?php checked( ! $blocs_creator_bloc['ecarte'] || $blocs_creator_bloc['protege'] ); ?>
+										<?php disabled( $blocs_creator_bloc['protege'] ); ?>>
 
-									<?php if ( $bc_bloc['protege'] ) : ?>
-										<input type="hidden" name="<?php echo esc_attr( $bc_option ); ?>[blocs_actifs][]"
-											value="<?php echo esc_attr( $bc_bloc['nom'] ); ?>">
+									<?php if ( $blocs_creator_bloc['protege'] ) : ?>
+										<input type="hidden" name="<?php echo esc_attr( $blocs_creator_option ); ?>[blocs_actifs][]"
+											value="<?php echo esc_attr( $blocs_creator_bloc['nom'] ); ?>">
 									<?php endif; ?>
 
 									<span class="bc-blocs__nom">
-										<span class="bc-blocs__titre"><?php echo esc_html( $bc_bloc['titre'] ); ?></span>
-										<code class="bc-code"><?php echo esc_html( $bc_bloc['nom'] ); ?></code>
+										<span class="bc-blocs__titre"><?php echo esc_html( $blocs_creator_bloc['titre'] ); ?></span>
+										<code class="bc-code"><?php echo esc_html( $blocs_creator_bloc['nom'] ); ?></code>
 									</span>
 
 									<span class="bc-blocs__meta">
-										<?php if ( $bc_bloc['protege'] ) : ?>
+										<?php if ( $blocs_creator_bloc['protege'] ) : ?>
 											<span class="bc-blocs__protege"><?php esc_html_e( 'ne se retire pas', 'blocs-creator' ); ?></span>
-										<?php elseif ( $bc_bloc['usage'] > 0 ) : ?>
+										<?php elseif ( $blocs_creator_bloc['usage'] > 0 ) : ?>
 											<span class="bc-blocs__usage">
 												<?php
 												printf(
 													esc_html(
 														/* translators: %d: nombre de publications. */
-														_n( 'posé dans %d publication', 'posé dans %d publications', $bc_bloc['usage'], 'blocs-creator' )
+														_n( 'posé dans %d publication', 'posé dans %d publications', $blocs_creator_bloc['usage'], 'blocs-creator' )
 													),
-													(int) $bc_bloc['usage']
+													(int) $blocs_creator_bloc['usage']
 												);
 												?>
 											</span>
@@ -362,29 +369,29 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 		</section>
 
 		<!-- ---------------------------------------------------------- -->
-		<section class="bc-onglet" data-bc-panneau="animations" <?php echo 'animations' === $bc_onglet ? '' : 'hidden'; ?>>
+		<section class="bc-onglet" data-bc-panneau="animations" <?php echo 'animations' === $blocs_creator_onglet ? '' : 'hidden'; ?>>
 
 			<p class="bc-chapo">
 				<?php esc_html_e( 'Une apparition appartient au bloc, pas à la page : elle se choisit une fois, et toutes ses occurrences entrent de la même façon partout sur le site. Pour les blocs que vous avez créés, elle se règle sur leur propre écran ; pour ceux de WordPress et des autres extensions, c\'est ici.', 'blocs-creator' ); ?>
 			</p>
 
 			<?php
-			$bc_reglables  = BC_Animations::blocs_reglables();
-			$bc_apparitions = array();
+			$blocs_creator_reglables  = Blocs_Creator_Animations::blocs_reglables();
+			$blocs_creator_apparitions = array();
 
-			foreach ( BC_Animations::carte() as $bc_bloc_nom => $bc_reglage ) {
-				if ( isset( $bc_reglables[ $bc_bloc_nom ] ) ) {
-					$bc_apparitions[ $bc_bloc_nom ] = $bc_reglage;
+			foreach ( Blocs_Creator_Animations::carte() as $blocs_creator_bloc_nom => $blocs_creator_reglage ) {
+				if ( isset( $blocs_creator_reglables[ $blocs_creator_bloc_nom ] ) ) {
+					$blocs_creator_apparitions[ $blocs_creator_bloc_nom ] = $blocs_creator_reglage;
 				}
 			}
 
-			$bc_scenarios = BC_Animations::scenarios();
-			$bc_opt_anim  = BC_Animations::OPTION;
+			$blocs_creator_scenarios = Blocs_Creator_Animations::scenarios();
+			$blocs_creator_opt_anim  = Blocs_Creator_Animations::OPTION;
 			?>
 
 			<h2 class="bc-groupe-blocs__titre"><?php esc_html_e( 'Les blocs qui entrent en scène', 'blocs-creator' ); ?></h2>
 
-			<?php if ( empty( $bc_apparitions ) ) : ?>
+			<?php if ( empty( $blocs_creator_apparitions ) ) : ?>
 				<p class="description">
 					<?php esc_html_e( 'Aucun pour l\'instant. Choisissez un bloc ci-dessous pour lui en donner une.', 'blocs-creator' ); ?>
 				</p>
@@ -398,30 +405,30 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ( $bc_apparitions as $bc_bloc_nom => $bc_reglage ) : ?>
+						<?php foreach ( $blocs_creator_apparitions as $blocs_creator_bloc_nom => $blocs_creator_reglage ) : ?>
 							<tr>
 								<td>
-									<strong><?php echo esc_html( $bc_reglables[ $bc_bloc_nom ] ); ?></strong>
-									<div><code class="bc-code"><?php echo esc_html( $bc_bloc_nom ); ?></code></div>
+									<strong><?php echo esc_html( $blocs_creator_reglables[ $blocs_creator_bloc_nom ] ); ?></strong>
+									<div><code class="bc-code"><?php echo esc_html( $blocs_creator_bloc_nom ); ?></code></div>
 								</td>
 								<td>
-									<label class="screen-reader-text" for="bc-anim-<?php echo esc_attr( sanitize_key( str_replace( '/', '-', $bc_bloc_nom ) ) ); ?>">
+									<label class="screen-reader-text" for="bc-anim-<?php echo esc_attr( sanitize_key( str_replace( '/', '-', $blocs_creator_bloc_nom ) ) ); ?>">
 										<?php esc_html_e( 'Apparition', 'blocs-creator' ); ?>
 									</label>
-									<select id="bc-anim-<?php echo esc_attr( sanitize_key( str_replace( '/', '-', $bc_bloc_nom ) ) ); ?>"
-										name="<?php echo esc_attr( $bc_opt_anim ); ?>[<?php echo esc_attr( $bc_bloc_nom ); ?>][nom]">
+									<select id="bc-anim-<?php echo esc_attr( sanitize_key( str_replace( '/', '-', $blocs_creator_bloc_nom ) ) ); ?>"
+										name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[<?php echo esc_attr( $blocs_creator_bloc_nom ); ?>][nom]">
 										<option value=""><?php esc_html_e( '— la retirer —', 'blocs-creator' ); ?></option>
-										<?php foreach ( $bc_scenarios as $bc_valeur => $bc_scenario ) : ?>
-											<option value="<?php echo esc_attr( $bc_valeur ); ?>" <?php selected( $bc_reglage['nom'], $bc_valeur ); ?>>
-												<?php echo esc_html( $bc_scenario['libelle'] ); ?>
+										<?php foreach ( $blocs_creator_scenarios as $blocs_creator_valeur => $blocs_creator_scenario ) : ?>
+											<option value="<?php echo esc_attr( $blocs_creator_valeur ); ?>" <?php selected( $blocs_creator_reglage['nom'], $blocs_creator_valeur ); ?>>
+												<?php echo esc_html( $blocs_creator_scenario['libelle'] ); ?>
 											</option>
 										<?php endforeach; ?>
 									</select>
 								</td>
 								<td>
 									<input type="number" class="small-text" min="200" max="3000" step="50"
-										name="<?php echo esc_attr( $bc_opt_anim ); ?>[<?php echo esc_attr( $bc_bloc_nom ); ?>][duree]"
-										value="<?php echo esc_attr( (string) ( $bc_reglage['duree'] > 0 ? $bc_reglage['duree'] : 720 ) ); ?>">
+										name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[<?php echo esc_attr( $blocs_creator_bloc_nom ); ?>][duree]"
+										value="<?php echo esc_attr( (string) ( $blocs_creator_reglage['duree'] > 0 ? $blocs_creator_reglage['duree'] : 720 ) ); ?>">
 									<span class="bc-vide">ms</span>
 								</td>
 							</tr>
@@ -439,14 +446,14 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 					</th>
 					<td>
 						<select id="bc-anim-ajout-bloc" class="regular-text"
-							name="<?php echo esc_attr( $bc_opt_anim ); ?>[__ajout][bloc]">
+							name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[__ajout][bloc]">
 							<option value=""><?php esc_html_e( '— choisir un bloc —', 'blocs-creator' ); ?></option>
-							<?php foreach ( $bc_reglables as $bc_bloc_nom => $bc_bloc_titre ) : ?>
-								<?php if ( isset( $bc_apparitions[ $bc_bloc_nom ] ) ) : ?>
+							<?php foreach ( $blocs_creator_reglables as $blocs_creator_bloc_nom => $blocs_creator_bloc_titre ) : ?>
+								<?php if ( isset( $blocs_creator_apparitions[ $blocs_creator_bloc_nom ] ) ) : ?>
 									<?php continue; ?>
 								<?php endif; ?>
-								<option value="<?php echo esc_attr( $bc_bloc_nom ); ?>">
-									<?php echo esc_html( $bc_bloc_titre . ' — ' . $bc_bloc_nom ); ?>
+								<option value="<?php echo esc_attr( $blocs_creator_bloc_nom ); ?>">
+									<?php echo esc_html( $blocs_creator_bloc_titre . ' — ' . $blocs_creator_bloc_nom ); ?>
 								</option>
 							<?php endforeach; ?>
 						</select>
@@ -461,7 +468,7 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 						<label for="bc-anim-ajout-nom"><?php esc_html_e( 'Son apparition', 'blocs-creator' ); ?></label>
 					</th>
 					<td>
-						<?php BC_Animations::champ( 'bc-anim-ajout-nom', $bc_opt_anim . '[__ajout][nom]', '' ); ?>
+						<?php Blocs_Creator_Animations::champ( 'bc-anim-ajout-nom', $blocs_creator_opt_anim . '[__ajout][nom]', '' ); ?>
 					</td>
 				</tr>
 
@@ -471,7 +478,7 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 					</th>
 					<td>
 						<input type="number" id="bc-anim-ajout-duree" class="small-text" min="200" max="3000" step="50"
-							name="<?php echo esc_attr( $bc_opt_anim ); ?>[__ajout][duree]" value="720">
+							name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[__ajout][duree]" value="720">
 						<span class="bc-vide">ms</span>
 						<p class="description">
 							<?php esc_html_e( '720 ms est la durée commune à tout le site : la garder, c\'est faire entrer les blocs d\'un même mouvement.', 'blocs-creator' ); ?>
@@ -483,10 +490,10 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 			<h2 class="bc-groupe-blocs__titre"><?php esc_html_e( 'Les scènes', 'blocs-creator' ); ?></h2>
 
 			<ul class="bc-variantes">
-				<?php foreach ( $bc_scenarios as $bc_valeur => $bc_scenario ) : ?>
+				<?php foreach ( $blocs_creator_scenarios as $blocs_creator_valeur => $blocs_creator_scenario ) : ?>
 					<li>
-						<span class="bc-variantes__nom"><?php echo esc_html( $bc_scenario['libelle'] ); ?></span>
-						<span class="bc-variantes__quoi"><?php echo esc_html( $bc_scenario['description'] ); ?></span>
+						<span class="bc-variantes__nom"><?php echo esc_html( $blocs_creator_scenario['libelle'] ); ?></span>
+						<span class="bc-variantes__quoi"><?php echo esc_html( $blocs_creator_scenario['description'] ); ?></span>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -527,9 +534,10 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 			 * seul moment où l'on a vraiment besoin de le lire, et aller le
 			 * chercher au bas d'une page de cent trente blocs n'arrive jamais.
 			 */
-			$bc_echec = isset( $_GET['bc_message'] ) && 'erreur' === $_GET['bc_message'];
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Le message posé par notre propre redirection, lu pour ouvrir un volet.
+			$blocs_creator_echec = isset( $_GET['bc_message'] ) && 'erreur' === $_GET['bc_message'];
 			?>
-			<details class="bc-details" <?php echo $bc_echec ? 'open' : ''; ?>>
+			<details class="bc-details" <?php echo $blocs_creator_echec ? 'open' : ''; ?>>
 				<summary><?php esc_html_e( 'L\'enregistrement ne passe pas ? Ouvrez ceci.', 'blocs-creator' ); ?></summary>
 
 				<p class="bc-aide">
@@ -545,7 +553,7 @@ foreach ( $bc_inventaire as $bc_groupe_total ) {
 				</p>
 
 				<textarea id="bc-releve" class="bc-code-depart" readonly rows="18" onclick="this.select()"><?php
-					echo esc_textarea( BC_Diagnostic::releve() );
+					echo esc_textarea( Blocs_Creator_Diagnostic::releve() );
 				?></textarea>
 
 				<p class="bc-aide">

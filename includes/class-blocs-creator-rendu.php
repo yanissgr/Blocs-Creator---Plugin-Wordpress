@@ -7,7 +7,7 @@
  * contexte, inclure le fichier. Le gabarit écrit ensuite ce qu'il veut.
  *
  * Le contexte est une pile, et non une simple variable, parce qu'un bloc peut
- * en contenir un autre : quand un gabarit fait `echo bc_contenu()`, le rendu
+ * en contenir un autre : quand un gabarit fait `echo blocs_creator_contenu()`, le rendu
  * des blocs imbriqués s'exécute à l'intérieur du sien. Sans pile, l'enfant
  * écraserait les champs du parent, qui reprendrait la main avec les mauvais.
  *
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Rendu serveur des blocs générés.
  */
-class BC_Rendu {
+class Blocs_Creator_Rendu {
 
 	/**
 	 * Pile des contextes de rendu.
@@ -53,7 +53,7 @@ class BC_Rendu {
 			return '';
 		}
 
-		$gabarit = BC_Gabarits::chemin_rendu( $definition );
+		$gabarit = Blocs_Creator_Gabarits::chemin_rendu( $definition );
 
 		if ( ! file_exists( $gabarit ) ) {
 			return self::rappel(
@@ -84,8 +84,8 @@ class BC_Rendu {
 		 * pour les blocs à `render` ($attributes, $content, $block), plus
 		 * $champs et $bloc, qui n'ont d'équivalent nulle part ailleurs.
 		 */
-		( static function ( $bc_gabarit, $attributes, $content, $block, $champs, $bloc ) {
-			include $bc_gabarit;
+		( static function ( $blocs_creator_gabarit, $attributes, $content, $block, $champs, $bloc ) {
+			include $blocs_creator_gabarit;
 		} )(
 			$gabarit,
 			(array) $attributes,
@@ -111,15 +111,15 @@ class BC_Rendu {
 		$champs = array();
 
 		foreach ( $definition['champs'] as $champ ) {
-			if ( ! BC_Champs::porte_valeur( $champ['type'] ) ) {
+			if ( ! Blocs_Creator_Champs::porte_valeur( $champ['type'] ) ) {
 				continue;
 			}
 
 			$cle    = $champ['cle'];
 			$valeur = array_key_exists( $cle, $attributs ) ? $attributs[ $cle ] : null;
-			$valeur = BC_Champs::assainir_valeur( $champ, $valeur );
+			$valeur = Blocs_Creator_Champs::assainir_valeur( $champ, $valeur );
 
-			$champs[ $cle ] = BC_Champs::preparer( $champ, $valeur );
+			$champs[ $cle ] = Blocs_Creator_Champs::preparer( $champ, $valeur );
 		}
 
 		/**

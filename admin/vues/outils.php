@@ -35,12 +35,12 @@ defined( 'ABSPATH' ) || exit;
 					<fieldset class="bc-cases">
 						<legend class="screen-reader-text"><?php esc_html_e( 'Blocs à exporter', 'blocs-creator' ); ?></legend>
 
-						<?php foreach ( $definitions as $bc_definition ) : ?>
+						<?php foreach ( $definitions as $blocs_creator_definition ) : ?>
 							<label class="bc-case">
-								<input type="checkbox" name="blocs[]" value="<?php echo esc_attr( (int) $bc_definition['id'] ); ?>" checked>
+								<input type="checkbox" name="blocs[]" value="<?php echo esc_attr( (int) $blocs_creator_definition['id'] ); ?>" checked>
 								<span>
-									<strong><?php echo esc_html( $bc_definition['titre'] ); ?></strong>
-									<span class="bc-aide"><?php echo esc_html( BC_Definition::nom( $bc_definition ) ); ?></span>
+									<strong><?php echo esc_html( $blocs_creator_definition['titre'] ); ?></strong>
+									<span class="bc-aide"><?php echo esc_html( Blocs_Creator_Definition::nom( $blocs_creator_definition ) ); ?></span>
 								</span>
 							</label>
 						<?php endforeach; ?>

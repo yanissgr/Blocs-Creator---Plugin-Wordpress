@@ -32,7 +32,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Conversion d'un bloc codé en définition modifiable.
  */
-class BC_Adoption {
+class Blocs_Creator_Adoption {
 
 	/**
 	 * Noms d'attributs que WordPress se réserve, et qu'un champ ne doit pas
@@ -54,7 +54,7 @@ class BC_Adoption {
 	public static function reprises() {
 		$reprises = array();
 
-		foreach ( BC_Definition::toutes() as $definition ) {
+		foreach ( Blocs_Creator_Definition::toutes() as $definition ) {
 			if ( empty( $definition['adoption']['nom'] ) ) {
 				continue;
 			}
@@ -103,7 +103,7 @@ class BC_Adoption {
 		 */
 		$declare = isset( $meta['blocsCreator'] ) && is_array( $meta['blocsCreator'] ) ? $meta['blocsCreator'] : array();
 
-		$definition = BC_Definition::vierge();
+		$definition = Blocs_Creator_Definition::vierge();
 
 		$definition['titre']       = (string) ( $meta['title'] ?? $code['titre'] );
 		$definition['slug']        = (string) $code['slug'];
@@ -164,7 +164,7 @@ class BC_Adoption {
 			'date'    => current_time( 'mysql' ),
 		);
 
-		return BC_Definition::normaliser( $definition );
+		return Blocs_Creator_Definition::normaliser( $definition );
 	}
 
 	/**
@@ -474,7 +474,7 @@ class BC_Adoption {
 		}
 
 		$definition = self::traduire( $code );
-		$post_id    = BC_Definition::enregistrer( $definition );
+		$post_id    = Blocs_Creator_Definition::enregistrer( $definition );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -483,7 +483,7 @@ class BC_Adoption {
 		$avertissements = array();
 		$gabarit        = '';
 
-		$existant = BC_Gabarits::chemin( $definition );
+		$existant = Blocs_Creator_Gabarits::chemin( $definition );
 
 		if ( '' !== $existant ) {
 			$gabarit = $existant;
@@ -491,11 +491,11 @@ class BC_Adoption {
 			$avertissements[] = sprintf(
 				/* translators: %s: chemin du fichier. */
 				__( 'Un gabarit existait déjà à %s : il n\'a pas été touché, et c\'est lui qui dessine le bloc.', 'blocs-creator' ),
-				BC_Gabarits::chemin_court( $existant )
+				Blocs_Creator_Gabarits::chemin_court( $existant )
 			);
 		} else {
-			$resultat = BC_Gabarits::ecrire(
-				BC_Gabarits::chemin_prefere( $definition, true ),
+			$resultat = Blocs_Creator_Gabarits::ecrire(
+				Blocs_Creator_Gabarits::chemin_prefere( $definition, true ),
 				self::code_gabarit( $code, $definition )
 			);
 
@@ -514,7 +514,7 @@ class BC_Adoption {
 			);
 		}
 
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 
 		return array(
 			'id'             => (int) $post_id,
@@ -589,7 +589,7 @@ class BC_Adoption {
 	 * @return true|WP_Error
 	 */
 	public static function rendre_au_code( $post_id ) {
-		$definition = BC_Definition::charger( $post_id );
+		$definition = Blocs_Creator_Definition::charger( $post_id );
 
 		if ( null === $definition || empty( $definition['adoption']['nom'] ) ) {
 			return new WP_Error( 'bc_pas_une_reprise', __( 'Ce bloc n\'a pas été repris à un bloc codé.', 'blocs-creator' ) );
@@ -604,7 +604,7 @@ class BC_Adoption {
 
 		wp_delete_post( (int) $post_id, true );
 
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 
 		return true;
 	}
@@ -620,7 +620,7 @@ class BC_Adoption {
 	public static function reprises_en_cours() {
 		$reprises = array();
 
-		foreach ( BC_Definition::toutes() as $definition ) {
+		foreach ( Blocs_Creator_Definition::toutes() as $definition ) {
 			if ( empty( $definition['adoption']['nom'] ) ) {
 				continue;
 			}
@@ -655,7 +655,7 @@ class BC_Adoption {
 				continue;
 			}
 
-			$rendus[] = BC_Definition::nom( $definition );
+			$rendus[] = Blocs_Creator_Definition::nom( $definition );
 		}
 
 		return array(
@@ -698,8 +698,8 @@ class BC_Adoption {
 		$entete = sprintf(
 			"<?php\n/**\n * Gabarit du bloc « %s » (%s).\n *\n * Repris du bloc codé %s le %s par Blocs Creator.\n * Ce fichier vous appartient : le plugin ne le réécrira jamais.\n *\n * @var array    \$attributes Les valeurs brutes, telles qu'enregistrées.\n * @var string   \$content    Les blocs imbriqués, déjà rendus.\n * @var WP_Block \$block      L'instance du bloc.\n * @var array    \$champs     Les valeurs prêtes à l'emploi, par clé.\n */\n\ndefined( 'ABSPATH' ) || exit;\n\n",
 			$definition['titre'],
-			BC_Definition::nom( $definition ),
-			BC_Gabarits::chemin_court( (string) $code['dossier'] ),
+			Blocs_Creator_Definition::nom( $definition ),
+			Blocs_Creator_Gabarits::chemin_court( (string) $code['dossier'] ),
 			date_i18n( 'd/m/Y' )
 		);
 

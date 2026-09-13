@@ -4,7 +4,7 @@
  *
  * @package BlocsCreator
  *
- * @var BC_Liste_Table $table Le tableau, déjà préparé.
+ * @var Blocs_Creator_Liste_Table $table Le tableau, déjà préparé.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<h1 class="wp-heading-inline"><?php esc_html_e( 'Blocs Creator', 'blocs-creator' ); ?></h1>
 
-	<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . BC_Definition::TYPE ) ); ?>" class="page-title-action">
+	<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Blocs_Creator_Definition::TYPE ) ); ?>" class="page-title-action">
 		<?php esc_html_e( 'Ajouter un bloc', 'blocs-creator' ); ?>
 	</a>
 
@@ -28,9 +28,9 @@ defined( 'ABSPATH' ) || exit;
 		?>
 	</p>
 
-	<?php $bc_a_reprendre = BC_Adoption::a_reprendre(); ?>
+	<?php $blocs_creator_a_reprendre = Blocs_Creator_Adoption::a_reprendre(); ?>
 
-	<?php if ( ! empty( $bc_a_reprendre ) ) : ?>
+	<?php if ( ! empty( $blocs_creator_a_reprendre ) ) : ?>
 		<div class="notice notice-info bc-reprendre-tout">
 			<p>
 				<?php
@@ -40,11 +40,11 @@ defined( 'ABSPATH' ) || exit;
 						_n(
 							'%d bloc de ce site est écrit à la main : il se liste ici, mais ne s\'y modifie pas.',
 							'%d blocs de ce site sont écrits à la main : ils se listent ici, mais ne s\'y modifient pas.',
-							count( $bc_a_reprendre ),
+							count( $blocs_creator_a_reprendre ),
 							'blocs-creator'
 						)
 					),
-					count( $bc_a_reprendre )
+					count( $blocs_creator_a_reprendre )
 				);
 				?>
 				<?php esc_html_e( 'Les reprendre en main en fait des blocs comme les vôtres — mêmes identifiants, même aspect, champs modifiables. L\'opération se défait bloc par bloc.', 'blocs-creator' ); ?>
@@ -64,9 +64,9 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 	<?php endif; ?>
 
-	<?php $bc_reprises = BC_Adoption::reprises_en_cours(); ?>
+	<?php $blocs_creator_reprises = Blocs_Creator_Adoption::reprises_en_cours(); ?>
 
-	<?php if ( ! empty( $bc_reprises ) ) : ?>
+	<?php if ( ! empty( $blocs_creator_reprises ) ) : ?>
 		<div class="notice notice-info bc-reprendre-tout">
 			<p>
 				<?php
@@ -76,11 +76,11 @@ defined( 'ABSPATH' ) || exit;
 						_n(
 							'%d bloc de cette liste a été repris à son code : sa définition est modifiable ici, et son dossier d\'origine attend, intact.',
 							'%d blocs de cette liste ont été repris à leur code : leurs définitions sont modifiables ici, et leurs dossiers d\'origine attendent, intacts.',
-							count( $bc_reprises ),
+							count( $blocs_creator_reprises ),
 							'blocs-creator'
 						)
 					),
-					count( $bc_reprises )
+					count( $blocs_creator_reprises )
 				);
 				?>
 				<?php esc_html_e( 'Les rendre au code supprime leurs définitions et remet leurs dossiers aux commandes. Les pages ne changent pas : mêmes identifiants, même aspect.', 'blocs-creator' ); ?>
@@ -103,10 +103,12 @@ defined( 'ABSPATH' ) || exit;
 	<?php $table->views(); ?>
 
 	<form method="get">
-		<input type="hidden" name="page" value="<?php echo esc_attr( BC_Admin::PAGE ); ?>">
+		<input type="hidden" name="page" value="<?php echo esc_attr( Blocs_Creator_Admin::PAGE ); ?>">
+		<?php // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Le filtre d'affichage est reconduit dans le formulaire de recherche. ?>
 		<?php if ( isset( $_GET['filtre'] ) ) : ?>
 			<input type="hidden" name="filtre" value="<?php echo esc_attr( sanitize_key( wp_unslash( $_GET['filtre'] ) ) ); ?>">
 		<?php endif; ?>
+		<?php // phpcs:enable WordPress.Security.NonceVerification.Recommended ?>
 		<?php $table->search_box( __( 'Rechercher un bloc', 'blocs-creator' ), 'bc-recherche' ); ?>
 		<?php $table->display(); ?>
 	</form>

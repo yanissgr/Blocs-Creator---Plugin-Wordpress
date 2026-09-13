@@ -15,13 +15,13 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-$bc_reglages = get_option( 'blocs_creator_reglages', array() );
+$blocs_creator_reglages = get_option( 'blocs_creator_reglages', array() );
 
-if ( empty( $bc_reglages['supprimer_donnees'] ) ) {
+if ( empty( $blocs_creator_reglages['supprimer_donnees'] ) ) {
 	return;
 }
 
-$bc_blocs = get_posts(
+$blocs_creator_blocs = get_posts(
 	array(
 		'post_type'      => 'bc_bloc',
 		'post_status'    => 'any',
@@ -30,8 +30,8 @@ $bc_blocs = get_posts(
 	)
 );
 
-foreach ( $bc_blocs as $bc_id ) {
-	wp_delete_post( (int) $bc_id, true );
+foreach ( $blocs_creator_blocs as $blocs_creator_id ) {
+	wp_delete_post( (int) $blocs_creator_id, true );
 }
 
 delete_option( 'blocs_creator_reglages' );

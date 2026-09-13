@@ -4,94 +4,94 @@ Tags: blocks, gutenberg, custom blocks, fields, acf
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 4.1.0
+Stable tag: 4.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Créez vos blocs Gutenberg en déclarant leurs champs, puis dessinez-les dans un simple fichier PHP de votre thème.
+Build Gutenberg blocks by declaring their fields, then draw them in a plain PHP file of your own theme.
 
 == Description ==
 
-Blocs Creator sépare deux choses que la plupart des outils mélangent.
+Blocs Creator separates two things most tools mix together.
 
-**Ce que le bloc contient** se déclare dans le back-office : un nom, des champs,
-un type par champ. Aucune ligne de code.
+**What a block contains** is declared in the admin area: a name, some fields, a
+type per field. Not a single line of code.
 
-**Ce à quoi le bloc ressemble** s'écrit dans un fichier PHP de votre thème. Le
-plugin l'appelle avec les valeurs saisies, et se retire. Pas de constructeur
-visuel qui génère du balisage que vous devrez déjouer ensuite : votre HTML
-reste le vôtre.
+**What a block looks like** is written in a PHP file of your theme. The plugin
+calls that file with the submitted values, and then steps aside. There is no
+visual builder generating markup you will have to fight later: your HTML stays
+yours.
 
-= Ce que vous obtenez =
+The plugin ships with a French admin interface. Translations are welcome.
 
-* Un écran qui liste **tous** les blocs du site — ceux déclarés ici comme ceux
-  écrits à la main dans un fichier. Avec, pour chacun, son identifiant, ses
-  champs, son gabarit et le nombre de pages qui s'en servent.
-* Vingt-quatre types de champs, du texte simple au répéteur, en passant par les
-  images, les liens, les publications, le point de cadrage et les blocs
-  imbriqués.
-* Un fichier de rendu créé pour vous à la publication du bloc, avec un point de
-  départ pour chaque champ déclaré — et jamais réécrit ensuite.
-* Un aperçu fidèle dans l'éditeur : le bloc s'affiche par son rendu serveur,
-  exactement le code qui tournera sur le site. Une bascule dans la barre
-  d'outils passe au formulaire pour saisir.
-* Un import/export JSON, pour emporter vos blocs d'un site à l'autre.
-* **Reprendre la main** sur un bloc écrit à la main : sa déclaration devient une
-  définition modifiable, son fichier de rendu s'installe dans votre thème, et
-  son identifiant ne bouge pas. Un bouton reprend tous les blocs codés d'un
-  coup, et l'opération se défait bloc par bloc.
-* **Le tri de l'inséreur** : une case à cocher par bloc — ceux de WordPress,
-  ceux des autres extensions — pour que le « + » ne propose que ce qui sert.
-* **Les apparitions** : neuf scènes d'entrée au défilement, choisies une fois
-  pour le bloc, avec aperçu au moment du choix.
+= What you get =
 
-= Les types de champs =
+* One screen listing **every** block on the site — the ones declared here and
+  the ones hand-written in a file. Each with its name, its fields, its template
+  and the number of pages using it.
+* Twenty-four field types, from plain text to repeaters, including images,
+  links, posts, focal point and inner blocks.
+* A render file created for you when the block is published, with a starting
+  point for every declared field — and never rewritten afterwards.
+* A faithful preview in the editor: the block is displayed through its server
+  render, exactly the code that will run on the site. A toggle in the toolbar
+  switches to the form to fill the fields in.
+* JSON import and export, to carry your blocks from one site to another.
+* **Take over** a hand-written block: its declaration becomes an editable
+  definition, its render file is installed in your theme, and its name does not
+  change. One button takes over every coded block at once, and the operation
+  can be undone block by block.
+* **Inserter housekeeping**: one checkbox per block — those of WordPress, those
+  of other plugins — so that the "+" only offers what is actually used.
+* **Entrances**: nine scroll-triggered scenes, chosen once for the block, with
+  a preview at the moment of choice.
 
-Texte, texte long, texte enrichi, nombre, oui/non, liste déroulante, groupe de
-boutons, cases à cocher, niveau de titre, couleur, icône, point de cadrage,
-image, galerie, fichier, lien, publication, publications, type de publication,
-terme, groupe, répéteur, blocs imbriqués, note.
+= Field types =
 
-= Écrire un gabarit =
+Text, long text, rich text, number, yes/no, select, button group, checkboxes,
+heading level, color, icon, focal point, image, gallery, file, link, post,
+posts, post type, term, group, repeater, inner blocks, note.
 
-Un fichier, une quinzaine de fonctions :
+= Writing a template =
+
+One file, about fifteen functions:
 
 `
-<section <?php echo bc_attributs( 'temoignages' ); ?>>
+<section <?php echo blocs_creator_attributs( 'temoignages' ); ?>>
 
-    <?php printf( '<h%1$d>%2$s</h%1$d>', bc_niveau( 'niveau' ), esc_html( bc_champ( 'titre' ) ) ); ?>
+    <?php printf( '<h%1$d>%2$s</h%1$d>', blocs_creator_niveau( 'niveau' ), esc_html( blocs_creator_champ( 'titre' ) ) ); ?>
 
-    <?php foreach ( bc_boucle( 'lignes' ) as $ligne ) : ?>
+    <?php foreach ( blocs_creator_boucle( 'lignes' ) as $ligne ) : ?>
         <blockquote><?php echo wp_kses_post( $ligne['citation'] ); ?></blockquote>
         <cite><?php echo esc_html( $ligne['auteur'] ); ?></cite>
     <?php endforeach; ?>
 
-    <?php if ( bc_lien_rempli( 'cta' ) ) : ?>
-        <a <?php echo bc_lien_attrs( 'cta' ); ?>><?php echo esc_html( bc_lien_titre( 'cta' ) ); ?></a>
+    <?php if ( blocs_creator_lien_rempli( 'cta' ) ) : ?>
+        <a <?php echo blocs_creator_lien_attrs( 'cta' ); ?>><?php echo esc_html( blocs_creator_lien_titre( 'cta' ) ); ?></a>
     <?php endif; ?>
 
 </section>
 `
 
-La liste complète des fonctions est dans le menu **Blocs Creator → Écrire un
-gabarit**, avec ce que rend chaque type de champ.
+The full list of functions lives under **Blocs Creator → Write a template**,
+along with what each field type returns.
 
-= Les blocs déjà codés =
+= Blocks you already coded =
 
-Si vous avez déjà des blocs écrits à la main, Blocs Creator les découvre et les
-enregistre : posez un dossier portant un `block.json` dans `blocs/` de votre
-thème, dans `wp-content/blocs-creator/blocs/`, ou dans un pack du plugin. Ils
-apparaissent dans la même liste que les autres, marqués « Codés ».
+If you already have hand-written blocks, Blocs Creator finds them and registers
+them: drop a folder carrying a `block.json` into `blocs/` of your theme, into
+`wp-content/blocs-creator/blocs/`, or into a pack of the plugin. They show up in
+the same list as the others, marked as coded.
 
-Et vous pouvez les **reprendre en main**, un par un ou tous d'un coup. L'action
-traduit le `block.json` en définition — ses attributs deviennent des champs —,
-recopie son `rendu.php` dans votre thème comme gabarit, et garde son
-identifiant, ses feuilles de style et ses variantes. Le bloc se modifie alors
-comme si vous l'aviez créé ici. « Rendre au code » défait tout : le dossier
-reprend la main, et il n'a jamais été touché.
+And you can **take them over**, one at a time or all at once. The action
+translates the `block.json` into a definition — its attributes become fields —
+copies its `rendu.php` into your theme as a template, and keeps its name, its
+stylesheets and its variations. The block is then edited as if you had created
+it here. "Give back to code" undoes everything: the folder takes over again,
+and it was never touched.
 
-Pour que la reprise soit **exacte**, un bloc codé peut décrire lui-même ce que
-ses attributs doivent devenir, dans une clé `blocsCreator` de son `block.json` :
+For the takeover to be **exact**, a coded block can describe by itself what its
+attributes should become, in a `blocsCreator` key of its `block.json`:
 
 `
 "blocsCreator": {
@@ -104,181 +104,188 @@ ses attributs doivent devenir, dans une clé `blocsCreator` de son `block.json` 
 }
 `
 
-Sans cette clé, le manifeste est lu au mieux : les types sont devinés, et un
-attribut qu'aucun champ ne sait porter est conservé tel quel plutôt
-qu'abandonné. L'écran de confirmation montre la traduction avant de la faire.
+Without that key, the manifest is read as well as it can be: types are guessed,
+and an attribute no field knows how to carry is kept as it is rather than
+dropped. The confirmation screen shows the translation before applying it.
 
-= Les blocs disponibles =
+= Available blocks =
 
-**Réglages → Blocs disponibles** liste tous les blocs enregistrés, groupés par
-provenance, avec une case à cocher. Décocher un bloc le retire de l'inséreur —
-et de lui seul : les pages qui le portent déjà continuent de s'afficher et de
-se modifier.
+**Settings → Available blocks** lists every registered block, grouped by origin,
+with a checkbox. Unchecking a block removes it from the inserter — and from the
+inserter only: pages already carrying it keep displaying and editing fine.
 
-Deux familles résistent : vos propres blocs, et les blocs qui n'existent qu'à
-l'intérieur d'un autre. La liste enregistrée est celle de ce que vous retirez,
-jamais de ce que vous gardez : un bloc qui arrive avec une nouvelle extension
-est donc disponible d'emblée.
+Two families resist: your own blocks, and blocks that only exist inside another
+one. What gets stored is the list of what you remove, never the list of what you
+keep: a block arriving with a newly installed plugin is therefore available
+right away.
 
-= Les apparitions =
+= Entrances =
 
-Une apparition appartient au bloc, pas à la page : elle se choisit une fois —
-sur l'écran du bloc pour ceux que vous créez, dans les réglages pour ceux de
-WordPress et des autres extensions — et toutes ses occurrences entrent de la
-même façon, partout. Un aperçu la joue au moment du choix.
+An entrance belongs to the block, not to the page: it is chosen once — on the
+block screen for the ones you create, in the settings for those of WordPress and
+other plugins — and every occurrence enters the same way, everywhere. A preview
+plays it at the moment of choice.
 
-Une apparition est une scène, pas un geste : chacune des neuf dit ce que fait
-le bloc ET ce que font ses parties — son titre, son texte, ses cartes — avec un
-décalage entre elles.
+An entrance is a scene, not a gesture: each of the nine says what the block does
+AND what its parts do — its heading, its text, its cards — with an offset
+between them.
 
-La classe est posée au rendu, pas dans le contenu enregistré : un bloc statique
-garde donc exactement le balisage qu'il avait, et retirer le plugin ne laisse
-rien derrière. Rien ne s'anime pour qui a demandé moins d'animations dans les
-réglages de son appareil, et rien n'est jamais caché si le JavaScript ne se
-charge pas.
+The class is added at render time, not in the stored content: a static block
+therefore keeps exactly the markup it had, and removing the plugin leaves
+nothing behind. Nothing animates for someone who asked for reduced motion in
+their device settings, and nothing is ever hidden if JavaScript fails to load.
 
 == Installation ==
 
-1. Déposez le dossier `blocs-creator` dans `wp-content/plugins/`.
-2. Activez le plugin.
-3. Ouvrez **Blocs Creator** dans le menu, puis **Ajouter un bloc**.
+1. Drop the `blocs-creator` folder into `wp-content/plugins/`.
+2. Activate the plugin.
+3. Open **Blocs Creator** in the menu, then **Add a block**.
 
-Un dossier `packs/` peut contenir des blocs livrés avec le plugin. Sur une
-installation neuve, supprimez ce dossier : le plugin n'en saura rien.
+A `packs/` folder may hold blocks shipped with the plugin. On a fresh install,
+delete that folder: the plugin will not notice.
 
 == Frequently Asked Questions ==
 
-= Où est le fichier de rendu de mon bloc ? =
+= Where is the render file of my block? =
 
-Dans `wp-content/themes/<votre-thème>/blocs/<identifiant>.php`. Le chemin exact
-est écrit dans la colonne de droite de l'écran du bloc, et dans la liste. Le
-dossier se change dans les réglages.
+In `wp-content/themes/<your-theme>/blocs/<name>.php`. The exact path is written
+in the right-hand column of the block screen, and in the list. The folder can be
+changed in the settings.
 
-= Le plugin va-t-il écraser mon fichier ? =
+= Will the plugin overwrite my file? =
 
-Jamais. Il le crée s'il n'existe pas, et n'y retouche plus — même si vous
-ajoutez ou supprimez des champs.
+Never. It creates the file if it does not exist, and never touches it again —
+even if you add or remove fields.
 
-= Puis-je charger une feuille de style avec un bloc ? =
+= Can I load a stylesheet along with a block? =
 
-Oui. Posez un `<identifiant>.css` à côté du gabarit : il est chargé
-automatiquement, et seulement sur les pages qui portent le bloc.
+Yes. Put a `<name>.css` next to the template: it is loaded automatically, and
+only on the pages carrying the block.
 
-= Que se passe-t-il si je renomme un bloc déjà utilisé ? =
+= What happens if I rename a block already in use? =
 
-Les pages qui s'en servent ne le reconnaîtront plus. L'écran vous avertit du
-nombre de pages concernées avant que vous ne changiez quoi que ce soit.
+Pages using it will no longer recognize it. The screen warns you how many pages
+are concerned before you change anything.
 
-= Et si je désinstalle le plugin ? =
+= What if I uninstall the plugin? =
 
-Par défaut, rien n'est supprimé : vos définitions restent en base et vos
-gabarits dans le thème. Une case dans les réglages permet de tout effacer à la
-désinstallation, si c'est ce que vous voulez.
+By default nothing is deleted: your definitions stay in the database and your
+templates stay in the theme. A checkbox in the settings erases everything on
+uninstall, if that is what you want.
 
 == Screenshots ==
 
-1. Tous les blocs du site, générés et codés, dans une seule liste.
-2. Le constructeur de champs.
-3. Un bloc généré dans l'éditeur : son rendu serveur, et ses champs.
-4. L'aide à l'écriture d'un gabarit.
+1. Every block of the site, generated and coded, in a single list.
+2. The field builder.
+3. A generated block in the editor: its server render, and its fields.
+4. The help screen for writing a template.
 
 == Changelog ==
 
+= 4.2.0 =
+* **Everything the plugin declares now carries a full prefix.** Classes went
+  from `BC_*` to `Blocs_Creator_*`, and the template helpers from `bc_champ()`
+  to `blocs_creator_champ()`. A two-letter prefix is a collision waiting to
+  happen, and the WordPress guidelines ask for four characters at least.
+  Existing templates must be updated — the block screen shows the new lines.
+* Option names, post type, hooks, query arguments and CSS classes are
+  **unchanged**: nothing stored in the database or in page content moves.
+* `is_writable()` gives way to `wp_is_writable()`, the WordPress wrapper that
+  also answers correctly on Windows.
+* The pack strings now use the plugin text domain, so they are translated along
+  with the rest.
+* Translation loading is left to WordPress, which has been doing it by itself
+  since 4.6.
+* This readme is now in English, as the plugin directory requires.
+
 = 4.1.0 =
-* **Le plugin insiste quand l'écriture ne prend pas.** Les réglages sont écrits,
-  relus, comparés ; si la relecture ne rend pas ce qu'on vient d'écrire, la
-  ligne est écrite directement en base. Un filtre `pre_update_option` posé par
-  une autre extension, un cache d'objets qui ne se vide pas : autant de choses
-  invisibles depuis le plugin, et qui donnent toutes le même bouton mort.
-* **Un diagnostic, sur l'écran des réglages.** Un écran qui revient inchangé
-  peut avoir quatre causes très différentes, et elles se ressemblent toutes vues
-  du navigateur. Le relevé les distingue : version, limites de PHP, présence de
-  la ligne en base, cache d'objets, extensions actives, et surtout le **journal
-  des huit dernières tentatives**. S'il reste vide après un clic, la requête
-  n'arrive pas jusqu'au plugin — et l'on cherche du côté de l'hébergement. Le
-  tout se copie d'un bouton.
-* Le diagnostic s'atteint depuis la barre d'enregistrement, qui ne quitte jamais
-  l'écran, et s'ouvre de lui-même quand un enregistrement vient d'échouer. Au
-  bas d'une page de cent trente blocs, personne ne le trouvait.
+* **The plugin insists when a write does not go through.** Settings are written,
+  read back, compared; if the read-back does not return what was just written,
+  the row is written straight to the database. A `pre_update_option` filter set
+  by another plugin, an object cache that never clears: things invisible from
+  inside the plugin, all giving the same dead button.
+* **A diagnostic panel, on the settings screen.** A screen coming back unchanged
+  can have four very different causes, and they all look alike from the browser.
+  The report tells them apart: version, PHP limits, presence of the row in the
+  database, object cache, active plugins, and above all the **log of the last
+  eight attempts**. If it stays empty after a click, the request never reaches
+  the plugin — and hosting is where to look. The whole thing copies with one
+  button.
+* The diagnostic is reachable from the save bar, which never leaves the screen,
+  and opens by itself right after a failed save. At the bottom of a page listing
+  a hundred and thirty blocks, nobody ever found it.
 
 = 4.0.0 =
 
-Quatre corrections, et elles ont la même racine : le plugin savait faire des
-choses qu'il ne disait pas, et refusait des choses qu'on lui demandait.
+Four fixes, all with the same root: the plugin could do things it did not say,
+and refused things it was asked for.
 
-* **Les réglages s'enregistrent, et le disent.** Le formulaire ne passe plus par
-  `options.php` : il appelle son propre gestionnaire, qui écrit, RELIT, compare,
-  et annonce le résultat. L'onglet ouvert revient avec.
-* **Une définition se supprime, toujours.** L'action s'appelle « Supprimer », et
-  elle supprime — même quand le bloc codé d'origine a disparu du disque, cas où
-  « Rendre au code » refusait à juste titre et laissait la définition coincée
-  dans la liste. La confirmation dit ce que ça coûte, et combien de publications
-  s'en servent. Une copie de bloc ne se souvient plus d'être née d'une reprise.
-* **Une dixième scène : « Composée ».** Les neuf autres appliquent un même geste
-  à toutes les parties d'un bloc. Celle-ci laisse le DESSIN distribuer les
-  rôles, partie par partie : `data-bc-part="zoom"` sur l'image, `"haut"` sur le
-  texte, `"pinceau"` sur un trait. Huit variantes — haut, bas, gauche, droite,
-  zoom, pastille, fondu, pinceau. C'est ce qu'il fallait pour qu'un bloc dont
-  les moitiés n'entrent pas de la même façon garde son entrée, tout en restant
-  réglable depuis le back-office.
-* **Le rang d'une partie repart à chaque conteneur**, et à chaque rangée d'une
-  grille. Deux moitiés qui doivent se croiser partent donc ensemble, et la
-  quatrième carte d'une grille à trois colonnes n'attend plus le retard d'une
-  quatrième. Un rang déjà posé par le dessin est respecté.
-* **La fiche du bloc.** Une boîte sur l'écran d'un bloc rassemble tout ce qu'il
-  faut pour le dessiner — identifiant, fichier à écrire, chaque champ avec la
-  ligne qui va le chercher — et la copie d'un bouton. C'est le pont entre les
-  deux moitiés du plugin : on déclare ici, on dessine là-bas, et il fallait
-  pouvoir passer de l'une à l'autre sans ouvrir la base.
+* **Settings save, and say so.** The form no longer goes through `options.php`:
+  it calls its own handler, which writes, READS BACK, compares, and announces
+  the result. The open tab comes back with it.
+* **A definition always deletes.** The action is called "Delete", and it
+  deletes — even when the original coded block has vanished from disk, the very
+  case where "Give back to code" rightly refused and left the definition stuck
+  in the list. The confirmation says what it costs, and how many posts use it. A
+  copy of a block no longer remembers being born from a takeover.
+* **A tenth scene: "Composed".** The other nine apply one gesture to every part
+  of a block. This one lets the TEMPLATE hand out the roles, part by part:
+  `data-bc-part="zoom"` on the image, `"haut"` on the text, `"pinceau"` on a
+  rule. Eight variants — up, down, left, right, zoom, badge, fade, brush.
+* **A part's rank restarts at each container**, and at each row of a grid. Two
+  halves meant to cross therefore start together, and the fourth card of a
+  three-column grid no longer waits for a fourth delay. A rank already set by
+  the template is respected.
+* **The block sheet.** A box on a block screen gathers everything needed to draw
+  it — name, file to write, each field with the line that fetches it — and
+  copies with one button. It is the bridge between the two halves of the plugin.
 
 = 3.2.0 =
-* L'écran des réglages dit ce qu'il a fait : une confirmation s'affiche après
-  l'enregistrement, et l'on revient sur l'onglet qu'on avait sous les yeux.
-* L'onglet « Blocs disponibles » n'envoie plus un champ par bloc mais un seul :
-  sur un site fourni, le formulaire dépassait `max_input_vars` et arrivait
-  tronqué — des blocs décochés revenaient, et l'enregistrement semblait sans
-  effet. Un envoi tronqué ne touche désormais plus à rien.
-* Le même écran se lit enfin : un bilan en tête, un filtre Tous / Disponibles /
-  Écartés, des groupes qui se plient, et des compteurs qui suivent les clics.
-* L'écran d'un bloc s'ouvre sur son parcours en trois étapes — nommer, déclarer
-  les champs, dessiner — avec l'état réel du fichier de dessin. Chaque champ
-  rappelle la ligne qui va le chercher dans le gabarit.
-* Un dossier de thème verrouillé en écriture est annoncé, et le code de départ
-  est montré à copier plutôt qu'un bouton qui échoue.
-* Un bloc repris se supprime : l'action de sa ligne s'appelle « Supprimer », et
-  un bouton « Tout rendre au code » défait une reprise en un geste.
-* Un gabarit peut désigner lui-même les parties qui entrent en scène, en posant
-  `data-bc-part` sur ses éléments. Une scène qui n'anime que les parties d'un
-  bloc qui n'en offre aucune fait désormais entrer le bloc entier plutôt que
-  de ne rien jouer.
+* The settings screen says what it did: a confirmation is displayed after
+  saving, and you come back to the tab you were looking at.
+* The "Available blocks" tab no longer sends one field per block but a single
+  one: on a busy site the form exceeded `max_input_vars` and arrived truncated —
+  unchecked blocks came back, and saving seemed to have no effect. A truncated
+  submission now touches nothing.
+* That same screen finally reads: a summary on top, an All / Available / Removed
+  filter, groups that fold, and counters following the clicks.
+* A block screen opens on its three-step path — name it, declare the fields,
+  draw it — with the real state of the drawing file. Each field recalls the line
+  that fetches it in the template.
+* A theme folder locked against writing is announced, and the starting code is
+  shown to copy rather than a button that fails.
+* A taken-over block deletes: its row action is called "Delete", and a "Give
+  everything back to code" button undoes a takeover in one go.
+* A template can name the parts that enter the scene itself, by putting
+  `data-bc-part` on its elements. A scene animating only the parts of a block
+  that offers none now brings in the whole block rather than playing nothing.
 
 = 3.1.0 =
-* Les apparitions se règlent sur le bloc, plus sur la page : un bloc entre
-  toujours de la même façon, partout. Un aperçu les joue au moment du choix.
-* Neuf scènes travaillées à la place des quinze gestes : chacune anime le bloc
-  ET ses parties, avec un décalage entre elles.
-* Reprise exacte des blocs codés : un `block.json` peut déclarer lui-même ce
-  que ses attributs deviennent, dans une clé `blocsCreator`.
-* Un bouton « Tout reprendre en main » : plus un seul bloc codé en un clic.
-* Deux types de champs de plus : point de cadrage et type de publication.
+* Entrances are set on the block, no longer on the page: a block always enters
+  the same way, everywhere. A preview plays them at the moment of choice.
+* Nine worked scenes instead of fifteen gestures: each animates the block AND
+  its parts, with an offset between them.
+* Exact takeover of coded blocks: a `block.json` can declare by itself what its
+  attributes become, in a `blocsCreator` key.
+* A "Take everything over" button: not a single coded block left, in one click.
+* Two more field types: focal point and post type.
 
 = 3.0.0 =
-* Reprise en main des blocs codés : un bloc écrit à la main devient une
-  définition modifiable, sans changer d'identifiant ni d'aspect. Réversible.
-* Écran « Blocs disponibles » : cocher ou décocher les blocs de WordPress et
-  des autres extensions pour ne garder dans l'inséreur que ce qui sert.
-* Apparitions au défilement : quinze gestes d'entrée, réglables bloc par bloc,
-  sur n'importe quel bloc.
-* Une seule catégorie dans l'inséreur : celle que vous choisissez parmi les
-  sections existantes. Deux sections de même nom ne sont plus créées, et les
-  blocs déjà rangés dans l'ancienne déménagent à la montée de version.
-* Les clés de champs gardent leur casse : `imageId` reste `imageId`.
+* Takeover of coded blocks: a hand-written block becomes an editable definition,
+  without changing its name or its look. Reversible.
+* "Available blocks" screen: check or uncheck the blocks of WordPress and other
+  plugins to keep in the inserter only what is useful.
+* Scroll entrances: fifteen gestures, set block by block, on any block.
+* A single category in the inserter: the one you pick among existing sections.
+  Two sections with the same name are no longer created, and blocks already
+  filed under the old one move over on upgrade.
+* Field keys keep their case: `imageId` stays `imageId`.
 
 = 2.0.0 =
-* Création de blocs par déclaration de champs, sans code.
-* Écran unique listant les blocs générés et les blocs codés.
-* Vingt-deux types de champs, dont le répéteur et les blocs imbriqués.
-* Génération du fichier de rendu, avec un exemple par champ.
-* Aperçu par rendu serveur dans l'éditeur.
-* Import et export JSON.
-* Découverte des blocs codés dans le thème, dans wp-content et dans les packs.
+* Block creation by declaring fields, without code.
+* A single screen listing generated blocks and coded blocks.
+* Twenty-two field types, including the repeater and inner blocks.
+* Generation of the render file, with one example per field.
+* Server-render preview in the editor.
+* JSON import and export.
+* Discovery of coded blocks in the theme, in wp-content and in packs.

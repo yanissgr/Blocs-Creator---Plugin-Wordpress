@@ -14,42 +14,42 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bc_gabarit = BC_Gabarits::chemin( $definition );
-$bc_prefere = BC_Gabarits::chemin_prefere( $definition );
-$bc_nouveau = 'auto-draft' === $post->post_status;
-$bc_dossier = dirname( $bc_prefere );
+$blocs_creator_gabarit = Blocs_Creator_Gabarits::chemin( $definition );
+$blocs_creator_prefere = Blocs_Creator_Gabarits::chemin_prefere( $definition );
+$blocs_creator_nouveau = 'auto-draft' === $post->post_status;
+$blocs_creator_dossier = dirname( $blocs_creator_prefere );
 
 // Sur bien des hébergements, le thème arrive par FTP et PHP n'y écrit pas.
 // Proposer un bouton qui échouera n'aide personne : on montre alors le code.
-$bc_ecrivant = is_dir( $bc_dossier ) ? is_writable( $bc_dossier ) : is_writable( dirname( $bc_dossier ) );
+$blocs_creator_ecrivant = is_dir( $blocs_creator_dossier ) ? wp_is_writable( $blocs_creator_dossier ) : wp_is_writable( dirname( $blocs_creator_dossier ) );
 ?>
 <div class="bc-metabox">
 
-	<?php if ( $bc_nouveau ) : ?>
+	<?php if ( $blocs_creator_nouveau ) : ?>
 
 		<p class="bc-aide">
 			<?php esc_html_e( 'Le fichier de rendu sera créé à la publication, avec un point de départ pour chacun de vos champs.', 'blocs-creator' ); ?>
 		</p>
 
-	<?php elseif ( '' !== $bc_gabarit ) : ?>
+	<?php elseif ( '' !== $blocs_creator_gabarit ) : ?>
 
 		<p class="bc-gabarit-etat bc-gabarit-etat--ok">
 			<span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>
 			<?php esc_html_e( 'Le gabarit existe.', 'blocs-creator' ); ?>
 		</p>
 
-		<p class="bc-chemin bc-chemin--bloc"><?php echo esc_html( BC_Gabarits::chemin_court( $bc_gabarit ) ); ?></p>
+		<p class="bc-chemin bc-chemin--bloc"><?php echo esc_html( Blocs_Creator_Gabarits::chemin_court( $blocs_creator_gabarit ) ); ?></p>
 
 		<p class="bc-aide">
 			<?php esc_html_e( 'Modifiez-le dans votre éditeur de code. Le plugin ne le réécrira jamais, même si vous ajoutez des champs.', 'blocs-creator' ); ?>
 		</p>
 
-		<?php $bc_style = BC_Gabarits::chemin_style( $definition ); ?>
+		<?php $blocs_creator_style = Blocs_Creator_Gabarits::chemin_style( $definition ); ?>
 
-		<?php if ( '' !== $bc_style ) : ?>
+		<?php if ( '' !== $blocs_creator_style ) : ?>
 			<p class="bc-aide">
 				<?php esc_html_e( 'Feuille de style chargée avec le bloc :', 'blocs-creator' ); ?>
-				<code><?php echo esc_html( basename( $bc_style ) ); ?></code>
+				<code><?php echo esc_html( basename( $blocs_creator_style ) ); ?></code>
 			</p>
 		<?php else : ?>
 			<p class="bc-aide">
@@ -57,7 +57,7 @@ $bc_ecrivant = is_dir( $bc_dossier ) ? is_writable( $bc_dossier ) : is_writable(
 				printf(
 					/* translators: %s: nom de fichier CSS. */
 					esc_html__( 'Un fichier %s posé à côté serait chargé automatiquement, et seulement sur les pages qui portent ce bloc.', 'blocs-creator' ),
-					'<code>' . esc_html( basename( (string) preg_replace( '/\.php$/', '.css', $bc_gabarit ) ) ) . '</code>'
+					'<code>' . esc_html( basename( (string) preg_replace( '/\.php$/', '.css', $blocs_creator_gabarit ) ) ) . '</code>'
 				);
 				?>
 			</p>
@@ -70,9 +70,9 @@ $bc_ecrivant = is_dir( $bc_dossier ) ? is_writable( $bc_dossier ) : is_writable(
 			<?php esc_html_e( 'Aucun gabarit : le bloc s\'affiche sans mise en forme, avec ses champs les uns sous les autres. C\'est ce fichier qui lui donne son allure.', 'blocs-creator' ); ?>
 		</p>
 
-		<p class="bc-chemin bc-chemin--bloc"><?php echo esc_html( BC_Gabarits::chemin_court( $bc_prefere ) ); ?></p>
+		<p class="bc-chemin bc-chemin--bloc"><?php echo esc_html( Blocs_Creator_Gabarits::chemin_court( $blocs_creator_prefere ) ); ?></p>
 
-		<?php if ( $bc_ecrivant ) : ?>
+		<?php if ( $blocs_creator_ecrivant ) : ?>
 			<p>
 				<a class="button button-secondary" href="<?php
 					echo esc_url(
@@ -91,23 +91,23 @@ $bc_ecrivant = is_dir( $bc_dossier ) ? is_writable( $bc_dossier ) : is_writable(
 				printf(
 					/* translators: %s: chemin du dossier. */
 					esc_html__( '%s n\'est pas accessible en écriture : le plugin ne peut pas déposer le fichier. Copiez le code ci-dessous et déposez-le vous-même, par FTP ou depuis votre éditeur.', 'blocs-creator' ),
-					'<code>' . esc_html( BC_Gabarits::chemin_court( $bc_dossier ) ) . '</code>'
+					'<code>' . esc_html( Blocs_Creator_Gabarits::chemin_court( $blocs_creator_dossier ) ) . '</code>'
 				);
 				?>
 			</p>
 		<?php endif; ?>
 
-		<details class="bc-details" <?php echo $bc_ecrivant ? '' : 'open'; ?>>
+		<details class="bc-details" <?php echo $blocs_creator_ecrivant ? '' : 'open'; ?>>
 			<summary><?php esc_html_e( 'Le code de départ', 'blocs-creator' ); ?></summary>
 			<textarea class="bc-code-depart" readonly rows="12" onclick="this.select()"><?php
-				echo esc_textarea( BC_Gabarits::code_depart( $definition ) );
+				echo esc_textarea( Blocs_Creator_Gabarits::code_depart( $definition ) );
 			?></textarea>
 		</details>
 
 	<?php endif; ?>
 
 	<p class="bc-aide">
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . BC_Admin::PAGE . '-aide' ) ); ?>">
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Blocs_Creator_Admin::PAGE . '-aide' ) ); ?>">
 			<?php esc_html_e( 'Les fonctions disponibles dans un gabarit', 'blocs-creator' ); ?>
 		</a>
 	</p>

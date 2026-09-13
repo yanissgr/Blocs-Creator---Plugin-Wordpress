@@ -14,10 +14,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bc_gabarit  = BC_Gabarits::chemin_prefere( $definition, true );
-$bc_existant = BC_Gabarits::chemin( $definition );
-$bc_usages   = BC_Usage::compter( $code['nom'] );
-$bc_types    = BC_Champs::catalogue();
+$blocs_creator_gabarit  = Blocs_Creator_Gabarits::chemin_prefere( $definition, true );
+$blocs_creator_existant = Blocs_Creator_Gabarits::chemin( $definition );
+$blocs_creator_usages   = Blocs_Creator_Usage::compter( $code['nom'] );
+$blocs_creator_types    = Blocs_Creator_Champs::catalogue();
 ?>
 <div class="wrap bc-wrap">
 
@@ -46,15 +46,15 @@ $bc_types    = BC_Champs::catalogue();
 					'<code>' . esc_html( $code['nom'] ) . '</code>'
 				);
 				?>
-				<?php if ( $bc_usages > 0 ) : ?>
+				<?php if ( $blocs_creator_usages > 0 ) : ?>
 					<strong>
 						<?php
 						printf(
 							esc_html(
 								/* translators: %d: nombre de publications. */
-								_n( '(%d publication concernée)', '(%d publications concernées)', $bc_usages, 'blocs-creator' )
+								_n( '(%d publication concernée)', '(%d publications concernées)', $blocs_creator_usages, 'blocs-creator' )
 							),
-							(int) $bc_usages
+							(int) $blocs_creator_usages
 						);
 						?>
 					</strong>
@@ -62,18 +62,18 @@ $bc_types    = BC_Champs::catalogue();
 			</li>
 			<li>
 				<?php
-				if ( '' !== $bc_existant ) {
+				if ( '' !== $blocs_creator_existant ) {
 					printf(
 						/* translators: %s: chemin du fichier. */
 						esc_html__( 'Un gabarit existe déjà à %s : il n\'est pas touché, et c\'est lui qui dessinera le bloc.', 'blocs-creator' ),
-						'<code>' . esc_html( BC_Gabarits::chemin_court( $bc_existant ) ) . '</code>'
+						'<code>' . esc_html( Blocs_Creator_Gabarits::chemin_court( $blocs_creator_existant ) ) . '</code>'
 					);
 				} else {
 					printf(
 						/* translators: 1: fichier d'origine, 2: fichier créé. */
 						esc_html__( 'Le dessin du bloc est recopié tel quel de %1$s vers %2$s. Le fichier devient le vôtre : le plugin ne le réécrira jamais.', 'blocs-creator' ),
-						'<code>' . esc_html( BC_Gabarits::chemin_court( (string) $code['rendu'] ) ) . '</code>',
-						'<code>' . esc_html( BC_Gabarits::chemin_court( $bc_gabarit ) ) . '</code>'
+						'<code>' . esc_html( Blocs_Creator_Gabarits::chemin_court( (string) $code['rendu'] ) ) . '</code>',
+						'<code>' . esc_html( Blocs_Creator_Gabarits::chemin_court( $blocs_creator_gabarit ) ) . '</code>'
 					);
 				}
 				?>
@@ -87,7 +87,7 @@ $bc_types    = BC_Champs::catalogue();
 					printf(
 						esc_html(
 							/* translators: %d: nombre de variantes. */
-							_n( 'Sa variante est conservée.', 'Ses %d variantes sont conservées.', count( (array) $definition['extras']['variations'] ), 'blocs-creator' )
+							_n( '%d variante conservée.', '%d variantes conservées.', count( (array) $definition['extras']['variations'] ), 'blocs-creator' )
 						),
 						count( (array) $definition['extras']['variations'] )
 					);
@@ -109,7 +109,7 @@ $bc_types    = BC_Champs::catalogue();
 			printf(
 				esc_html(
 					/* translators: %d: nombre de champs. */
-					_n( 'Le champ que vous pourrez modifier', 'Les %d champs que vous pourrez modifier', count( $definition['champs'] ), 'blocs-creator' )
+					_n( '%d champ que vous pourrez modifier', '%d champs que vous pourrez modifier', count( $definition['champs'] ), 'blocs-creator' )
 				),
 				count( $definition['champs'] )
 			);
@@ -128,11 +128,11 @@ $bc_types    = BC_Champs::catalogue();
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ( $definition['champs'] as $bc_champ ) : ?>
+					<?php foreach ( $definition['champs'] as $blocs_creator_champ ) : ?>
 						<tr>
-							<td><?php echo esc_html( $bc_champ['libelle'] ); ?></td>
-							<td><code class="bc-code"><?php echo esc_html( $bc_champ['cle'] ); ?></code></td>
-							<td><?php echo esc_html( (string) ( $bc_types[ $bc_champ['type'] ]['libelle'] ?? $bc_champ['type'] ) ); ?></td>
+							<td><?php echo esc_html( $blocs_creator_champ['libelle'] ); ?></td>
+							<td><code class="bc-code"><?php echo esc_html( $blocs_creator_champ['cle'] ); ?></code></td>
+							<td><?php echo esc_html( (string) ( $blocs_creator_types[ $blocs_creator_champ['type'] ]['libelle'] ?? $blocs_creator_champ['type'] ) ); ?></td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
@@ -151,10 +151,10 @@ $bc_types    = BC_Champs::catalogue();
 			</p>
 
 			<ul class="bc-liste-puces">
-				<?php foreach ( $definition['attributs'] as $bc_nom => $bc_spec ) : ?>
+				<?php foreach ( $definition['attributs'] as $blocs_creator_nom => $blocs_creator_spec ) : ?>
 					<li>
-						<code class="bc-code"><?php echo esc_html( $bc_nom ); ?></code>
-						<span class="bc-vide"><?php echo esc_html( (string) ( $bc_spec['type'] ?? '' ) ); ?></span>
+						<code class="bc-code"><?php echo esc_html( $blocs_creator_nom ); ?></code>
+						<span class="bc-vide"><?php echo esc_html( (string) ( $blocs_creator_spec['type'] ?? '' ) ); ?></span>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -170,7 +170,7 @@ $bc_types    = BC_Champs::catalogue();
 					<?php esc_html_e( 'Reprendre la main sur ce bloc', 'blocs-creator' ); ?>
 				</button>
 
-				<a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . BC_Admin::PAGE ) ); ?>">
+				<a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Blocs_Creator_Admin::PAGE ) ); ?>">
 					<?php esc_html_e( 'Annuler', 'blocs-creator' ); ?>
 				</a>
 			</p>

@@ -8,7 +8,7 @@
  *
  * Deux principes :
  *
- *   - CE QUI SORT EST ÉCHAPPÉ. bc_image(), bc_lien_attrs() et bc_attributs()
+ *   - CE QUI SORT EST ÉCHAPPÉ. blocs_creator_image(), blocs_creator_lien_attrs() et blocs_creator_attributs()
  *     rendent du HTML prêt à poser. Les valeurs de texte, elles, sortent
  *     brutes : le gabarit choisit son échappement, parce que lui seul sait
  *     s'il écrit dans un attribut, dans une balise ou dans une URL.
@@ -37,22 +37,22 @@ defined( 'ABSPATH' ) || exit;
  * @param mixed  $defaut Valeur de repli si le champ n'existe pas.
  * @return mixed
  */
-function bc_champ( $cle, $defaut = null ) {
-	return BC_Rendu::champ( $cle, $defaut );
+function blocs_creator_champ( $cle, $defaut = null ) {
+	return Blocs_Creator_Rendu::champ( $cle, $defaut );
 }
 
 /**
  * Retourne la valeur brute d'un champ, telle qu'enregistrée dans le bloc.
  *
- * Utile pour les identifiants : `bc_brut( 'image' )` donne le numéro de la
- * pièce jointe, là où `bc_champ( 'image' )` donne le tableau complet.
+ * Utile pour les identifiants : `blocs_creator_brut( 'image' )` donne le numéro de la
+ * pièce jointe, là où `blocs_creator_champ( 'image' )` donne le tableau complet.
  *
  * @param string $cle    Clé du champ.
  * @param mixed  $defaut Valeur de repli.
  * @return mixed
  */
-function bc_brut( $cle, $defaut = null ) {
-	return BC_Rendu::brut( $cle, $defaut );
+function blocs_creator_brut( $cle, $defaut = null ) {
+	return Blocs_Creator_Rendu::brut( $cle, $defaut );
 }
 
 /**
@@ -64,8 +64,8 @@ function bc_brut( $cle, $defaut = null ) {
  * @param string $cle Clé du champ.
  * @return bool
  */
-function bc_a_champ( $cle ) {
-	$valeur = bc_champ( $cle );
+function blocs_creator_a_champ( $cle ) {
+	$valeur = blocs_creator_champ( $cle );
 
 	if ( is_array( $valeur ) ) {
 		return ! empty( $valeur );
@@ -91,7 +91,7 @@ function bc_a_champ( $cle ) {
  * @param array        $extra   Autres attributs (`style`, `data-…`).
  * @return string
  */
-function bc_attributs( $classes = '', $extra = array() ) {
+function blocs_creator_attributs( $classes = '', $extra = array() ) {
 	if ( is_array( $classes ) ) {
 		$classes = implode( ' ', array_filter( $classes ) );
 	}
@@ -112,8 +112,8 @@ function bc_attributs( $classes = '', $extra = array() ) {
  *
  * @return string
  */
-function bc_contenu() {
-	return BC_Rendu::contenu();
+function blocs_creator_contenu() {
+	return Blocs_Creator_Rendu::contenu();
 }
 
 /* ---------------------------------------------------------------------- *
@@ -132,8 +132,8 @@ function bc_contenu() {
  * @param string $taille Taille d'image ; par défaut celle réglée sur le champ.
  * @return string
  */
-function bc_image( $cle, $attrs = array(), $taille = '' ) {
-	$image = bc_champ( $cle );
+function blocs_creator_image( $cle, $attrs = array(), $taille = '' ) {
+	$image = blocs_creator_champ( $cle );
 
 	if ( ! is_array( $image ) || empty( $image['id'] ) || empty( $image['est_image'] ) ) {
 		$classe = isset( $attrs['class'] ) ? (string) $attrs['class'] : '';
@@ -157,8 +157,8 @@ function bc_image( $cle, $attrs = array(), $taille = '' ) {
  * @param string $taille Taille d'image ; ignorée pour un fichier.
  * @return string
  */
-function bc_url( $cle, $taille = '' ) {
-	$media = bc_champ( $cle );
+function blocs_creator_url( $cle, $taille = '' ) {
+	$media = blocs_creator_champ( $cle );
 
 	if ( ! is_array( $media ) || empty( $media['id'] ) ) {
 		return '';
@@ -186,8 +186,8 @@ function bc_url( $cle, $taille = '' ) {
  * @param string $cle Clé du champ.
  * @return bool
  */
-function bc_lien_rempli( $cle ) {
-	$lien = bc_champ( $cle );
+function blocs_creator_lien_rempli( $cle ) {
+	$lien = blocs_creator_champ( $cle );
 
 	return is_array( $lien ) && ! empty( $lien['rempli'] );
 }
@@ -196,13 +196,13 @@ function bc_lien_rempli( $cle ) {
  * Retourne les attributs HTML d'un champ lien, déjà échappés.
  *
  * Porte le `href`, et le `target`/`rel` quand le nouvel onglet est demandé.
- * À écrire tel quel : `<a <?php echo bc_lien_attrs( 'cta' ); ?>>`.
+ * À écrire tel quel : `<a <?php echo blocs_creator_lien_attrs( 'cta' ); ?>>`.
  *
  * @param string $cle Clé du champ.
  * @return string
  */
-function bc_lien_attrs( $cle ) {
-	$lien = bc_champ( $cle );
+function blocs_creator_lien_attrs( $cle ) {
+	$lien = blocs_creator_champ( $cle );
 
 	return is_array( $lien ) ? (string) ( $lien['attrs'] ?? '' ) : '';
 }
@@ -214,8 +214,8 @@ function bc_lien_attrs( $cle ) {
  * @param string $defaut Libellé de repli.
  * @return string
  */
-function bc_lien_titre( $cle, $defaut = '' ) {
-	$lien  = bc_champ( $cle );
+function blocs_creator_lien_titre( $cle, $defaut = '' ) {
+	$lien  = blocs_creator_champ( $cle );
 	$titre = is_array( $lien ) ? trim( (string) ( $lien['titre'] ?? '' ) ) : '';
 
 	return '' !== $titre ? $titre : $defaut;
@@ -227,8 +227,8 @@ function bc_lien_titre( $cle, $defaut = '' ) {
  * @param string $cle Clé du champ.
  * @return string
  */
-function bc_lien_url( $cle ) {
-	$lien = bc_champ( $cle );
+function blocs_creator_lien_url( $cle ) {
+	$lien = blocs_creator_champ( $cle );
 
 	return is_array( $lien ) ? (string) ( $lien['url'] ?? '' ) : '';
 }
@@ -246,8 +246,8 @@ function bc_lien_url( $cle ) {
  * @param string $cle Clé du répéteur.
  * @return array<int, array>
  */
-function bc_boucle( $cle ) {
-	$lignes = bc_champ( $cle );
+function blocs_creator_boucle( $cle ) {
+	$lignes = blocs_creator_champ( $cle );
 
 	return is_array( $lignes ) ? $lignes : array();
 }
@@ -258,8 +258,8 @@ function bc_boucle( $cle ) {
  * @param string $cle Clé du répéteur.
  * @return int
  */
-function bc_compte( $cle ) {
-	return count( bc_boucle( $cle ) );
+function blocs_creator_compte( $cle ) {
+	return count( blocs_creator_boucle( $cle ) );
 }
 
 /* ---------------------------------------------------------------------- *
@@ -277,8 +277,8 @@ function bc_compte( $cle ) {
  * @param string $defaut Couleur de repli.
  * @return string
  */
-function bc_couleur( $cle, $defaut = '' ) {
-	$valeur = (string) bc_champ( $cle, '' );
+function blocs_creator_couleur( $cle, $defaut = '' ) {
+	$valeur = (string) blocs_creator_champ( $cle, '' );
 
 	if ( '' === $valeur ) {
 		return $defaut;
@@ -305,8 +305,8 @@ function bc_couleur( $cle, $defaut = '' ) {
  * @param int        $minimum Niveau le plus haut autorisé.
  * @return int
  */
-function bc_niveau( $cle, $minimum = 2 ) {
-	$niveau  = is_numeric( $cle ) ? (int) $cle : (int) bc_champ( $cle, 2 );
+function blocs_creator_niveau( $cle, $minimum = 2 ) {
+	$niveau  = is_numeric( $cle ) ? (int) $cle : (int) blocs_creator_champ( $cle, 2 );
 	$minimum = min( 6, max( 1, (int) $minimum ) );
 
 	return min( 6, max( $minimum, $niveau ) );
@@ -320,8 +320,8 @@ function bc_niveau( $cle, $minimum = 2 ) {
  * @param string $message Ce qui manque.
  * @return string
  */
-function bc_rappel( $message ) {
-	return BC_Rendu::rappel( $message );
+function blocs_creator_rappel( $message ) {
+	return Blocs_Creator_Rendu::rappel( $message );
 }
 
 /**
@@ -332,6 +332,6 @@ function bc_rappel( $message ) {
  *
  * @return array|null
  */
-function bc_bloc() {
-	return BC_Rendu::definition();
+function blocs_creator_bloc() {
+	return Blocs_Creator_Rendu::definition();
 }

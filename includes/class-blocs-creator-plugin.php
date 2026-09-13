@@ -14,26 +14,26 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Le plugin.
  */
-final class BC_Plugin {
+final class Blocs_Creator_Plugin {
 
 	/**
 	 * Instance unique.
 	 *
-	 * @var BC_Plugin|null
+	 * @var Blocs_Creator_Plugin|null
 	 */
 	private static $instance = null;
 
 	/**
 	 * Le registre des blocs.
 	 *
-	 * @var BC_Registre
+	 * @var Blocs_Creator_Registre
 	 */
 	public $registre;
 
 	/**
 	 * Les réglages.
 	 *
-	 * @var BC_Reglages
+	 * @var Blocs_Creator_Reglages
 	 */
 	public $reglages;
 
@@ -47,7 +47,7 @@ final class BC_Plugin {
 	/**
 	 * Retourne l'instance unique.
 	 *
-	 * @return BC_Plugin
+	 * @return Blocs_Creator_Plugin
 	 */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -68,29 +68,29 @@ final class BC_Plugin {
 	public function demarrer() {
 		$this->charger();
 
-		$this->reglages = new BC_Reglages();
-		$this->registre = new BC_Registre();
+		$this->reglages = new Blocs_Creator_Reglages();
+		$this->registre = new Blocs_Creator_Registre();
 
 		/*
-		 * Depuis WordPress 6.7, charger un domaine de traduction avant `init`
-		 * vaut un avertissement : la priorité 0 le place au plus tôt de ce qui
-		 * est permis, avant que nos propres hooks d'`init` n'appellent __().
+		 * Aucun chargement de domaine de traduction ici : depuis WordPress 4.6,
+		 * les traductions du dépôt officiel se chargent seules, et depuis 6.7
+		 * WordPress va chercher `languages/` du plugin au premier __() venu.
+		 * Le faire nous-mêmes n'ajouterait qu'un avertissement.
 		 */
-		add_action( 'init', array( $this, 'traductions' ), 0 );
 		add_action( 'plugins_loaded', array( $this, 'charger_packs' ), 20 );
 		add_action( 'admin_init', array( $this, 'mettre_a_jour' ), 20 );
 
 		$this->reglages->demarrer();
 		$this->registre->demarrer();
 
-		BC_Rendu::demarrer();
-		BC_Rest::demarrer();
+		Blocs_Creator_Rendu::demarrer();
+		Blocs_Creator_Rest::demarrer();
 
-		BC_Animations::demarrer();
-		BC_Disponibilite::demarrer();
+		Blocs_Creator_Animations::demarrer();
+		Blocs_Creator_Disponibilite::demarrer();
 
 		if ( is_admin() ) {
-			( new BC_Admin() )->demarrer();
+			( new Blocs_Creator_Admin() )->demarrer();
 		}
 	}
 
@@ -99,41 +99,30 @@ final class BC_Plugin {
 	 */
 	private function charger() {
 		$fichiers = array(
-			'includes/class-bc-reglages.php',
-			'includes/class-bc-champs.php',
-			'includes/class-bc-definition.php',
-			'includes/class-bc-registre.php',
-			'includes/class-bc-rendu.php',
-			'includes/class-bc-gabarits.php',
-			'includes/class-bc-usage.php',
-			'includes/class-bc-adoption.php',
-			'includes/class-bc-disponibilite.php',
-			'includes/class-bc-animations.php',
-			'includes/class-bc-diagnostic.php',
-			'includes/class-bc-rest.php',
+			'includes/class-blocs-creator-reglages.php',
+			'includes/class-blocs-creator-champs.php',
+			'includes/class-blocs-creator-definition.php',
+			'includes/class-blocs-creator-registre.php',
+			'includes/class-blocs-creator-rendu.php',
+			'includes/class-blocs-creator-gabarits.php',
+			'includes/class-blocs-creator-usage.php',
+			'includes/class-blocs-creator-adoption.php',
+			'includes/class-blocs-creator-disponibilite.php',
+			'includes/class-blocs-creator-animations.php',
+			'includes/class-blocs-creator-diagnostic.php',
+			'includes/class-blocs-creator-rest.php',
 			'includes/fonctions.php',
 		);
 
 		if ( is_admin() ) {
-			$fichiers[] = 'admin/class-bc-admin.php';
-			$fichiers[] = 'admin/class-bc-ecran-definition.php';
-			$fichiers[] = 'admin/class-bc-outils.php';
+			$fichiers[] = 'admin/class-blocs-creator-admin.php';
+			$fichiers[] = 'admin/class-blocs-creator-ecran-definition.php';
+			$fichiers[] = 'admin/class-blocs-creator-outils.php';
 		}
 
 		foreach ( $fichiers as $fichier ) {
 			require_once BLOCS_CREATOR_DIR . $fichier;
 		}
-	}
-
-	/**
-	 * Charge le domaine de traduction.
-	 */
-	public function traductions() {
-		load_plugin_textdomain(
-			'blocs-creator',
-			false,
-			dirname( plugin_basename( BLOCS_CREATOR_FICHIER ) ) . '/languages'
-		);
 	}
 
 	/**
@@ -226,7 +215,7 @@ final class BC_Plugin {
 			$this->reglages->fusionner_categorie();
 		}
 
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 
 		update_option( 'blocs_creator_version', BLOCS_CREATOR_VERSION );
 	}
@@ -236,13 +225,13 @@ final class BC_Plugin {
 	 * permaliens et le cache des blocs.
 	 */
 	public static function activation() {
-		BC_Definition::declarer_type();
+		Blocs_Creator_Definition::declarer_type();
 		flush_rewrite_rules();
 
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 
 		if ( false === get_option( 'blocs_creator_reglages' ) ) {
-			add_option( 'blocs_creator_reglages', BC_Reglages::defauts() );
+			add_option( 'blocs_creator_reglages', Blocs_Creator_Reglages::defauts() );
 		}
 
 		update_option( 'blocs_creator_version', BLOCS_CREATOR_VERSION );
@@ -255,7 +244,7 @@ final class BC_Plugin {
 	 * désactiver n'est pas désinstaller.
 	 */
 	public static function desactivation() {
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 		flush_rewrite_rules();
 	}
 }

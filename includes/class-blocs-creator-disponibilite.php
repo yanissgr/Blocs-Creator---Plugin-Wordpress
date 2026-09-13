@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Filtrage des blocs proposés par l'éditeur.
  */
-class BC_Disponibilite {
+class Blocs_Creator_Disponibilite {
 
 	/**
 	 * Branche les hooks.
@@ -128,7 +128,7 @@ class BC_Disponibilite {
 		$proteges   = self::proteges();
 		$ecartes    = (array) blocs_creator()->reglages->get( 'blocs_desactives' );
 		$enregistres = WP_Block_Type_Registry::get_instance()->get_all_registered();
-		$usages     = BC_Usage::compter_plusieurs( array_keys( $enregistres ) );
+		$usages     = Blocs_Creator_Usage::compter_plusieurs( array_keys( $enregistres ) );
 
 		foreach ( $enregistres as $nom => $type ) {
 			$nom    = (string) $nom;

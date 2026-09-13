@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Catalogue et manipulation des champs.
  */
-class BC_Champs {
+class Blocs_Creator_Champs {
 
 	/**
 	 * Le catalogue, construit une seule fois.

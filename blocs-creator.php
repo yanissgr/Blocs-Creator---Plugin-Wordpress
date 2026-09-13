@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:       Blocs Creator
- * Plugin URI:        https://yanis-singer.com/blocs-creator
+ * Plugin URI:        https://github.com/yanissgr/Blocs-Creator---Plugin-Wordpress
  * Description:       Créez vos propres blocs Gutenberg en déclarant leurs champs, comme avec ACF, puis dessinez-les dans un simple fichier PHP. Les blocs écrits à la main se reprennent en main d'un clic, l'inséreur ne propose que les blocs que vous voulez, et chaque bloc entre en scène à sa façon.
- * Version:           4.1.0
+ * Version:           4.2.0
  * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Yanis Singer
@@ -31,12 +31,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BLOCS_CREATOR_VERSION', '4.1.0' );
+define( 'BLOCS_CREATOR_VERSION', '4.2.0' );
 define( 'BLOCS_CREATOR_FICHIER', __FILE__ );
 define( 'BLOCS_CREATOR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BLOCS_CREATOR_URL', plugin_dir_url( __FILE__ ) );
 
-require_once BLOCS_CREATOR_DIR . 'includes/class-bc-plugin.php';
+require_once BLOCS_CREATOR_DIR . 'includes/class-blocs-creator-plugin.php';
 
 /**
  * Retourne l'instance unique du plugin.
@@ -44,13 +44,13 @@ require_once BLOCS_CREATOR_DIR . 'includes/class-bc-plugin.php';
  * Point d'entrée public : un thème ou un autre plugin passe par là plutôt que
  * par les classes, qui peuvent bouger.
  *
- * @return BC_Plugin
+ * @return Blocs_Creator_Plugin
  */
 function blocs_creator() {
-	return BC_Plugin::instance();
+	return Blocs_Creator_Plugin::instance();
 }
 
 blocs_creator()->demarrer();
 
-register_activation_hook( __FILE__, array( 'BC_Plugin', 'activation' ) );
-register_deactivation_hook( __FILE__, array( 'BC_Plugin', 'desactivation' ) );
+register_activation_hook( __FILE__, array( 'Blocs_Creator_Plugin', 'activation' ) );
+register_deactivation_hook( __FILE__, array( 'Blocs_Creator_Plugin', 'desactivation' ) );

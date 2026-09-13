@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Comptage et localisation des utilisations d'un bloc.
  */
-class BC_Usage {
+class Blocs_Creator_Usage {
 
 	/**
 	 * Préfixe des transients.

@@ -7,6 +7,29 @@ Auteur : **Yanis Singer** — Licence GPL-2.0-or-later — WordPress 6.5+, PHP 8
 
 ---
 
+## Passer en 4.2 : les noms s'allongent
+
+Tout ce que le plugin déclare porte désormais le préfixe entier. Deux lettres,
+c'est une collision qui attend son heure, et les règles du dépôt WordPress
+demandent quatre caractères au minimum.
+
+| Avant | Après |
+|---|---|
+| `bc_champ()`, `bc_attributs()`, `bc_boucle()`… | `blocs_creator_champ()`, `blocs_creator_attributs()`, `blocs_creator_boucle()`… |
+| `BC_Definition`, `BC_Gabarits`… | `Blocs_Creator_Definition`, `Blocs_Creator_Gabarits`… |
+| `includes/class-bc-*.php` | `includes/class-blocs-creator-*.php` |
+
+**Les gabarits déjà écrits sont à reprendre** : remplacez `bc_` par
+`blocs_creator_` dans `wp-content/themes/<thème>/blocs/`. La boîte « Fiche du
+bloc » de l'écran d'un bloc donne les nouvelles lignes, prêtes à copier.
+
+Ce qui **ne bouge pas** — parce que c'est écrit en base ou dans le contenu des
+pages : les noms de blocs, le type de publication `bc_bloc`, les options, les
+crochets (déjà en `blocs_creator_*`), les arguments d'URL et les classes CSS
+`bc-*`.
+
+---
+
 ## Le principe
 
 Le plugin tient une frontière, et rien d'autre :
@@ -58,26 +81,26 @@ Et une quinzaine de fonctions :
 
 | Fonction | Ce qu'elle rend |
 |---|---|
-| `bc_champ( $cle, $defaut = null )` | La valeur du champ, prête à l'emploi. |
-| `bc_brut( $cle, $defaut = null )` | La valeur telle qu'enregistrée (pour une image, son identifiant). |
-| `bc_a_champ( $cle )` | Le champ est-il rempli ? |
-| `bc_attributs( $classes, $extra )` | Les attributs de la balise racine. **Indispensable.** |
-| `bc_contenu()` | Les blocs imbriqués, rendus. |
-| `bc_image( $cle, $attrs, $taille )` | La balise `<img>`, ou une surface d'attente. |
-| `bc_url( $cle, $taille )` | L'URL d'une image ou d'un fichier. |
-| `bc_lien_rempli( $cle )` | Le lien a-t-il une destination ? |
-| `bc_lien_attrs( $cle )` | `href`, `target` et `rel`, déjà échappés. |
-| `bc_lien_titre( $cle, $defaut )` | Le libellé du lien. |
-| `bc_lien_url( $cle )` | L'URL seule. |
-| `bc_boucle( $cle )` | Les lignes d'un répéteur — toujours un tableau. |
-| `bc_compte( $cle )` | Le nombre de lignes d'un répéteur. |
-| `bc_couleur( $cle, $defaut )` | Une couleur utilisable en CSS. |
-| `bc_niveau( $cle, $minimum = 2 )` | Un niveau de titre borné. |
-| `bc_rappel( $message )` | Un rappel visible des seuls rédacteurs. |
-| `bc_bloc()` | La définition du bloc en cours. |
+| `blocs_creator_champ( $cle, $defaut = null )` | La valeur du champ, prête à l'emploi. |
+| `blocs_creator_brut( $cle, $defaut = null )` | La valeur telle qu'enregistrée (pour une image, son identifiant). |
+| `blocs_creator_a_champ( $cle )` | Le champ est-il rempli ? |
+| `blocs_creator_attributs( $classes, $extra )` | Les attributs de la balise racine. **Indispensable.** |
+| `blocs_creator_contenu()` | Les blocs imbriqués, rendus. |
+| `blocs_creator_image( $cle, $attrs, $taille )` | La balise `<img>`, ou une surface d'attente. |
+| `blocs_creator_url( $cle, $taille )` | L'URL d'une image ou d'un fichier. |
+| `blocs_creator_lien_rempli( $cle )` | Le lien a-t-il une destination ? |
+| `blocs_creator_lien_attrs( $cle )` | `href`, `target` et `rel`, déjà échappés. |
+| `blocs_creator_lien_titre( $cle, $defaut )` | Le libellé du lien. |
+| `blocs_creator_lien_url( $cle )` | L'URL seule. |
+| `blocs_creator_boucle( $cle )` | Les lignes d'un répéteur — toujours un tableau. |
+| `blocs_creator_compte( $cle )` | Le nombre de lignes d'un répéteur. |
+| `blocs_creator_couleur( $cle, $defaut )` | Une couleur utilisable en CSS. |
+| `blocs_creator_niveau( $cle, $minimum = 2 )` | Un niveau de titre borné. |
+| `blocs_creator_rappel( $message )` | Un rappel visible des seuls rédacteurs. |
+| `blocs_creator_bloc()` | La définition du bloc en cours. |
 
-Ce qui sort échappé sort échappé — `bc_image()`, `bc_lien_attrs()` et
-`bc_attributs()` rendent du HTML prêt à poser. Les valeurs de texte sortent
+Ce qui sort échappé sort échappé — `blocs_creator_image()`, `blocs_creator_lien_attrs()` et
+`blocs_creator_attributs()` rendent du HTML prêt à poser. Les valeurs de texte sortent
 brutes : le gabarit choisit son échappement, parce que lui seul sait s'il écrit
 dans un attribut, dans une balise ou dans une URL.
 
@@ -87,18 +110,18 @@ dans un attribut, dans une balise ou dans une URL.
 <?php
 defined( 'ABSPATH' ) || exit;
 ?>
-<section <?php echo bc_attributs( 'temoignages' ); ?>>
+<section <?php echo blocs_creator_attributs( 'temoignages' ); ?>>
 
-    <?php if ( bc_a_champ( 'titre' ) ) : ?>
+    <?php if ( blocs_creator_a_champ( 'titre' ) ) : ?>
         <?php printf(
             '<h%1$d class="temoignages__titre">%2$s</h%1$d>',
-            bc_niveau( 'niveau' ),
-            esc_html( bc_champ( 'titre' ) )
+            blocs_creator_niveau( 'niveau' ),
+            esc_html( blocs_creator_champ( 'titre' ) )
         ); ?>
     <?php endif; ?>
 
     <ul class="temoignages__liste">
-        <?php foreach ( bc_boucle( 'lignes' ) as $ligne ) : ?>
+        <?php foreach ( blocs_creator_boucle( 'lignes' ) as $ligne ) : ?>
             <li>
                 <blockquote><?php echo wp_kses_post( $ligne['citation'] ); ?></blockquote>
                 <cite><?php echo esc_html( $ligne['auteur'] ); ?></cite>
@@ -106,9 +129,9 @@ defined( 'ABSPATH' ) || exit;
         <?php endforeach; ?>
     </ul>
 
-    <?php if ( bc_lien_rempli( 'cta' ) ) : ?>
-        <a class="temoignages__lien" <?php echo bc_lien_attrs( 'cta' ); ?>>
-            <?php echo esc_html( bc_lien_titre( 'cta' ) ); ?>
+    <?php if ( blocs_creator_lien_rempli( 'cta' ) ) : ?>
+        <a class="temoignages__lien" <?php echo blocs_creator_lien_attrs( 'cta' ); ?>>
+            <?php echo esc_html( blocs_creator_lien_titre( 'cta' ) ); ?>
         </a>
     <?php endif; ?>
 
@@ -132,7 +155,7 @@ et seulement sur les pages qui portent le bloc.
 | **Liens** | lien, publication, publications, terme |
 | **Structure** | groupe, répéteur, blocs imbriqués, note |
 
-Ce que `bc_champ()` rend, par type :
+Ce que `blocs_creator_champ()` rend, par type :
 
 | Type | Rend |
 |---|---|
@@ -150,7 +173,7 @@ Ce que `bc_champ()` rend, par type :
 | terme | `WP_Term` ou `WP_Term[]` |
 | groupe | `array` |
 | répéteur | `array[]` — une entrée par ligne |
-| blocs imbriqués | rien : passe par `$content` / `bc_contenu()` |
+| blocs imbriqués | rien : passe par `$content` / `blocs_creator_contenu()` |
 
 **La structure ne s'imbrique qu'un cran.** Un répéteur contient des champs
 simples, jamais un autre répéteur. C'est arbitraire, et c'est ce qui garde
@@ -339,13 +362,13 @@ dans la valeur de `data-bc-part`, et le script s'en tient à cette liste au lieu
 de deviner.
 
 ```php
-<section <?php echo bc_attributs( 'ma-banniere' ); ?>>
+<section <?php echo blocs_creator_attributs( 'ma-banniere' ); ?>>
 	<div class="ma-banniere__texte">
-		<h2 data-bc-part="haut"><?php echo esc_html( bc_champ( 'titre' ) ); ?></h2>
-		<p data-bc-part="haut"><?php echo esc_html( bc_champ( 'chapo' ) ); ?></p>
+		<h2 data-bc-part="haut"><?php echo esc_html( blocs_creator_champ( 'titre' ) ); ?></h2>
+		<p data-bc-part="haut"><?php echo esc_html( blocs_creator_champ( 'chapo' ) ); ?></p>
 	</div>
 	<div class="ma-banniere__media">
-		<?php echo bc_image( 'image', array( 'data-bc-part' => 'zoom' ) ); ?>
+		<?php echo blocs_creator_image( 'image', array( 'data-bc-part' => 'zoom' ) ); ?>
 	</div>
 </section>
 ```
@@ -459,25 +482,25 @@ fichier trafiqué ne peut déclarer que des champs du catalogue.
 ```
 blocs-creator.php          En-tête, constantes, point d'entrée
 includes/
-  class-bc-plugin.php      Bootstrap : chargement, packs, activation
-  class-bc-champs.php      Le catalogue des types de champs
-  class-bc-definition.php  Une définition de bloc : lecture, nettoyage, écriture
-  class-bc-registre.php    Découverte et enregistrement de tous les blocs
-  class-bc-rendu.php       Appel du gabarit, pile de contexte
-  class-bc-gabarits.php    Résolution des chemins, génération du fichier
-  class-bc-usage.php       Où un bloc est-il utilisé
-  class-bc-adoption.php    Reprendre en main un bloc codé, et le rendre
-  class-bc-disponibilite.php  Ce que l'inséreur a le droit de proposer
-  class-bc-animations.php  Les apparitions : réglage, rendu, assets
-  class-bc-reglages.php    Les réglages
-  class-bc-diagnostic.php  Journal des enregistrements, relevé de la machine
-  class-bc-rest.php        Deux routes pour l'éditeur
-  fonctions.php            L'API des gabarits (bc_*)
+  class-blocs-creator-plugin.php      Bootstrap : chargement, packs, activation
+  class-blocs-creator-champs.php      Le catalogue des types de champs
+  class-blocs-creator-definition.php  Une définition de bloc : lecture, nettoyage, écriture
+  class-blocs-creator-registre.php    Découverte et enregistrement de tous les blocs
+  class-blocs-creator-rendu.php       Appel du gabarit, pile de contexte
+  class-blocs-creator-gabarits.php    Résolution des chemins, génération du fichier
+  class-blocs-creator-usage.php       Où un bloc est-il utilisé
+  class-blocs-creator-adoption.php    Reprendre en main un bloc codé, et le rendre
+  class-blocs-creator-disponibilite.php  Ce que l'inséreur a le droit de proposer
+  class-blocs-creator-animations.php  Les apparitions : réglage, rendu, assets
+  class-blocs-creator-reglages.php    Les réglages
+  class-blocs-creator-diagnostic.php  Journal des enregistrements, relevé de la machine
+  class-blocs-creator-rest.php        Deux routes pour l'éditeur
+  fonctions.php            L'API des gabarits (blocs_creator_*)
 admin/
-  class-bc-admin.php             Menu, écrans, actions
-  class-bc-liste-table.php       L'écran « Tous les blocs »
-  class-bc-ecran-definition.php  L'écran d'édition d'un bloc
-  class-bc-outils.php            Import et export
+  class-blocs-creator-admin.php             Menu, écrans, actions
+  class-blocs-creator-liste-table.php       L'écran « Tous les blocs »
+  class-blocs-creator-ecran-definition.php  L'écran d'édition d'un bloc
+  class-blocs-creator-outils.php            Import et export
   js/constructeur.js             Le constructeur de champs
   js/reglages.js                 Onglets et tri de l'écran des réglages
   js/apercu-animation.js         L'aperçu d'une apparition, au moment du choix
@@ -503,10 +526,10 @@ partout sans `npm install`.
 
 Trois endroits, et pas un de plus :
 
-1. `BC_Champs::catalogue()` — ou le filtre `blocs_creator_catalogue_champs` —
+1. `Blocs_Creator_Champs::catalogue()` — ou le filtre `blocs_creator_catalogue_champs` —
    déclare le type : son attribut Gutenberg, sa valeur par défaut, ses
    réglages.
-2. `BC_Champs::assainir_valeur()` et `BC_Champs::preparer()` disent comment il
+2. `Blocs_Creator_Champs::assainir_valeur()` et `Blocs_Creator_Champs::preparer()` disent comment il
    se nettoie et ce qu'il rend au gabarit.
 3. `assets/js/editeur.js` (fonction `controle`) et `admin/js/constructeur.js`
    (fonction `reglagesDuType`) fournissent ses contrôles.

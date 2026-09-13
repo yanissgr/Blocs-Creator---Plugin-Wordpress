@@ -1386,7 +1386,7 @@
 	 * le reste serait de la redite, donc de la dérive en puissance.
 	 */
 	/*
-	 * Le garde-fou des blocs repris (BC_Registre::garde_reprises) refuse
+	 * Le garde-fou des blocs repris (Blocs_Creator_Registre::garde_reprises) refuse
 	 * `registerBlockType` sur les noms qu'un pack ne doit plus enregistrer.
 	 * Nous, si : on lève le drapeau le temps de nos propres déclarations.
 	 */

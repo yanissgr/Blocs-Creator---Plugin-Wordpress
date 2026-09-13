@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Réglage et rendu des apparitions.
  */
-class BC_Animations {
+class Blocs_Creator_Animations {
 
 	/**
 	 * Option qui porte les apparitions des blocs qu'on n'a pas créés.
@@ -345,7 +345,7 @@ class BC_Animations {
 	/**
 	 * Écrit les apparitions envoyées par l'écran des réglages.
 	 *
-	 * Même raison que pour BC_Reglages : l'écran n'envoie plus son formulaire
+	 * Même raison que pour Blocs_Creator_Reglages : l'écran n'envoie plus son formulaire
 	 * à `options.php`, il appelle son propre gestionnaire.
 	 *
 	 * @param array $valeurs Valeurs brutes du formulaire.
@@ -360,13 +360,13 @@ class BC_Animations {
 		self::$carte = null;
 
 		// Même filet que pour les réglages : si la ligne n'a pas bougé, on
-		// l'écrit directement. Voir BC_Diagnostic::forcer().
+		// l'écrit directement. Voir Blocs_Creator_Diagnostic::forcer().
 		if ( (array) get_option( self::OPTION, array() ) !== $attendu ) {
-			BC_Diagnostic::forcer( self::OPTION, $attendu );
+			Blocs_Creator_Diagnostic::forcer( self::OPTION, $attendu );
 
 			self::$carte = null;
 
-			BC_Diagnostic::noter(
+			Blocs_Creator_Diagnostic::noter(
 				array( 'quoi' => 'apparitions : écriture directe (la voie normale n\'a rien écrit)' )
 			);
 		}
@@ -593,11 +593,11 @@ class BC_Animations {
 		<div class="bc-apparition" data-bc-apparition>
 			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $nom ); ?>" class="widefat" data-bc-apparition-choix>
 				<option value=""><?php esc_html_e( 'Aucune — le bloc est là, tout simplement', 'blocs-creator' ); ?></option>
-				<?php foreach ( $scenarios as $bc_valeur => $bc_scenario ) : ?>
-					<option value="<?php echo esc_attr( $bc_valeur ); ?>"
-						data-bc-description="<?php echo esc_attr( $bc_scenario['description'] ); ?>"
-						<?php selected( $courant, $bc_valeur ); ?>>
-						<?php echo esc_html( $bc_scenario['libelle'] ); ?>
+				<?php foreach ( $scenarios as $blocs_creator_valeur => $blocs_creator_scenario ) : ?>
+					<option value="<?php echo esc_attr( $blocs_creator_valeur ); ?>"
+						data-bc-description="<?php echo esc_attr( $blocs_creator_scenario['description'] ); ?>"
+						<?php selected( $courant, $blocs_creator_valeur ); ?>>
+						<?php echo esc_html( $blocs_creator_scenario['libelle'] ); ?>
 					</option>
 				<?php endforeach; ?>
 			</select>

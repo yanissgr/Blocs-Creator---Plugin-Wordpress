@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 	<div class="bc-champ">
 		<label for="bc-animation"><?php esc_html_e( 'Quand le bloc arrive à l\'écran', 'blocs-creator' ); ?></label>
 
-		<?php BC_Animations::champ( 'bc-animation', 'bc[animation]', (string) $definition['animation'] ); ?>
+		<?php Blocs_Creator_Animations::champ( 'bc-animation', 'bc[animation]', (string) $definition['animation'] ); ?>
 	</div>
 
 	<?php if ( '' !== $definition['animation'] ) : ?>

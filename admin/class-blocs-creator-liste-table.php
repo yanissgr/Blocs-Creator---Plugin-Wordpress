@@ -20,7 +20,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * Le tableau des blocs.
  */
-class BC_Liste_Table extends WP_List_Table {
+class Blocs_Creator_Liste_Table extends WP_List_Table {
 
 	/**
 	 * Tous les blocs, avant filtrage.
@@ -112,7 +112,7 @@ class BC_Liste_Table extends WP_List_Table {
 
 			$vues[ $cle ] = sprintf(
 				'<a href="%1$s"%2$s>%3$s <span class="count">(%4$d)</span></a>',
-				esc_url( add_query_arg( array( 'page' => BC_Admin::PAGE, 'filtre' => $cle ), admin_url( 'admin.php' ) ) ),
+				esc_url( add_query_arg( array( 'page' => Blocs_Creator_Admin::PAGE, 'filtre' => $cle ), admin_url( 'admin.php' ) ) ),
 				$courant === $cle ? ' class="current" aria-current="page"' : '',
 				esc_html( $libelle ),
 				(int) $comptes[ $cle ]
@@ -128,6 +128,9 @@ class BC_Liste_Table extends WP_List_Table {
 	 * @return string
 	 */
 	private function filtre() {
+		// Un filtre d'affichage ne change rien : comme les tables de WordPress,
+		// il se lit sans jeton. La valeur est ramenée à la liste connue juste après.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$filtre = isset( $_GET['filtre'] ) ? sanitize_key( wp_unslash( $_GET['filtre'] ) ) : 'tous';
 
 		return in_array( $filtre, array( 'tous', 'genere', 'code', 'brouillon' ), true ) ? $filtre : 'tous';
@@ -149,7 +152,7 @@ class BC_Liste_Table extends WP_List_Table {
 		$this->blocs = blocs_creator()->registre->tous();
 
 		foreach ( $this->blocs as &$bloc ) {
-			$bloc['usage'] = BC_Usage::compter( $bloc['nom'] );
+			$bloc['usage'] = Blocs_Creator_Usage::compter( $bloc['nom'] );
 		}
 
 		unset( $bloc );
@@ -173,6 +176,7 @@ class BC_Liste_Table extends WP_List_Table {
 			);
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Recherche d'affichage.
 		$recherche = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
 
 		if ( '' !== $recherche ) {
@@ -184,8 +188,8 @@ class BC_Liste_Table extends WP_List_Table {
 			);
 		}
 
-		$tri   = isset( $_GET['orderby'] ) ? sanitize_key( wp_unslash( $_GET['orderby'] ) ) : 'titre';
-		$sens  = isset( $_GET['order'] ) && 'desc' === strtolower( sanitize_key( wp_unslash( $_GET['order'] ) ) ) ? -1 : 1;
+		$tri   = isset( $_GET['orderby'] ) ? sanitize_key( wp_unslash( $_GET['orderby'] ) ) : 'titre'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tri d'affichage.
+		$sens  = isset( $_GET['order'] ) && 'desc' === strtolower( sanitize_key( wp_unslash( $_GET['order'] ) ) ) ? -1 : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tri d'affichage.
 		$items = array_values( $items );
 
 		usort(
@@ -285,7 +289,7 @@ class BC_Liste_Table extends WP_List_Table {
 						wp_nonce_url(
 							add_query_arg(
 								array(
-									'page'         => BC_Admin::PAGE,
+									'page'         => Blocs_Creator_Admin::PAGE,
 									'bc_reprendre' => rawurlencode( $bloc['nom'] ),
 								),
 								admin_url( 'admin.php' )
@@ -300,7 +304,7 @@ class BC_Liste_Table extends WP_List_Table {
 			if ( '' !== $bloc['gabarit'] ) {
 				$actions['fichier'] = sprintf(
 					'<span class="bc-chemin">%s</span>',
-					esc_html( BC_Gabarits::chemin_court( dirname( $bloc['gabarit'] ) ) )
+					esc_html( Blocs_Creator_Gabarits::chemin_court( dirname( $bloc['gabarit'] ) ) )
 				);
 			}
 
@@ -344,7 +348,7 @@ class BC_Liste_Table extends WP_List_Table {
 		 * reprend la main, ou rien du tout.
 		 */
 		$origine = ! empty( $bloc['adoption']['nom'] )
-			? BC_Adoption::bloc_code( (string) $bloc['adoption']['nom'] )
+			? Blocs_Creator_Adoption::bloc_code( (string) $bloc['adoption']['nom'] )
 			: null;
 
 		if ( null !== $origine ) {
@@ -463,7 +467,7 @@ class BC_Liste_Table extends WP_List_Table {
 	 */
 	public function column_gabarit( $bloc ) {
 		if ( '' !== $bloc['gabarit'] ) {
-			$complet = BC_Gabarits::chemin_court( $bloc['gabarit'] );
+			$complet = Blocs_Creator_Gabarits::chemin_court( $bloc['gabarit'] );
 
 			/*
 			 * Le chemin entier tiendrait sur cinq lignes et ferait une ligne

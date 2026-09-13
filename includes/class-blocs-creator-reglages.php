@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Lecture et écriture des réglages.
  */
-class BC_Reglages {
+class Blocs_Creator_Reglages {
 
 	/**
 	 * Nom de l'option.
@@ -139,13 +139,13 @@ class BC_Reglages {
 		 * déjà assainie ; ce qu'on saute, ce sont les filtres, pas les gardes.
 		 */
 		if ( ! empty( $refuses ) ) {
-			$force = BC_Diagnostic::forcer( self::OPTION, $attendu );
+			$force = Blocs_Creator_Diagnostic::forcer( self::OPTION, $attendu );
 
 			$this->valeurs = null;
 			$refuses       = $this->ecart( $attendu );
 		}
 
-		BC_Diagnostic::noter(
+		Blocs_Creator_Diagnostic::noter(
 			array(
 				'quoi' => sprintf(
 					'réglages : %d champs reçus, %s%s',
@@ -379,7 +379,7 @@ class BC_Reglages {
 
 		update_option( self::OPTION, $this->assainir( $valeurs ) );
 
-		foreach ( BC_Definition::toutes() as $definition ) {
+		foreach ( Blocs_Creator_Definition::toutes() as $definition ) {
 			if ( $definition['categorie'] !== $slug ) {
 				continue;
 			}
@@ -391,7 +391,7 @@ class BC_Reglages {
 
 			update_post_meta(
 				$definition['id'],
-				BC_Definition::META,
+				Blocs_Creator_Definition::META,
 				wp_slash( wp_json_encode( $a_stocker, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) )
 			);
 		}

@@ -19,11 +19,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bc_nouveau = 'auto-draft' === $post->post_status;
+$blocs_creator_nouveau = 'auto-draft' === $post->post_status;
 ?>
 <div class="bc-metabox">
 
-	<?php if ( $bc_nouveau ) : ?>
+	<?php if ( $blocs_creator_nouveau ) : ?>
 
 		<p class="bc-aide">
 			<?php esc_html_e( 'La fiche sera prête dès la première publication : elle rassemble l\'identifiant du bloc, le nom du fichier de dessin et la liste des champs avec la ligne qui va chercher chacun.', 'blocs-creator' ); ?>
@@ -46,7 +46,7 @@ $bc_nouveau = 'auto-draft' === $post->post_status;
 		<details class="bc-details">
 			<summary><?php esc_html_e( 'La voir', 'blocs-creator' ); ?></summary>
 			<textarea id="bc-fiche" class="bc-code-depart" readonly rows="14" onclick="this.select()"><?php
-				echo esc_textarea( BC_Definition::fiche( $definition ) );
+				echo esc_textarea( Blocs_Creator_Definition::fiche( $definition ) );
 			?></textarea>
 		</details>
 

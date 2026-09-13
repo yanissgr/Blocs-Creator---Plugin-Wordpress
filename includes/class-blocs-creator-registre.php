@@ -5,8 +5,8 @@
  * Deux sortes de blocs entrent ici, et en ressortent enregistrées de la même
  * façon auprès de Gutenberg :
  *
- *   - LES BLOCS GÉNÉRÉS, décrits dans le back-office (BC_Definition). Leurs
- *     attributs sont déduits de leurs champs, leur rendu passe par BC_Rendu.
+ *   - LES BLOCS GÉNÉRÉS, décrits dans le back-office (Blocs_Creator_Definition). Leurs
+ *     attributs sont déduits de leurs champs, leur rendu passe par Blocs_Creator_Rendu.
  *   - LES BLOCS CODÉS, découverts sur le disque à leur `block.json` — dans un
  *     pack du plugin, dans le thème, ou dans `wp-content/blocs-creator/`.
  *     Le registre ne fait que les enregistrer : leur rendu et leur éditeur
@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Découverte et enregistrement des blocs.
  */
-class BC_Registre {
+class Blocs_Creator_Registre {
 
 	/**
 	 * Identifiant du script de l'éditeur.
@@ -69,7 +69,7 @@ class BC_Registre {
 	 * Branche les hooks.
 	 */
 	public function demarrer() {
-		add_action( 'init', array( 'BC_Definition', 'declarer_type' ), 5 );
+		add_action( 'init', array( 'Blocs_Creator_Definition', 'declarer_type' ), 5 );
 		add_action( 'init', array( $this, 'enregistrer_assets' ), 15 );
 		add_action( 'init', array( $this, 'enregistrer_blocs' ), 20 );
 		add_filter( 'block_categories_all', array( $this, 'categorie' ) );
@@ -199,7 +199,7 @@ class BC_Registre {
 				'nom'     => $nom,
 				'titre'   => $definition['titre'],
 				'apercu'  => $definition['apercu'],
-				'gabarit' => '' !== BC_Gabarits::chemin( $definition ),
+				'gabarit' => '' !== Blocs_Creator_Gabarits::chemin( $definition ),
 				'champs'  => $this->champs_editeur( $definition['champs'] ),
 			);
 		}
@@ -216,7 +216,7 @@ class BC_Registre {
 				'reprises'     => $this->reprises(),
 				'tailles'      => $this->tailles_images(),
 				'typesContenu' => $this->types_contenu(),
-				'dashicons'    => BC_Reglages::dashicons(),
+				'dashicons'    => Blocs_Creator_Reglages::dashicons(),
 			)
 		);
 
@@ -281,9 +281,9 @@ class BC_Registre {
 	 */
 	private function champs_editeur( $champs ) {
 		foreach ( $champs as &$champ ) {
-			$champ['defaut_editeur'] = BC_Champs::defaut( $champ );
+			$champ['defaut_editeur'] = Blocs_Creator_Champs::defaut( $champ );
 			if ( in_array( $champ['type'], array( 'liste', 'boutons', 'cases' ), true ) ) {
-				$champ['choix_editeur'] = BC_Champs::choix( $champ );
+				$champ['choix_editeur'] = Blocs_Creator_Champs::choix( $champ );
 			}
 			if ( isset( $champ['sous_champs'] ) ) {
 				$champ['sous_champs'] = $this->champs_editeur( $champ['sous_champs'] );
@@ -297,7 +297,7 @@ class BC_Registre {
 		$types = array();
 
 		foreach ( get_post_types( array( 'show_ui' => true ), 'objects' ) as $type ) {
-			if ( in_array( $type->name, array( 'attachment', BC_Definition::TYPE ), true ) ) {
+			if ( in_array( $type->name, array( 'attachment', Blocs_Creator_Definition::TYPE ), true ) ) {
 				continue;
 			}
 
@@ -345,7 +345,7 @@ class BC_Registre {
 	 * définition, et c'est lui qui a probablement des pages derrière lui.
 	 */
 	public function enregistrer_blocs() {
-		$definitions = BC_Definition::toutes( array( 'post_status' => 'publish' ) );
+		$definitions = Blocs_Creator_Definition::toutes( array( 'post_status' => 'publish' ) );
 
 		foreach ( $definitions as $definition ) {
 			if ( ! empty( $definition['adoption']['nom'] ) ) {
@@ -395,7 +395,7 @@ class BC_Registre {
 	 * @return WP_Block_Type|false
 	 */
 	private function enregistrer_genere( $definition ) {
-		$nom = BC_Definition::nom( $definition );
+		$nom = Blocs_Creator_Definition::nom( $definition );
 
 		if ( '' === $nom || $this->deja_enregistre( $nom ) ) {
 			return false;
@@ -413,7 +413,7 @@ class BC_Registre {
 			'textdomain'           => 'blocs-creator',
 			'attributes'           => $this->attributs( $definition ),
 			'supports'             => $this->supports( $definition ),
-			'render_callback'      => array( 'BC_Rendu', 'rendre' ),
+			'render_callback'      => array( 'Blocs_Creator_Rendu', 'rendre' ),
 			'editor_script_handles' => array( self::SCRIPT ),
 			'editor_style_handles'  => array( self::STYLE ),
 		);
@@ -424,7 +424,7 @@ class BC_Registre {
 
 		$args['style_handles'] = array( self::STYLE_SITE );
 
-		$style = BC_Gabarits::handle_style( $definition );
+		$style = Blocs_Creator_Gabarits::handle_style( $definition );
 
 		if ( '' !== $style ) {
 			$args['style_handles'][] = $style;
@@ -477,7 +477,7 @@ class BC_Registre {
 		$attributs = (array) ( $definition['attributs'] ?? array() );
 
 		foreach ( $definition['champs'] as $champ ) {
-			$attribut = BC_Champs::attribut( $champ );
+			$attribut = Blocs_Creator_Champs::attribut( $champ );
 
 			if ( null !== $attribut ) {
 				$attributs[ $champ['cle'] ] = $attribut;
@@ -700,7 +700,7 @@ class BC_Registre {
 		$tous    = array();
 		$reprises = array();
 
-		foreach ( BC_Definition::toutes() as $definition ) {
+		foreach ( Blocs_Creator_Definition::toutes() as $definition ) {
 			$repris = (string) ( $definition['adoption']['nom'] ?? '' );
 
 			// Seule une reprise publiée remplace son bloc codé. Repassée en
@@ -715,7 +715,7 @@ class BC_Registre {
 				'source'      => 'genere',
 				'adoption'    => $definition['adoption'],
 				'id'          => $definition['id'],
-				'nom'         => BC_Definition::nom( $definition ),
+				'nom'         => Blocs_Creator_Definition::nom( $definition ),
 				'espace'      => $definition['espace'],
 				'slug'        => $definition['slug'],
 				'titre'       => $definition['titre'],
@@ -724,7 +724,7 @@ class BC_Registre {
 				'categorie'   => $definition['categorie'],
 				'statut'      => $definition['statut'],
 				'champs'      => wp_list_pluck( $definition['champs'], 'cle' ),
-				'gabarit'     => BC_Gabarits::chemin( $definition ),
+				'gabarit'     => Blocs_Creator_Gabarits::chemin( $definition ),
 				'definition'  => $definition,
 			);
 		}

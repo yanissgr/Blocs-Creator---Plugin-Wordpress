@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Écrans d'administration.
  */
-class BC_Admin {
+class Blocs_Creator_Admin {
 
 	/**
 	 * Identifiant de la page principale.
@@ -30,7 +30,7 @@ class BC_Admin {
 	/**
 	 * L'écran d'édition d'une définition.
 	 *
-	 * @var BC_Ecran_Definition
+	 * @var Blocs_Creator_Ecran_Definition
 	 */
 	private $ecran;
 
@@ -38,10 +38,10 @@ class BC_Admin {
 	 * Branche les hooks.
 	 */
 	public function demarrer() {
-		$this->ecran = new BC_Ecran_Definition();
+		$this->ecran = new Blocs_Creator_Ecran_Definition();
 		$this->ecran->demarrer();
 
-		( new BC_Outils() )->demarrer();
+		( new Blocs_Creator_Outils() )->demarrer();
 
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
@@ -91,7 +91,7 @@ class BC_Admin {
 			__( 'Ajouter un bloc', 'blocs-creator' ),
 			__( 'Ajouter un bloc', 'blocs-creator' ),
 			self::CAP,
-			'post-new.php?post_type=' . BC_Definition::TYPE
+			'post-new.php?post_type=' . Blocs_Creator_Definition::TYPE
 		);
 
 		add_submenu_page(
@@ -109,7 +109,7 @@ class BC_Admin {
 			__( 'Outils', 'blocs-creator' ),
 			self::CAP,
 			self::PAGE . '-outils',
-			array( 'BC_Outils', 'page' )
+			array( 'Blocs_Creator_Outils', 'page' )
 		);
 
 		add_submenu_page(
@@ -131,7 +131,7 @@ class BC_Admin {
 	public function menu_ouvert( $parent ) {
 		$ecran = get_current_screen();
 
-		if ( $ecran && BC_Definition::TYPE === $ecran->post_type ) {
+		if ( $ecran && Blocs_Creator_Definition::TYPE === $ecran->post_type ) {
 			return self::PAGE;
 		}
 
@@ -147,9 +147,9 @@ class BC_Admin {
 	public function sous_menu_ouvert( $sous_menu ) {
 		$ecran = get_current_screen();
 
-		if ( $ecran && BC_Definition::TYPE === $ecran->post_type ) {
+		if ( $ecran && Blocs_Creator_Definition::TYPE === $ecran->post_type ) {
 			return 'post-new' === $ecran->base
-				? 'post-new.php?post_type=' . BC_Definition::TYPE
+				? 'post-new.php?post_type=' . Blocs_Creator_Definition::TYPE
 				: self::PAGE;
 		}
 
@@ -192,7 +192,7 @@ class BC_Admin {
 	public function assets( $hook ) {
 		$ecran     = get_current_screen();
 		$est_nous  = str_contains( (string) $hook, self::PAGE );
-		$est_bloc  = $ecran && BC_Definition::TYPE === $ecran->post_type;
+		$est_bloc  = $ecran && Blocs_Creator_Definition::TYPE === $ecran->post_type;
 
 		if ( ! $est_nous && ! $est_bloc ) {
 			return;
@@ -226,7 +226,7 @@ class BC_Admin {
 				true
 			);
 
-			BC_Animations::assets_admin();
+			Blocs_Creator_Animations::assets_admin();
 		}
 
 		if ( ! $est_bloc ) {
@@ -235,7 +235,7 @@ class BC_Admin {
 
 		// L'aperçu d'apparition emprunte la feuille du site : ce qu'on voit en
 		// choisissant est ce que le visiteur verra.
-		BC_Animations::assets_admin();
+		Blocs_Creator_Animations::assets_admin();
 
 		wp_enqueue_script(
 			'blocs-creator-constructeur',
@@ -274,7 +274,7 @@ class BC_Admin {
 	private function donnees_constructeur() {
 		$types = array();
 
-		foreach ( BC_Champs::catalogue() as $slug => $def ) {
+		foreach ( Blocs_Creator_Champs::catalogue() as $slug => $def ) {
 			$types[] = array(
 				'type'        => $slug,
 				'libelle'     => $def['libelle'],
@@ -289,7 +289,7 @@ class BC_Admin {
 		$types_contenu = array();
 
 		foreach ( get_post_types( array( 'show_ui' => true ), 'objects' ) as $type ) {
-			if ( in_array( $type->name, array( 'attachment', BC_Definition::TYPE ), true ) ) {
+			if ( in_array( $type->name, array( 'attachment', Blocs_Creator_Definition::TYPE ), true ) ) {
 				continue;
 			}
 
@@ -319,11 +319,11 @@ class BC_Admin {
 
 		return array(
 			'types'        => $types,
-			'familles'     => BC_Champs::familles(),
+			'familles'     => Blocs_Creator_Champs::familles(),
 			'typesContenu' => $types_contenu,
 			'taxonomies'   => $taxonomies,
 			'tailles'      => $tailles,
-			'dashicons'    => BC_Reglages::dashicons(),
+			'dashicons'    => Blocs_Creator_Reglages::dashicons(),
 		);
 	}
 
@@ -341,9 +341,9 @@ class BC_Admin {
 
 		// WP_List_Table n'est déclarée qu'une fois wp-admin chargé : notre
 		// tableau, qui en hérite, ne peut donc pas l'être plus tôt.
-		require_once BLOCS_CREATOR_DIR . 'admin/class-bc-liste-table.php';
+		require_once BLOCS_CREATOR_DIR . 'admin/class-blocs-creator-liste-table.php';
 
-		$table = new BC_Liste_Table();
+		$table = new Blocs_Creator_Liste_Table();
 		$table->prepare_items();
 
 		include BLOCS_CREATOR_DIR . 'admin/vues/liste.php';
@@ -374,23 +374,27 @@ class BC_Admin {
 	 * @return bool Vrai si l'écran a été affiché.
 	 */
 	private function page_reprise() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Le jeton est vérifié deux lignes plus bas, une fois le nom connu.
 		if ( empty( $_GET['bc_reprendre'] ) ) {
 			return false;
 		}
 
-		$nom = sanitize_text_field( rawurldecode( wp_unslash( $_GET['bc_reprendre'] ) ) );
+		// Le nom voyage encodé : on le nettoie une fois brut, une fois décodé.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Idem.
+		$nom = sanitize_text_field( wp_unslash( $_GET['bc_reprendre'] ) );
+		$nom = sanitize_text_field( rawurldecode( $nom ) );
 
 		if ( ! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ?? '' ), 'bc_reprendre_' . $nom ) ) {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$code = BC_Adoption::bloc_code( $nom );
+		$code = Blocs_Creator_Adoption::bloc_code( $nom );
 
 		if ( null === $code ) {
 			wp_die( esc_html__( 'Ce bloc codé est introuvable.', 'blocs-creator' ), 404 );
 		}
 
-		$definition = BC_Adoption::traduire( $code );
+		$definition = Blocs_Creator_Adoption::traduire( $code );
 
 		include BLOCS_CREATOR_DIR . 'admin/vues/reprendre.php';
 
@@ -411,13 +415,13 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$definition = BC_Definition::charger( $post_id );
+		$definition = Blocs_Creator_Definition::charger( $post_id );
 
 		if ( null === $definition ) {
 			$this->rediriger( $post_id, 'erreur', __( 'Ce bloc est introuvable.', 'blocs-creator' ) );
 		}
 
-		$resultat = BC_Gabarits::creer( $definition );
+		$resultat = Blocs_Creator_Gabarits::creer( $definition );
 
 		if ( is_wp_error( $resultat ) ) {
 			$this->rediriger( $post_id, 'erreur', $resultat->get_error_message() );
@@ -429,7 +433,7 @@ class BC_Admin {
 			sprintf(
 				/* translators: %s: chemin du fichier créé. */
 				__( 'Gabarit créé : %s', 'blocs-creator' ),
-				BC_Gabarits::chemin_court( $resultat )
+				Blocs_Creator_Gabarits::chemin_court( $resultat )
 			)
 		);
 	}
@@ -444,7 +448,7 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$copie = BC_Definition::dupliquer( $post_id );
+		$copie = Blocs_Creator_Definition::dupliquer( $post_id );
 
 		if ( is_wp_error( $copie ) ) {
 			wp_safe_redirect(
@@ -474,7 +478,7 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$resultat = BC_Adoption::reprendre( $nom );
+		$resultat = Blocs_Creator_Adoption::reprendre( $nom );
 
 		if ( is_wp_error( $resultat ) ) {
 			$this->retour_liste( 'erreur', $resultat->get_error_message() );
@@ -512,7 +516,7 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$resultat = BC_Adoption::reprendre_tout();
+		$resultat = Blocs_Creator_Adoption::reprendre_tout();
 
 		if ( empty( $resultat['repris'] ) && empty( $resultat['echecs'] ) ) {
 			$this->retour_liste( 'erreur', __( 'Il n\'y avait aucun bloc codé à reprendre.', 'blocs-creator' ) );
@@ -549,7 +553,7 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$resultat = BC_Adoption::rendre_au_code( $post_id );
+		$resultat = Blocs_Creator_Adoption::rendre_au_code( $post_id );
 
 		if ( is_wp_error( $resultat ) ) {
 			$this->retour_liste( 'erreur', $resultat->get_error_message() );
@@ -573,7 +577,7 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$resultat = BC_Adoption::rendre_tout_au_code();
+		$resultat = Blocs_Creator_Adoption::rendre_tout_au_code();
 
 		if ( empty( $resultat['rendus'] ) && empty( $resultat['echecs'] ) ) {
 			$this->retour_liste( 'erreur', __( 'Aucun bloc repris à rendre au code.', 'blocs-creator' ) );
@@ -621,18 +625,18 @@ class BC_Admin {
 			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
 		}
 
-		$definition = BC_Definition::charger( $post_id );
+		$definition = Blocs_Creator_Definition::charger( $post_id );
 
 		if ( null === $definition ) {
 			$this->retour_liste( 'erreur', __( 'Ce bloc est introuvable.', 'blocs-creator' ) );
 		}
 
-		$nom   = BC_Definition::nom( $definition );
-		$usage = BC_Usage::compter( $nom );
+		$nom   = Blocs_Creator_Definition::nom( $definition );
+		$usage = Blocs_Creator_Usage::compter( $nom );
 
 		wp_delete_post( $post_id, true );
 
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 
 		$texte = sprintf(
 			/* translators: %s: nom complet du bloc. */
@@ -659,7 +663,7 @@ class BC_Admin {
 	/**
 	 * Enregistre les réglages.
 	 *
-	 * Voir BC_Reglages::enregistrer_depuis_formulaire() pour la raison d'être
+	 * Voir Blocs_Creator_Reglages::enregistrer_depuis_formulaire() pour la raison d'être
 	 * de ce chemin : on ne passe plus par `options.php`, qui pouvait renvoyer
 	 * l'écran inchangé et sans un mot.
 	 */
@@ -674,11 +678,11 @@ class BC_Admin {
 		$brut = wp_unslash( $_POST );
 
 		$resultat = blocs_creator()->reglages->enregistrer_depuis_formulaire(
-			(array) ( $brut[ BC_Reglages::OPTION ] ?? array() )
+			(array) ( $brut[ Blocs_Creator_Reglages::OPTION ] ?? array() )
 		);
 
-		BC_Animations::enregistrer_depuis_formulaire(
-			(array) ( $brut[ BC_Animations::OPTION ] ?? array() )
+		Blocs_Creator_Animations::enregistrer_depuis_formulaire(
+			(array) ( $brut[ Blocs_Creator_Animations::OPTION ] ?? array() )
 		);
 
 		$onglet = isset( $_POST['bc_onglet'] ) ? sanitize_key( wp_unslash( $_POST['bc_onglet'] ) ) : 'general';
@@ -755,12 +759,21 @@ class BC_Admin {
 	 * Affiche les messages posés par les actions.
 	 */
 	public function notices() {
+		/*
+		 * Ces deux arguments, c'est nous qui venons de les poser dans l'adresse
+		 * de redirection : ils n'ouvrent rien et ne décident de rien, ils
+		 * portent le texte d'un message déjà écrit par le plugin.
+		 */
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( empty( $_GET['bc_message'] ) ) {
 			return;
 		}
 
 		$type  = 'succes' === $_GET['bc_message'] ? 'success' : 'error';
-		$texte = isset( $_GET['bc_texte'] ) ? sanitize_text_field( rawurldecode( wp_unslash( $_GET['bc_texte'] ) ) ) : '';
+		$texte = isset( $_GET['bc_texte'] ) ? sanitize_text_field( wp_unslash( $_GET['bc_texte'] ) ) : '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		$texte = sanitize_text_field( rawurldecode( $texte ) );
 
 		if ( '' === $texte ) {
 			return;

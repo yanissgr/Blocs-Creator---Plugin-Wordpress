@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Résolution, lecture et création des fichiers de gabarit.
  */
-class BC_Gabarits {
+class Blocs_Creator_Gabarits {
 
 	/**
 	 * Styles déjà enregistrés, par nom de bloc.
@@ -154,7 +154,7 @@ class BC_Gabarits {
 	 * @return string Identifiant du style, ou chaîne vide.
 	 */
 	public static function handle_style( $definition ) {
-		$nom = BC_Definition::nom( $definition );
+		$nom = Blocs_Creator_Definition::nom( $definition );
 
 		if ( isset( self::$styles[ $nom ] ) ) {
 			return self::$styles[ $nom ];
@@ -270,7 +270,7 @@ class BC_Gabarits {
 			);
 		}
 
-		if ( ! is_writable( $dossier ) ) {
+		if ( ! wp_is_writable( $dossier ) ) {
 			return new WP_Error(
 				'bc_dossier_verrouille',
 				sprintf(
@@ -309,7 +309,7 @@ class BC_Gabarits {
 	 * @return string
 	 */
 	public static function code_depart( $definition ) {
-		$nom     = BC_Definition::nom( $definition );
+		$nom     = Blocs_Creator_Definition::nom( $definition );
 		$classe  = sanitize_html_class( str_replace( '/', '-', $nom ) );
 		$lignes  = array();
 		$lignes[] = '<?php';
@@ -328,7 +328,7 @@ class BC_Gabarits {
 		$lignes[] = 'defined( \'ABSPATH\' ) || exit;';
 		$lignes[] = '';
 		$lignes[] = '?>';
-		$lignes[] = sprintf( '<section <?php echo bc_attributs( \'%s\' ); ?>>', $classe );
+		$lignes[] = sprintf( '<section <?php echo blocs_creator_attributs( \'%s\' ); ?>>', $classe );
 		$lignes[] = '';
 
 		/*
@@ -399,14 +399,14 @@ class BC_Gabarits {
 		$libelle = $champ['libelle'];
 		$type    = $champ['type'];
 		$bem     = $classe . '__' . str_replace( '_', '-', $cle );
-		$titre   = sprintf( '%s<?php // %s — %s. ?>', $indent, $libelle, BC_Champs::type( $type )['libelle'] );
+		$titre   = sprintf( '%s<?php // %s — %s. ?>', $indent, $libelle, Blocs_Creator_Champs::type( $type )['libelle'] );
 
 		switch ( $type ) {
 			case 'texte':
 				// Apparié à un niveau de titre : le texte devient le titre.
 				if ( isset( $appariement['titre'] ) && $appariement['titre'] === $cle ) {
 					$corps = sprintf(
-						"%1\$s<?php printf( '<h%%1\$d class=\"%2\$s\">%%2\$s</h%%1\$d>', bc_niveau( '%3\$s' ), esc_html( bc_champ( '%4\$s' ) ) ); ?>",
+						"%1\$s<?php printf( '<h%%1\$d class=\"%2\$s\">%%2\$s</h%%1\$d>', blocs_creator_niveau( '%3\$s' ), esc_html( blocs_creator_champ( '%4\$s' ) ) ); ?>",
 						$indent,
 						$bem,
 						$appariement['niveau'],
@@ -416,7 +416,7 @@ class BC_Gabarits {
 				}
 
 				$corps = sprintf(
-					'%1$s<p class="%2$s"><?php echo esc_html( bc_champ( \'%3$s\' ) ); ?></p>',
+					'%1$s<p class="%2$s"><?php echo esc_html( blocs_creator_champ( \'%3$s\' ) ); ?></p>',
 					$indent,
 					$bem,
 					$cle
@@ -425,7 +425,7 @@ class BC_Gabarits {
 
 			case 'texte-long':
 				$corps = sprintf(
-					'%1$s<p class="%2$s"><?php echo nl2br( esc_html( bc_champ( \'%3$s\' ) ) ); ?></p>',
+					'%1$s<p class="%2$s"><?php echo nl2br( esc_html( blocs_creator_champ( \'%3$s\' ) ) ); ?></p>',
 					$indent,
 					$bem,
 					$cle
@@ -434,7 +434,7 @@ class BC_Gabarits {
 
 			case 'texte-riche':
 				$corps = sprintf(
-					'%1$s<div class="%2$s"><?php echo wp_kses_post( bc_champ( \'%3$s\' ) ); ?></div>',
+					'%1$s<div class="%2$s"><?php echo wp_kses_post( blocs_creator_champ( \'%3$s\' ) ); ?></div>',
 					$indent,
 					$bem,
 					$cle
@@ -443,7 +443,7 @@ class BC_Gabarits {
 
 			case 'nombre':
 				$corps = sprintf(
-					'%1$s<span class="%2$s"><?php echo esc_html( bc_champ( \'%3$s\' ) ); ?></span>',
+					'%1$s<span class="%2$s"><?php echo esc_html( blocs_creator_champ( \'%3$s\' ) ); ?></span>',
 					$indent,
 					$bem,
 					$cle
@@ -458,7 +458,7 @@ class BC_Gabarits {
 				}
 
 				$corps = sprintf(
-					"%1\$s<?php printf( '<h%%1\$d class=\"%2\$s\">%%2\$s</h%%1\$d>', bc_niveau( '%3\$s' ), esc_html( '…' ) ); ?>",
+					"%1\$s<?php printf( '<h%%1\$d class=\"%2\$s\">%%2\$s</h%%1\$d>', blocs_creator_niveau( '%3\$s' ), esc_html( '…' ) ); ?>",
 					$indent,
 					$classe . '__titre',
 					$cle
@@ -467,7 +467,7 @@ class BC_Gabarits {
 
 			case 'bascule':
 				$corps = sprintf(
-					"%1\$s<?php if ( bc_champ( '%2\$s' ) ) : ?>\n%1\$s\t<!-- %3\$s -->\n%1\$s<?php endif; ?>",
+					"%1\$s<?php if ( blocs_creator_champ( '%2\$s' ) ) : ?>\n%1\$s\t<!-- %3\$s -->\n%1\$s<?php endif; ?>",
 					$indent,
 					$cle,
 					$libelle
@@ -478,7 +478,7 @@ class BC_Gabarits {
 			case 'boutons':
 			case 'icone':
 				$corps = sprintf(
-					'%1$s<span class="%2$s %2$s--<?php echo esc_attr( bc_champ( \'%3$s\' ) ); ?>"></span>',
+					'%1$s<span class="%2$s %2$s--<?php echo esc_attr( blocs_creator_champ( \'%3$s\' ) ); ?>"></span>',
 					$indent,
 					$bem,
 					$cle
@@ -487,7 +487,7 @@ class BC_Gabarits {
 
 			case 'cases':
 				$corps = sprintf(
-					"%1\$s<?php foreach ( bc_champ( '%2\$s' ) as \$valeur ) : ?>\n%1\$s\t<span class=\"%3\$s\"><?php echo esc_html( \$valeur ); ?></span>\n%1\$s<?php endforeach; ?>",
+					"%1\$s<?php foreach ( blocs_creator_champ( '%2\$s' ) as \$valeur ) : ?>\n%1\$s\t<span class=\"%3\$s\"><?php echo esc_html( \$valeur ); ?></span>\n%1\$s<?php endforeach; ?>",
 					$indent,
 					$cle,
 					$bem
@@ -496,7 +496,7 @@ class BC_Gabarits {
 
 			case 'couleur':
 				$corps = sprintf(
-					'%1$s<div class="%2$s" style="--couleur: <?php echo esc_attr( bc_couleur( \'%3$s\' ) ); ?>"></div>',
+					'%1$s<div class="%2$s" style="--couleur: <?php echo esc_attr( blocs_creator_couleur( \'%3$s\' ) ); ?>"></div>',
 					$indent,
 					$bem,
 					$cle
@@ -505,7 +505,7 @@ class BC_Gabarits {
 
 			case 'image':
 				$corps = sprintf(
-					'%1$s<?php echo bc_image( \'%2$s\', array( \'class\' => \'%3$s\' ) ); ?>',
+					'%1$s<?php echo blocs_creator_image( \'%2$s\', array( \'class\' => \'%3$s\' ) ); ?>',
 					$indent,
 					$cle,
 					$bem
@@ -514,7 +514,7 @@ class BC_Gabarits {
 
 			case 'galerie':
 				$corps = sprintf(
-					"%1\$s<ul class=\"%3\$s\">\n%1\$s\t<?php foreach ( bc_champ( '%2\$s' ) as \$image ) : ?>\n%1\$s\t\t<li><?php echo wp_get_attachment_image( \$image['id'], \$image['taille'] ); ?></li>\n%1\$s\t<?php endforeach; ?>\n%1\$s</ul>",
+					"%1\$s<ul class=\"%3\$s\">\n%1\$s\t<?php foreach ( blocs_creator_champ( '%2\$s' ) as \$image ) : ?>\n%1\$s\t\t<li><?php echo wp_get_attachment_image( \$image['id'], \$image['taille'] ); ?></li>\n%1\$s\t<?php endforeach; ?>\n%1\$s</ul>",
 					$indent,
 					$cle,
 					$bem
@@ -523,7 +523,7 @@ class BC_Gabarits {
 
 			case 'fichier':
 				$corps = sprintf(
-					"%1\$s<?php \$fichier = bc_champ( '%2\$s' ); ?>\n%1\$s<?php if ( \$fichier ) : ?>\n%1\$s\t<a class=\"%3\$s\" href=\"<?php echo esc_url( \$fichier['url'] ); ?>\"><?php echo esc_html( \$fichier['titre'] ); ?></a>\n%1\$s<?php endif; ?>",
+					"%1\$s<?php \$fichier = blocs_creator_champ( '%2\$s' ); ?>\n%1\$s<?php if ( \$fichier ) : ?>\n%1\$s\t<a class=\"%3\$s\" href=\"<?php echo esc_url( \$fichier['url'] ); ?>\"><?php echo esc_html( \$fichier['titre'] ); ?></a>\n%1\$s<?php endif; ?>",
 					$indent,
 					$cle,
 					$bem
@@ -532,7 +532,7 @@ class BC_Gabarits {
 
 			case 'lien':
 				$corps = sprintf(
-					"%1\$s<?php if ( bc_lien_rempli( '%2\$s' ) ) : ?>\n%1\$s\t<a class=\"%3\$s\" <?php echo bc_lien_attrs( '%2\$s' ); ?>><?php echo esc_html( bc_lien_titre( '%2\$s' ) ); ?></a>\n%1\$s<?php endif; ?>",
+					"%1\$s<?php if ( blocs_creator_lien_rempli( '%2\$s' ) ) : ?>\n%1\$s\t<a class=\"%3\$s\" <?php echo blocs_creator_lien_attrs( '%2\$s' ); ?>><?php echo esc_html( blocs_creator_lien_titre( '%2\$s' ) ); ?></a>\n%1\$s<?php endif; ?>",
 					$indent,
 					$cle,
 					$bem
@@ -541,7 +541,7 @@ class BC_Gabarits {
 
 			case 'contenu':
 				$corps = sprintf(
-					"%1\$s<?php \$publication = bc_champ( '%2\$s' ); ?>\n%1\$s<?php if ( \$publication ) : ?>\n%1\$s\t<a class=\"%3\$s\" href=\"<?php echo esc_url( get_permalink( \$publication ) ); ?>\"><?php echo esc_html( get_the_title( \$publication ) ); ?></a>\n%1\$s<?php endif; ?>",
+					"%1\$s<?php \$publication = blocs_creator_champ( '%2\$s' ); ?>\n%1\$s<?php if ( \$publication ) : ?>\n%1\$s\t<a class=\"%3\$s\" href=\"<?php echo esc_url( get_permalink( \$publication ) ); ?>\"><?php echo esc_html( get_the_title( \$publication ) ); ?></a>\n%1\$s<?php endif; ?>",
 					$indent,
 					$cle,
 					$bem
@@ -550,7 +550,7 @@ class BC_Gabarits {
 
 			case 'contenus':
 				$corps = sprintf(
-					"%1\$s<ul class=\"%3\$s\">\n%1\$s\t<?php foreach ( bc_champ( '%2\$s' ) as \$publication ) : ?>\n%1\$s\t\t<li><a href=\"<?php echo esc_url( get_permalink( \$publication ) ); ?>\"><?php echo esc_html( get_the_title( \$publication ) ); ?></a></li>\n%1\$s\t<?php endforeach; ?>\n%1\$s</ul>",
+					"%1\$s<ul class=\"%3\$s\">\n%1\$s\t<?php foreach ( blocs_creator_champ( '%2\$s' ) as \$publication ) : ?>\n%1\$s\t\t<li><a href=\"<?php echo esc_url( get_permalink( \$publication ) ); ?>\"><?php echo esc_html( get_the_title( \$publication ) ); ?></a></li>\n%1\$s\t<?php endforeach; ?>\n%1\$s</ul>",
 					$indent,
 					$cle,
 					$bem
@@ -559,7 +559,7 @@ class BC_Gabarits {
 
 			case 'taxonomie':
 				$corps = sprintf(
-					"%1\$s<?php foreach ( (array) bc_champ( '%2\$s' ) as \$terme ) : ?>\n%1\$s\t<a class=\"%3\$s\" href=\"<?php echo esc_url( get_term_link( \$terme ) ); ?>\"><?php echo esc_html( \$terme->name ); ?></a>\n%1\$s<?php endforeach; ?>",
+					"%1\$s<?php foreach ( (array) blocs_creator_champ( '%2\$s' ) as \$terme ) : ?>\n%1\$s\t<a class=\"%3\$s\" href=\"<?php echo esc_url( get_term_link( \$terme ) ); ?>\"><?php echo esc_html( \$terme->name ); ?></a>\n%1\$s<?php endforeach; ?>",
 					$indent,
 					$cle,
 					$bem
@@ -574,7 +574,7 @@ class BC_Gabarits {
 				}
 
 				$corps = sprintf(
-					"%1\$s<?php \$%2\$s = bc_champ( '%2\$s' ); ?>\n%1\$s<div class=\"%3\$s\">\n%4\$s\n%1\$s</div>",
+					"%1\$s<?php \$%2\$s = blocs_creator_champ( '%2\$s' ); ?>\n%1\$s<div class=\"%3\$s\">\n%4\$s\n%1\$s</div>",
 					$indent,
 					$cle,
 					$bem,
@@ -595,7 +595,7 @@ class BC_Gabarits {
 				}
 
 				$corps = sprintf(
-					"%1\$s<ul class=\"%3\$s\">\n%1\$s\t<?php foreach ( bc_boucle( '%2\$s' ) as \$ligne ) : ?>\n%1\$s\t\t<li>\n%4\$s\n%1\$s\t\t</li>\n%1\$s\t<?php endforeach; ?>\n%1\$s</ul>",
+					"%1\$s<ul class=\"%3\$s\">\n%1\$s\t<?php foreach ( blocs_creator_boucle( '%2\$s' ) as \$ligne ) : ?>\n%1\$s\t\t<li>\n%4\$s\n%1\$s\t\t</li>\n%1\$s\t<?php endforeach; ?>\n%1\$s</ul>",
 					$indent,
 					$cle,
 					$bem,
@@ -605,7 +605,7 @@ class BC_Gabarits {
 
 			case 'blocs-imbriques':
 				$corps = sprintf(
-					'%1$s<div class="%2$s"><?php echo bc_contenu(); ?></div>',
+					'%1$s<div class="%2$s"><?php echo blocs_creator_contenu(); ?></div>',
 					$indent,
 					$classe . '__contenu'
 				);

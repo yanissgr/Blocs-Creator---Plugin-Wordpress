@@ -4,7 +4,7 @@
  *
  * C'est l'objet que l'on saisit dans le back-office : un nom, un identifiant,
  * une icône, et surtout une liste de champs. Il est stocké dans un type de
- * contenu privé (`bc_bloc`) sous forme de JSON, avec le titre, le slug et la
+ * contenu privé (`blocs_creator_bloc`) sous forme de JSON, avec le titre, le slug et la
  * description recopiés dans les colonnes natives — pour que la recherche et
  * les listes de WordPress fonctionnent sans rien réapprendre.
  *
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Lecture, nettoyage et écriture des définitions de blocs.
  */
-class BC_Definition {
+class Blocs_Creator_Definition {
 
 	/**
 	 * Identifiant du type de contenu.
@@ -97,8 +97,8 @@ class BC_Definition {
 	 */
 	public static function fiche( $definition ) {
 		$nom     = self::nom( $definition );
-		$gabarit = BC_Gabarits::chemin( $definition );
-		$cible   = '' !== $gabarit ? $gabarit : BC_Gabarits::chemin_prefere( $definition );
+		$gabarit = Blocs_Creator_Gabarits::chemin( $definition );
+		$cible   = '' !== $gabarit ? $gabarit : Blocs_Creator_Gabarits::chemin_prefere( $definition );
 
 		$lignes = array();
 
@@ -107,7 +107,7 @@ class BC_Definition {
 		$lignes[] = sprintf( '- Identifiant : `%s`', $nom );
 		$lignes[] = sprintf(
 			'- Fichier de dessin : `%s`%s',
-			BC_Gabarits::chemin_court( $cible ),
+			Blocs_Creator_Gabarits::chemin_court( $cible ),
 			'' !== $gabarit ? '' : ' — **à créer**'
 		);
 
@@ -135,7 +135,7 @@ class BC_Definition {
 					'| `%s` | %s | %s | `%s` |',
 					$champ['cle'],
 					str_replace( '|', '/', (string) $champ['libelle'] ),
-					BC_Champs::type( $champ['type'] )['libelle'] ?? $champ['type'],
+					Blocs_Creator_Champs::type( $champ['type'] )['libelle'] ?? $champ['type'],
 					self::appel( $champ )
 				);
 
@@ -144,7 +144,7 @@ class BC_Definition {
 						'| ↳ `%s` | %s | %s | `$ligne[\'%s\']` |',
 						$enfant['cle'],
 						str_replace( '|', '/', (string) $enfant['libelle'] ),
-						BC_Champs::type( $enfant['type'] )['libelle'] ?? $enfant['type'],
+						Blocs_Creator_Champs::type( $enfant['type'] )['libelle'] ?? $enfant['type'],
 						$enfant['cle']
 					);
 				}
@@ -171,25 +171,25 @@ class BC_Definition {
 	private static function appel( $champ ) {
 		switch ( $champ['type'] ) {
 			case 'repeteur':
-				return sprintf( "bc_boucle( '%s' )", $champ['cle'] );
+				return sprintf( "blocs_creator_boucle( '%s' )", $champ['cle'] );
 
 			case 'image':
-				return sprintf( "bc_image( '%s' )", $champ['cle'] );
+				return sprintf( "blocs_creator_image( '%s' )", $champ['cle'] );
 
 			case 'lien':
-				return sprintf( "bc_lien_attrs( '%s' )", $champ['cle'] );
+				return sprintf( "blocs_creator_lien_attrs( '%s' )", $champ['cle'] );
 
 			case 'niveau-titre':
-				return sprintf( "bc_niveau( '%s' )", $champ['cle'] );
+				return sprintf( "blocs_creator_niveau( '%s' )", $champ['cle'] );
 
 			case 'couleur':
-				return sprintf( "bc_couleur( '%s' )", $champ['cle'] );
+				return sprintf( "blocs_creator_couleur( '%s' )", $champ['cle'] );
 
 			case 'blocs-imbriques':
-				return 'bc_contenu()';
+				return 'blocs_creator_contenu()';
 
 			default:
-				return sprintf( "bc_champ( '%s' )", $champ['cle'] );
+				return sprintf( "blocs_creator_champ( '%s' )", $champ['cle'] );
 		}
 	}
 
@@ -227,14 +227,14 @@ class BC_Definition {
 			/*
 			 * L'apparition appartient au bloc, pas à la page : elle se choisit
 			 * ici une fois, et toutes ses occurrences entrent de la même façon.
-			 * Voir BC_Animations.
+			 * Voir Blocs_Creator_Animations.
 			 */
 			'animation'       => '',
 			'animation_duree' => 0,
 			'champs'      => array(),
 			/*
 			 * Les quatre clés qui suivent ne se saisissent pas : elles ne sont
-			 * remplies que par la reprise d'un bloc codé (BC_Adoption), et
+			 * remplies que par la reprise d'un bloc codé (Blocs_Creator_Adoption), et
 			 * traversent le formulaire sans être touchées.
 			 */
 			'attributs'   => array(),
@@ -298,7 +298,6 @@ class BC_Definition {
 					'order'                  => 'ASC',
 					'no_found_rows'          => true,
 					'update_post_term_cache' => false,
-					'suppress_filters'       => true,
 				)
 			)
 		);
@@ -354,7 +353,7 @@ class BC_Definition {
 		$propre['categorie']   = sanitize_key( (string) $propre['categorie'] );
 		$propre['apercu']      = in_array( $propre['apercu'], array( 'serveur', 'formulaire' ), true ) ? $propre['apercu'] : 'serveur';
 
-		$apparition                 = BC_Animations::assainir_reglage(
+		$apparition                 = Blocs_Creator_Animations::assainir_reglage(
 			array(
 				'nom'   => $propre['animation'],
 				'duree' => $propre['animation_duree'],
@@ -549,11 +548,11 @@ class BC_Definition {
 
 			$type = sanitize_key( (string) ( $champ['type'] ?? '' ) );
 
-			if ( ! BC_Champs::type_existe( $type ) ) {
+			if ( ! Blocs_Creator_Champs::type_existe( $type ) ) {
 				continue;
 			}
 
-			$def = BC_Champs::type( $type );
+			$def = Blocs_Creator_Champs::type( $type );
 
 			/*
 			 * La structure ne s'imbrique pas. Dans une ligne de répéteur, un
@@ -615,7 +614,7 @@ class BC_Definition {
 	 * @return array
 	 */
 	private static function normaliser_options( $type, $options ) {
-		$def     = BC_Champs::type( $type );
+		$def     = Blocs_Creator_Champs::type( $type );
 		$permis  = (array) ( $def['reglages'] ?? array() );
 		$propres = array();
 
@@ -830,7 +829,7 @@ class BC_Definition {
 			wp_slash( wp_json_encode( $a_stocker, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) )
 		);
 
-		BC_Usage::vider_cache();
+		Blocs_Creator_Usage::vider_cache();
 
 		/**
 		 * Se déclenche après l'enregistrement d'une définition de bloc.

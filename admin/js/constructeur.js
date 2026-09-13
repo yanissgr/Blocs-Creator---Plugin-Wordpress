@@ -484,13 +484,13 @@
 		var code;
 
 		if ( def && def.sousChamps ) {
-			code = "foreach ( bc_boucle( '" + cle + "' ) as $ligne ) { … }";
+			code = "foreach ( blocs_creator_boucle( '" + cle + "' ) as $ligne ) { … }";
 		} else if ( 'image' === champ.type ) {
-			code = "echo bc_image( '" + cle + "' );";
+			code = "echo blocs_creator_image( '" + cle + "' );";
 		} else if ( 'lien' === champ.type ) {
-			code = "<a <?php echo bc_lien_attrs( '" + cle + "' ); ?>>";
+			code = "<a <?php echo blocs_creator_lien_attrs( '" + cle + "' ); ?>>";
 		} else {
-			code = "bc_champ( '" + cle + "' )";
+			code = "blocs_creator_champ( '" + cle + "' )";
 		}
 
 		var bouton_copie = el( 'button', {

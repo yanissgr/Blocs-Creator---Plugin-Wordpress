@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Routes REST du plugin.
  */
-class BC_Rest {
+class Blocs_Creator_Rest {
 
 	/**
 	 * Espace de noms des routes.
