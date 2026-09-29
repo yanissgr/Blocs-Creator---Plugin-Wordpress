@@ -241,7 +241,8 @@ class Blocs_Creator_Diagnostic {
 
 		if ( empty( $journal ) ) {
 			$lignes[] = '_Aucune._ Si vous venez d\'appuyer sur « Enregistrer », c\'est que';
-			$lignes[] = 'la requête n\'est jamais arrivée jusqu\'au plugin : pare-feu de';
+			$lignes[] = 'la requête n\'est jamais arrivée jusqu\'au plugin : champ refusé par';
+			$lignes[] = 'le navigateur (il bloque l\'envoi avant qu\'il ne parte), pare-feu de';
 			$lignes[] = 'l\'hébergement, extension de sécurité, ou requête tronquée.';
 		} else {
 			foreach ( $journal as $entree ) {

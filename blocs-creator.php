@@ -3,7 +3,7 @@
  * Plugin Name:       Blocs Creator
  * Plugin URI:        https://github.com/yanissgr/Blocs-Creator---Plugin-Wordpress
  * Description:       Créez vos propres blocs Gutenberg en déclarant leurs champs, comme avec ACF, puis dessinez-les dans un simple fichier PHP. Les blocs écrits à la main se reprennent en main d'un clic, l'inséreur ne propose que les blocs que vous voulez, et chaque bloc entre en scène à sa façon.
- * Version:           4.2.0
+ * Version:           4.2.1
  * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Yanis Singer
@@ -31,7 +31,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BLOCS_CREATOR_VERSION', '4.2.0' );
+define( 'BLOCS_CREATOR_VERSION', '4.2.1' );
 define( 'BLOCS_CREATOR_FICHIER', __FILE__ );
 define( 'BLOCS_CREATOR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BLOCS_CREATOR_URL', plugin_dir_url( __FILE__ ) );

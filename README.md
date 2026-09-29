@@ -444,8 +444,15 @@ tronqué ne touche à rien.
 Enfin, un **diagnostic** repliable, atteignable depuis la barre
 d'enregistrement : limites de PHP, présence de la ligne en base, cache d'objets,
 extensions actives, et le journal des huit dernières tentatives. S'il reste vide
-après un clic, la requête n'est jamais arrivée jusqu'au plugin — et l'on cherche
-du côté de l'hébergement, pas du code.
+après un clic, la requête n'est jamais arrivée jusqu'au plugin. Première cause à
+écarter : un champ que le navigateur refuse, qui bloque l'envoi avant qu'il ne
+parte — l'écran ouvre alors l'onglet du champ, et le navigateur dit pourquoi.
+Ensuite seulement, on cherche du côté de l'hébergement.
+
+> **Une valeur pré-remplie doit passer les contraintes de son champ.** En 4.1 et 4.2.0,
+> la durée d'apparition avait `min="200" step="50"` et valait 720 par défaut : le
+> navigateur la tenait pour invalide et bloquait tout le formulaire, depuis un
+> onglet masqué, sans un mot. Corrigé en 4.2.1.
 
 ---
 

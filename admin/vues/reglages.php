@@ -19,6 +19,12 @@
  *      bloc dépasserait `max_input_vars` sur un site fourni, et le formulaire
  *      arriverait tronqué — c'est-à-dire avec des blocs qu'on croirait cochés.
  *      Sans JavaScript, les cases repartent comme avant : rien n'est perdu.
+ *   3. AUCUN CHAMP NE BLOQUE L'ENVOI EN SILENCE. Le navigateur refuse d'envoyer
+ *      un formulaire dont un champ est invalide — et si ce champ est dans un
+ *      onglet masqué, il ne peut même pas le montrer. La requête ne part pas,
+ *      le journal reste vide. Les valeurs que l'écran pré-remplit doivent donc
+ *      toujours passer les contraintes de leur champ (le pas d'un nombre, le
+ *      motif d'un texte), et le script ouvre l'onglet d'un champ refusé.
  *
  * @package BlocsCreator
  *
@@ -426,7 +432,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 									</select>
 								</td>
 								<td>
-									<input type="number" class="small-text" min="200" max="3000" step="50"
+									<input type="number" class="small-text" min="200" max="3000" step="1"
 										name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[<?php echo esc_attr( $blocs_creator_bloc_nom ); ?>][duree]"
 										value="<?php echo esc_attr( (string) ( $blocs_creator_reglage['duree'] > 0 ? $blocs_creator_reglage['duree'] : 720 ) ); ?>">
 									<span class="bc-vide">ms</span>
@@ -477,7 +483,16 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 						<label for="bc-anim-ajout-duree"><?php esc_html_e( 'Durée', 'blocs-creator' ); ?></label>
 					</th>
 					<td>
-						<input type="number" id="bc-anim-ajout-duree" class="small-text" min="200" max="3000" step="50"
+						<?php
+						/*
+						 * Le pas reste à 1, et il le faut : avec `min="200" step="50"`,
+						 * le navigateur n'accepte que 200, 250… 700, 750 — et tient
+						 * 720, la valeur par défaut, pour invalide. Il bloquait alors
+						 * TOUT le formulaire, depuis un onglet masqué, sans un mot :
+						 * c'était le bouton mort des 4.1 et 4.2.0.
+						 */
+						?>
+						<input type="number" id="bc-anim-ajout-duree" class="small-text" min="200" max="3000" step="1"
 							name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[__ajout][duree]" value="720">
 						<span class="bc-vide">ms</span>
 						<p class="description">
@@ -557,7 +572,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 				?></textarea>
 
 				<p class="bc-aide">
-					<?php esc_html_e( 'Le point à regarder en premier : « Les dernières tentatives d\'enregistrement ». Si elle reste vide alors que vous venez d\'appuyer sur le bouton, la requête n\'arrive pas jusqu\'au plugin — et c\'est du côté de l\'hébergement qu\'il faut chercher, pas ici.', 'blocs-creator' ); ?>
+					<?php esc_html_e( 'Le point à regarder en premier : « Les dernières tentatives d\'enregistrement ». Si elle reste vide alors que vous venez d\'appuyer sur le bouton, la requête n\'arrive pas jusqu\'au plugin. Regardez d\'abord si le navigateur signale un champ refusé, avec un message à côté : il bloque alors l\'envoi. Sinon, c\'est du côté de l\'hébergement qu\'il faut chercher.', 'blocs-creator' ); ?>
 				</p>
 			</details>
 		</div>

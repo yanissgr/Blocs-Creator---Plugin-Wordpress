@@ -46,7 +46,9 @@ class Blocs_Creator_Reglages {
 	 * @return array
 	 */
 	public static function defauts() {
-		$espace = sanitize_key( sanitize_title( get_bloginfo( 'name' ) ) );
+		// Sans soulignés : `sanitize_key()` les garde, mais le champ de l'écran
+		// les refuse — et un champ refusé bloque tout le formulaire.
+		$espace = preg_replace( '/[^a-z0-9-]/', '', sanitize_key( sanitize_title( get_bloginfo( 'name' ) ) ) );
 
 		if ( '' === $espace || is_numeric( $espace ) ) {
 			$espace = 'blocs';

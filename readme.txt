@@ -4,7 +4,7 @@ Tags: blocks, gutenberg, custom blocks, fields, acf
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 4.2.0
+Stable tag: 4.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,19 @@ uninstall, if that is what you want.
 4. The help screen for writing a template.
 
 == Changelog ==
+
+= 4.2.1 =
+* **Fixed: the settings could not be saved.** The "Duration" field of the
+  Animations tab accepted steps of 50 from 200 — 200, 250… 700, 750 — so its
+  default value, 720, was invalid. The browser then refused to send the whole
+  form, from a hidden tab, without a word: the request never left, and the
+  diagnostic log stayed empty. The same field on the block screen had the same
+  step. Durations now accept any whole number between 200 and 3000.
+* The settings screen now opens the tab of any field the browser refuses, so
+  its message shows instead of a button that seems to do nothing.
+* The default namespace drops underscores, which its own field refuses.
+* The diagnostic names a field refused by the browser as a possible cause of an
+  empty log.
 
 = 4.2.0 =
 * **Everything the plugin declares now carries a full prefix.** Classes went

@@ -373,6 +373,56 @@
 	}
 
 	/**
+	 * Montre le champ que le navigateur refuse, même dans un onglet masqué.
+	 *
+	 * Un champ invalide bloque l'envoi, et c'est le navigateur qui le décide :
+	 * la requête ne part pas, le journal du diagnostic reste vide. S'il est dans
+	 * un onglet masqué, le navigateur ne peut ni le montrer ni dire pourquoi —
+	 * le bouton a l'air mort. On ouvre donc l'onglet qui le porte, puis on lui
+	 * redemande son message, une fois l'onglet affiché.
+	 */
+	function validation() {
+		var formulaire = document.querySelector( '[data-bc-formulaire]' );
+		var signale = false;
+
+		if ( ! formulaire ) {
+			return;
+		}
+
+		// `invalid` ne remonte pas : on l'écoute à la descente.
+		formulaire.addEventListener( 'invalid', function ( evenement ) {
+			var champ = evenement.target;
+			var panneau = champ.closest( '[data-bc-panneau]' );
+
+			// Le premier champ refusé suffit : c'est celui que l'on montre.
+			if ( signale || ! panneau || ! panneau.hidden ) {
+				return;
+			}
+
+			var bouton = document.querySelector(
+				'[data-bc-onglet="' + panneau.getAttribute( 'data-bc-panneau' ) + '"]'
+			);
+
+			if ( ! bouton ) {
+				return;
+			}
+
+			signale = true;
+			bouton.click();
+
+			window.setTimeout( function () {
+				signale = false;
+
+				if ( champ.reportValidity ) {
+					champ.reportValidity();
+				} else {
+					champ.focus();
+				}
+			}, 0 );
+		}, true );
+	}
+
+	/**
 	 * Déplie et amène à l'écran un panneau qu'un lien désigne.
 	 *
 	 * Sert le diagnostic : il vit au bas d'une page très longue, et le lien qui
@@ -410,6 +460,7 @@
 		groupes();
 		filtre();
 		compter();
+		validation();
 		envoi();
 	}
 

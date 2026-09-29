@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 		<p class="bc-champ">
 			<label for="bc-animation-duree"><?php esc_html_e( 'Durée', 'blocs-creator' ); ?></label>
 			<input type="number" id="bc-animation-duree" name="bc[animation_duree]" class="small-text"
-				min="200" max="3000" step="50"
+				min="200" max="3000" step="1"
 				value="<?php echo esc_attr( (string) ( $definition['animation_duree'] > 0 ? $definition['animation_duree'] : 720 ) ); ?>">
 			<span class="bc-aide"><?php esc_html_e( 'En millisecondes. 720 par défaut — la durée commune à tout le site.', 'blocs-creator' ); ?></span>
 		</p>
