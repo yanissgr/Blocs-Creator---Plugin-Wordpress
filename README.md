@@ -15,9 +15,11 @@ Auteur : **Yanis Singer** — Licence GPL-2.0-or-later — WordPress 6.5+, PHP 8
 
 ## Nouveautés de la 5.0
 
-Ce qu'on réécrivait à chaque site rejoint le plugin. Rien ne change sur un
-site existant tant qu'on ne coche rien : les nouveautés sont des réglages, des
-modules désactivés, ou des fonctions qu'on appelle.
+Ce qu'on réécrivait à chaque site rejoint le plugin. Sur un site qui passe
+de la 4.x à la 5.0, l'IA, les modules et les blocs du contenu restent éteints
+tant qu'on ne les coche pas ; seuls le moteur d'apparitions et l'éditeur
+s'améliorent d'eux-mêmes. Sur un site neuf, l'IA est allumée d'office (dès
+qu'une IA est branchée).
 
 - **Des apparitions plus travaillées.** Sept variantes de parties de plus
   (`mots`, `masque`, `flou`, `trait`, `pop`, `carte`, `ligne`) ; les titres

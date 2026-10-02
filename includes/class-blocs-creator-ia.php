@@ -98,12 +98,51 @@ class Blocs_Creator_Ia {
 	}
 
 	/**
+	 * Les réglages d'un site qui existait avant la 5.0 : tout éteint.
+	 *
+	 * Un site en place ne doit rien voir changer tant qu'on ne coche rien —
+	 * et il a peut-être déjà son propre panneau d'IA dans son thème (c'est le
+	 * cas du site d'où ces services viennent) : deux « Rédiger avec l'IA »
+	 * côte à côte, et un minimum de texte compté deux fois.
+	 *
+	 * @return array
+	 */
+	public static function eteints() {
+		return array(
+			'articles'  => false,
+			'sections'  => false,
+			'extension' => false,
+		);
+	}
+
+	/**
+	 * Le site existait-il avant la 5.0 ?
+	 *
+	 * @return bool
+	 */
+	public static function site_anterieur() {
+		$version = (string) get_option( 'blocs_creator_version', '' );
+
+		return '' !== $version && '0' !== $version && version_compare( $version, '5.0.0', '<' );
+	}
+
+	/**
 	 * Les réglages, complétés par les valeurs par défaut.
+	 *
+	 * Tant que rien n'est enregistré, un site d'avant la 5.0 a l'IA éteinte
+	 * (Blocs_Creator_Plugin::mettre_a_jour() l'écrit ensuite pour de bon) ; un
+	 * site neuf l'a allumée, dès qu'une IA est branchée.
 	 *
 	 * @return array
 	 */
 	public static function reglages() {
-		return wp_parse_args( (array) get_option( self::OPTION, array() ), self::defauts() );
+		$enregistres = get_option( self::OPTION, null );
+
+		if ( null === $enregistres ) {
+			$enregistres = self::site_anterieur() ? self::eteints() : array();
+		}
+
+		return wp_parse_args( (array) $enregistres, self::defauts() );
 	}
 
 	/**

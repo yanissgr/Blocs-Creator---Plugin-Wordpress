@@ -249,6 +249,12 @@ final class Blocs_Creator_Plugin {
 			$this->reglages->fusionner_categorie();
 		}
 
+		// Un site d'avant la 5.0 garde l'IA éteinte tant qu'on ne la coche pas.
+		// Écrit avant de monter la version : c'est elle qui permet de le savoir.
+		if ( Blocs_Creator_Ia::site_anterieur() && false === get_option( Blocs_Creator_Ia::OPTION ) ) {
+			update_option( Blocs_Creator_Ia::OPTION, array_merge( Blocs_Creator_Ia::defauts(), Blocs_Creator_Ia::eteints() ), false );
+		}
+
 		Blocs_Creator_Usage::vider_cache();
 
 		update_option( 'blocs_creator_version', BLOCS_CREATOR_VERSION );
@@ -266,6 +272,12 @@ final class Blocs_Creator_Plugin {
 
 		if ( false === get_option( 'blocs_creator_reglages' ) ) {
 			add_option( 'blocs_creator_reglages', Blocs_Creator_Reglages::defauts() );
+		}
+
+		// Même garde-fou que mettre_a_jour() : réactiver le plugin sur un site
+		// d'avant la 5.0 ne doit pas allumer l'IA.
+		if ( Blocs_Creator_Ia::site_anterieur() && false === get_option( Blocs_Creator_Ia::OPTION ) ) {
+			update_option( Blocs_Creator_Ia::OPTION, array_merge( Blocs_Creator_Ia::defauts(), Blocs_Creator_Ia::eteints() ), false );
 		}
 
 		update_option( 'blocs_creator_version', BLOCS_CREATOR_VERSION );

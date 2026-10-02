@@ -193,9 +193,10 @@ uninstall, if that is what you want.
 == Changelog ==
 
 = 5.0.0 =
-What used to be rewritten for every site joins the plugin. Nothing changes on
-an existing site until something is ticked: the new features are settings,
-disabled modules, or functions a theme calls.
+What used to be rewritten for every site joins the plugin. On a site
+upgrading from 4.x, AI, modules and content entrances stay off until ticked;
+only the entrance engine and the editor improve on their own. On a new site,
+AI is on by default (as soon as an AI connector is set up).
 
 * **Entrances, reworked.** Seven new part variants for the "Composed" scene:
   `mots` (the heading rises word by word, in every scene), `masque` (a curtain
