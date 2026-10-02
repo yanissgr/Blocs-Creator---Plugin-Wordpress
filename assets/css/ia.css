@@ -1,0 +1,110 @@
+/*
+ * Les panneaux d'IA de l'éditeur (assets/js/ia-article.js, ia-section.js) :
+ * la colonne de droite, et la fenêtre de relecture.
+ */
+
+.bc-ia__aide {
+	margin: 0 0 16px;
+	color: #50575e;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.bc-ia__espace {
+	height: 16px;
+}
+
+.bc-ia__bouton {
+	justify-content: center;
+	width: 100%;
+}
+
+.bc-ia .components-notice {
+	margin: 12px 0 0;
+}
+
+/* La relecture d'un article : le brouillon, comme il sera inséré. */
+.bc-ia-apercu {
+	max-width: 680px;
+	font-size: 15px;
+	line-height: 1.6;
+}
+
+.bc-ia-apercu h2 {
+	margin: 1.4em 0 0.4em;
+	font-size: 1.35em;
+	line-height: 1.3;
+}
+
+.bc-ia-apercu h3 {
+	margin: 1.2em 0 0.3em;
+	font-size: 1.15em;
+	line-height: 1.3;
+}
+
+.bc-ia-apercu p,
+.bc-ia-apercu ul,
+.bc-ia-apercu ol {
+	margin: 0 0 0.9em;
+}
+
+.bc-ia-apercu__titre {
+	margin: 0 0 0.4em;
+	font-size: 1.7em;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.bc-ia-apercu__chapo {
+	margin: 0 0 1.4em;
+	color: #50575e;
+	font-size: 1.1em;
+}
+
+/* La relecture d'une section : chaque champ, et ce qu'il recevra. */
+.bc-ia-champs {
+	display: grid;
+	gap: 4px 0;
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.bc-ia-champs dt {
+	margin-top: 12px;
+	color: #50575e;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.bc-ia-champs dt:first-child {
+	margin-top: 0;
+}
+
+.bc-ia-champs dd {
+	margin: 0;
+	white-space: pre-line;
+}
+
+.bc-ia-champs ol {
+	margin: 0;
+	padding-left: 1.4em;
+}
+
+.bc-ia-options {
+	display: grid;
+	gap: 8px;
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid #ddd;
+}
+
+.bc-ia-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 16px;
+}

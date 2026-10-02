@@ -23,6 +23,18 @@
  *    rend jamais un contenu « inattendu », et retirer le plugin ne laisse
  *    aucune classe orpheline dans les pages.
  *
+ * Deux portes de plus, depuis la 5.0 :
+ *
+ *   - LES BLOCS DU CONTENU. Une case des réglages donne une apparition à
+ *     chaque bloc natif posé dans le contenu d'une page — paragraphe, titre,
+ *     image, liste… —, choisie par type (apparitions_contenu()). Un bloc de
+ *     mise en page (groupe, colonnes) ne s'anime pas : ce sont ses enfants
+ *     qui entrent. Un bloc qui entre emmène ses enfants : rien n'entre deux
+ *     fois. L'en-tête et le pied de page ne sont pas concernés.
+ *   - LA CLASSE `bc-apparition-<scène>`. Posée sur un bloc d'un modèle du
+ *     thème (en-tête d'archive, pied de page) ou dans « Classes CSS
+ *     supplémentaires », elle lui donne cette scène, à lui seul.
+ *
  * @package BlocsCreator
  */
 
@@ -40,6 +52,49 @@ class Blocs_Creator_Animations {
 	 * les règle, et c'est là qu'elles s'exportent avec le reste.
 	 */
 	const OPTION = 'blocs_creator_animations';
+
+	/**
+	 * Option qui dit si les blocs natifs du contenu entrent en scène.
+	 */
+	const OPTION_CONTENU = 'blocs_creator_animations_contenu';
+
+	/**
+	 * Blocs de mise en page : jamais animés eux-mêmes, ce sont leurs enfants
+	 * qui entrent, l'un après l'autre.
+	 *
+	 * @var array<int, string>
+	 */
+	const MISE_EN_PAGE = array(
+		'core/group',
+		'core/columns',
+		'core/column',
+		'core/query',
+		'core/spacer',
+		'core/post-content',
+		'core/block',
+		'core/template-part',
+	);
+
+	/**
+	 * La pile des blocs en cours de rendu.
+	 *
+	 * `render_block_data` passe sur chaque bloc en descendant, `render_block`
+	 * en remontant : un bloc est empilé avant ses enfants et dépilé après eux.
+	 * La pile dit donc, pour chaque bloc, dans quoi il se trouve.
+	 *
+	 * @var array<int, array{nom:string, scenario:string, anime:bool}>
+	 */
+	private static $pile = array();
+
+	/**
+	 * Une apparition a-t-elle été posée pendant ce rendu ?
+	 *
+	 * Sert la classe `bc-apparition-*` : dans un thème bloc, le modèle est
+	 * rendu avant `wp_head`, et l'amorce sait donc qu'elle a du travail.
+	 *
+	 * @var bool
+	 */
+	private static $posee = false;
 
 	/**
 	 * Blocs auxquels l'apparition n'est pas proposée.
@@ -80,6 +135,7 @@ class Blocs_Creator_Animations {
 	 */
 	public static function demarrer() {
 		add_action( 'admin_init', array( __CLASS__, 'declarer' ) );
+		add_filter( 'render_block_data', array( __CLASS__, 'empiler' ), 1 );
 		add_filter( 'render_block', array( __CLASS__, 'rendre' ), 20, 2 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets_site' ) );
 		add_action( 'wp_head', array( __CLASS__, 'amorce' ), 1 );
@@ -440,18 +496,181 @@ class Blocs_Creator_Animations {
 	}
 
 	/* ------------------------------------------------------------------ *
+	 * Les blocs du contenu
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Les blocs natifs du contenu entrent-ils en scène ?
+	 *
+	 * @return bool
+	 */
+	public static function contenu_actif() {
+		return (bool) get_option( self::OPTION_CONTENU, false );
+	}
+
+	/**
+	 * Écrit le réglage « blocs du contenu ».
+	 *
+	 * @param bool $actif Activer.
+	 */
+	public static function enregistrer_contenu( $actif ) {
+		update_option( self::OPTION_CONTENU, $actif ? 1 : 0 );
+	}
+
+	/**
+	 * La scène de chaque bloc natif posé dans le contenu.
+	 *
+	 * Les blocs qui n'y figurent pas prennent « Montée », la plus sobre. Un
+	 * bloc à qui le filtre donne '' n'entre pas.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function apparitions_contenu() {
+		$carte = array(
+			'core/heading'       => 'montee',
+			'core/paragraph'     => 'montee',
+			'core/list'          => 'cascade',
+			'core/quote'         => 'signature',
+			'core/pullquote'     => 'signature',
+			'core/image'         => 'deploiement',
+			'core/gallery'       => 'pastilles',
+			'core/cover'         => 'souffle',
+			'core/media-text'    => 'croisement',
+			'core/buttons'       => 'cascade',
+			'core/social-links'  => 'pastilles',
+			'core/video'         => 'deploiement',
+			'core/embed'         => 'deploiement',
+			'core/post-template' => 'pastilles',
+			'core/latest-posts'  => 'cascade',
+			'core/table'         => 'montee',
+			'core/details'       => 'montee',
+			'core/separator'     => 'montee',
+		);
+
+		/**
+		 * Filtre la scène des blocs natifs du contenu.
+		 *
+		 * @param array<string, string> $carte Scène, par nom de bloc.
+		 */
+		return (array) apply_filters( 'blocs_creator_apparitions_contenu', $carte );
+	}
+
+	/**
+	 * Y a-t-il de quoi animer sur ce site ?
+	 *
+	 * L'amorce et les fichiers ne se chargent que si c'est le cas : un site
+	 * sans apparition ne paie rien.
+	 *
+	 * @return bool
+	 */
+	public static function actives() {
+		$actives = self::$posee || ! empty( self::carte() ) || self::contenu_actif();
+
+		/**
+		 * Filtre le chargement des apparitions.
+		 *
+		 * Un thème classique qui ne pose que des classes `bc-apparition-*`
+		 * renvoie vrai : il rend son contenu après `wp_head`, trop tard pour
+		 * que l'amorce les voie passer.
+		 *
+		 * @param bool $actives Faut-il charger les apparitions.
+		 */
+		return (bool) apply_filters( 'blocs_creator_animations_actives', $actives );
+	}
+
+	/**
+	 * La scène demandée par une classe `bc-apparition-<scène>`, ou ''.
+	 *
+	 * @param array $bloc Bloc analysé.
+	 * @return string
+	 */
+	private static function scenario_classe( $bloc ) {
+		$classes = (string) ( $bloc['attrs']['className'] ?? '' );
+
+		if ( ! str_contains( $classes, 'bc-apparition-' ) || ! preg_match( '/(?:^|\s)bc-apparition-([a-z0-9-]+)(?:\s|$)/', $classes, $trouve ) ) {
+			return '';
+		}
+
+		return self::scenario_existe( $trouve[1] ) ? $trouve[1] : '';
+	}
+
+	/**
+	 * La scène d'un bloc du contenu, d'après sa place dans la page ; '' pour
+	 * aucune.
+	 *
+	 * @param string $nom  Nom du bloc.
+	 * @param array  $pile Ses ancêtres, du plus haut au plus proche.
+	 * @return string
+	 */
+	private static function scenario_contenu( $nom, $pile ) {
+		if ( '' === $nom || ! self::contenu_actif() || ! doing_filter( 'the_content' ) ) {
+			return '';
+		}
+
+		if ( in_array( $nom, self::MISE_EN_PAGE, true ) || in_array( $nom, self::EXCLUS, true ) ) {
+			return '';
+		}
+
+		// Un bloc créé ici a sa propre apparition, ou n'en veut pas.
+		if ( did_action( 'init' ) && null !== blocs_creator()->registre->definition( $nom ) ) {
+			return '';
+		}
+
+		// Un ancêtre qui entre déjà emmène ce bloc avec lui.
+		foreach ( $pile as $ancetre ) {
+			if ( $ancetre['anime'] ) {
+				return '';
+			}
+		}
+
+		$carte = self::apparitions_contenu();
+		$scene = array_key_exists( $nom, $carte ) ? (string) $carte[ $nom ] : 'montee';
+
+		return self::scenario_existe( $scene ) ? $scene : '';
+	}
+
+	/**
+	 * Empile chaque bloc avant son rendu, avec la scène qui l'attend.
+	 *
+	 * @param array $bloc Bloc analysé.
+	 * @return array
+	 */
+	public static function empiler( $bloc ) {
+		$nom      = (string) ( $bloc['blockName'] ?? '' );
+		$scenario = self::scenario_classe( $bloc );
+		$reglee   = '' !== $nom && null !== self::pour( $nom );
+
+		if ( '' === $scenario && ! $reglee ) {
+			$scenario = self::scenario_contenu( $nom, self::$pile );
+		}
+
+		self::$pile[] = array(
+			'nom'      => $nom,
+			'scenario' => $scenario,
+			'anime'    => '' !== $scenario || $reglee,
+		);
+
+		return $bloc;
+	}
+
+	/* ------------------------------------------------------------------ *
 	 * Rendu
 	 * ------------------------------------------------------------------ */
 
 	/**
 	 * Pose la classe et le scénario sur le bloc rendu.
 	 *
+	 * Dans l'ordre : la classe `bc-apparition-*` du bloc, l'apparition réglée
+	 * pour son type, celle des blocs du contenu.
+	 *
 	 * @param string $html HTML du bloc.
 	 * @param array  $bloc Bloc analysé.
 	 * @return string
 	 */
 	public static function rendre( $html, $bloc ) {
-		$nom = (string) ( $bloc['blockName'] ?? '' );
+		// D'abord dépiler, quoi qu'il arrive : la pile doit rester juste.
+		$courant = array_pop( self::$pile );
+		$nom     = (string) ( $bloc['blockName'] ?? '' );
 
 		if ( '' === $nom || '' === trim( $html ) ) {
 			return $html;
@@ -462,6 +681,19 @@ class Blocs_Creator_Animations {
 		}
 
 		$apparition = self::pour( $nom );
+		$scenario   = is_array( $courant ) && $nom === $courant['nom'] ? (string) $courant['scenario'] : '';
+
+		if ( '' !== $scenario ) {
+			// Un bloc du contenu resté vide (un paragraphe laissé blanc) n'a rien à faire entrer.
+			if ( null === $apparition && '' === trim( wp_strip_all_tags( $html ) ) && ! preg_match( '/<(img|video|iframe|svg|hr|table|figure)\b/i', $html ) ) {
+				return $html;
+			}
+
+			$apparition = array(
+				'nom'   => $scenario,
+				'duree' => $apparition['duree'] ?? 0,
+			);
+		}
 
 		if ( null === $apparition ) {
 			return $html;
@@ -469,9 +701,11 @@ class Blocs_Creator_Animations {
 
 		$processeur = new WP_HTML_Tag_Processor( $html );
 
-		if ( ! $processeur->next_tag() ) {
+		if ( ! $processeur->next_tag() || $processeur->has_class( 'bc-anim' ) ) {
 			return $html;
 		}
+
+		self::$posee = true;
 
 		$processeur->add_class( 'bc-anim' );
 		$processeur->set_attribute( 'data-bc-anim', $apparition['nom'] );
@@ -503,7 +737,7 @@ class Blocs_Creator_Animations {
 	 * apparition.
 	 */
 	public static function amorce() {
-		if ( is_admin() || ! self::carte() ) {
+		if ( is_admin() || ! self::actives() ) {
 			return;
 		}
 
@@ -518,7 +752,7 @@ class Blocs_Creator_Animations {
 	 * Met en file la feuille et le script du site.
 	 */
 	public static function assets_site() {
-		if ( is_admin() || ! self::carte() ) {
+		if ( is_admin() || ! self::actives() ) {
 			return;
 		}
 

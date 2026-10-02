@@ -4,6 +4,50 @@ Créez vos blocs Gutenberg en déclarant leurs champs, puis dessinez-les dans un
 fichier PHP de votre thème.
 
 Auteur : **Yanis Singer** — Licence GPL-2.0-or-later — WordPress 6.5+, PHP 8.0+
+(l'IA demande WordPress 7.0+)
+
+> **Deux lectures avant de commencer.** `docs/guide-theme.md` pour construire
+> un site avec le plugin (le thème, le format de `definitions.json`, les
+> apparitions, les modules, les migrations). `CLAUDE.md` pour modifier le
+> plugin lui-même (conventions, pièges connus, comment tester).
+
+---
+
+## Nouveautés de la 5.0
+
+Ce qu'on réécrivait à chaque site rejoint le plugin. Rien ne change sur un
+site existant tant qu'on ne coche rien : les nouveautés sont des réglages, des
+modules désactivés, ou des fonctions qu'on appelle.
+
+- **Des apparitions plus travaillées.** Sept variantes de parties de plus
+  (`mots`, `masque`, `flou`, `trait`, `pop`, `carte`, `ligne`) ; les titres
+  `data-bc-part="mots"` montent mot à mot ; les parties encore sous l'écran
+  **attendent leur tour** au lieu de jouer hors de vue sur un téléphone ; le
+  bas de page entre toujours.
+- **Les blocs du contenu.** Une case fait entrer chaque paragraphe, titre,
+  image, liste… posé dans une page, avec la scène de son type. La classe
+  `bc-apparition-<scène>` en donne une à un bloc seul (modèle, pied de page).
+- **L'IA dans l'éditeur** (WordPress 7.0+, Réglages › Connecteurs) :
+  « Rédiger avec l'IA » sur les articles, « Remplir avec l'IA » sur les blocs
+  créés ici, et l'extension « AI » de WordPress qui lit enfin le texte des
+  sections.
+- **Des modules** à cocher : maintenance, bandeau cookies (Google Analytics
+  attend l'accord), brouillons des formulaires, pas de page d'auteur, pas de
+  recherche, bouton « Modifier la page », nom des blocs sur une page
+  d'exemple. Un thème peut les imposer.
+- **Les définitions voyagent avec le thème** : `blocs-creator/definitions.json`
+  s'installe à l'activation du thème, se compare et se recopie depuis l'écran
+  Outils ; des **migrations** poussent les changements sur un site en ligne ;
+  des commandes **WP-CLI** font tout cela en ligne de commande.
+- **Les e-mails** des formulaires du thème, mis en page, avec leur version
+  texte : `blocs_creator_email_*()`.
+- **Dans l'éditeur**, les aperçus des blocs ne réagissent plus au clic (un lien
+  ne fait plus quitter l'éditeur), et les valeurs par défaut des champs
+  enrichis comprennent `**gras**` et `_italique_`.
+
+Ce qui reste au thème, délibérément : les micro-interactions (compteurs,
+cartes inclinables, boutons aimantés, parallaxe, accordéons, en-tête qui se
+cache…). Elles se dessinent pour chaque projet.
 
 ---
 
@@ -381,11 +425,52 @@ de deviner.
 | `pastille` | réduit et décalé d'un rien — pour une grille de cartes |
 | `fondu` | l'opacité seule, sans déplacement |
 | `pinceau` | une découpe inclinée qui balaie la largeur |
+| `mots` | le titre reste en place, chaque mot monte de sous sa ligne (vaut dans **toutes** les scènes) |
+| `masque` | un rideau se lève, l'image derrière se pose en dézoomant |
+| `flou` | sort de la brume en montant d'un rien |
+| `trait` | une ligne qui se tire de gauche à droite |
+| `pop` | petit, penché, puis posé d'un rebond — une icône, un guillemet |
+| `carte` | monte de loin, légèrement tournée, et se redresse (une sur deux dans l'autre sens) |
+| `ligne` | une rangée de liste qui glisse depuis la gauche |
 
 Un `data-bc-part` posé par le gabarit est toujours respecté, quelle que soit la
 scène ; un `--bc-anim-rang` posé en style en ligne l'est aussi. Une scène qui ne
 déplace pas le bloc et ne trouve aucune partie animable bascule sur « Montée »
 plutôt que de ne rien jouer.
+
+### Ce que le moteur fait tout seul (5.0)
+
+- **Les titres mot à mot.** Un élément `data-bc-part="mots"` est découpé en
+  mots (`bc-mot` / `bc-mot__in`) ; les balises intérieures restent. Une fois
+  posés, les mots rendent leurs débords (`bc-mots-poses`) : un italique n'est
+  pas rogné.
+- **Les parties qui attendent leur tour.** Un bloc est révélé dès que son haut
+  entre à l'écran ; sur un téléphone, ses cartes du bas joueraient leur entrée
+  deux écrans plus bas. Chaque partie encore sous l'écran au chargement
+  attend (`bc-attend`) d'arriver elle-même à la ligne d'entrée.
+- **Le filet.** Toutes les deux secondes de page regardée, ce qui est à
+  l'écran et attend encore entre : le dernier bloc d'une page n'atteint jamais
+  la ligne d'entrée sur un grand écran.
+- **L'évènement `blocs-creator:vu`** part de chaque bloc révélé (il remonte) :
+  un script du thème qui doit démarrer à l'entrée d'un bloc l'écoute.
+
+### Les blocs du contenu, et la classe `bc-apparition-*`
+
+*Réglages → Apparitions → Les blocs du contenu* : une case fait entrer chaque
+bloc natif posé dans le contenu d'une page, avec la scène de son type —
+titre et paragraphe montent, une liste en cascade, une image se déploie, une
+citation signe… (filtre `blocs_creator_apparitions_contenu`). Un groupe ou des
+colonnes n'entrent pas eux-mêmes : leurs enfants entrent, l'un après l'autre.
+Un bloc qui entre emmène ses enfants. L'en-tête et le pied de page ne sont pas
+concernés.
+
+Pour un bloc seul — dans un modèle du thème, un pied de page, ou par
+« Classes CSS supplémentaires » — la classe `bc-apparition-cascade` (ou
+`-montee`, `-souffle`…) lui donne cette scène.
+
+Le rythme de tout le site se règle sur `:root` : `--bc-anim-duree`,
+`--bc-anim-courbe`, `--bc-anim-courbe-expo`, `--bc-anim-courbe-douce`,
+`--bc-anim-courbe-ressort`, `--bc-anim-cadence-mots`, `--bc-anim-ecart`.
 
 Trois garde-fous :
 
@@ -416,6 +501,10 @@ la déclare, des règles CSS sur `[data-bc-anim="…"]` la dessinent.
 | Supprimer les données à la désinstallation | non |
 | Blocs retirés de l'inséreur | aucun |
 | Apparition d'un bloc | aucune, jusqu'à ce que vous en choisissiez une |
+| Blocs natifs du contenu animés | non |
+| IA : rédiger un article, remplir une section, extension « AI » | oui, dès qu'une IA est branchée |
+| IA : délai de réponse | 90 secondes |
+| Modules | aucun, sauf ceux que le thème impose |
 
 > **Une seule catégorie.** Le plugin n'ajoute sa section à l'inséreur que si
 > personne ne l'a déjà déclarée — ni sous ce slug, ni sous ce titre. Deux
@@ -456,6 +545,81 @@ Ensuite seulement, on cherche du côté de l'hébergement.
 
 ---
 
+## L'IA
+
+*Réglages → IA.* Le plugin ne parle à aucune IA lui-même et ne garde aucune
+clé : il passe par le client d'IA de WordPress (7.0 et plus), branché dans
+*Réglages → Connecteurs* — Google, Anthropic, OpenAI. Sans connecteur, rien
+n'apparaît.
+
+| Service | Où | Ce qu'il fait |
+|---|---|---|
+| Rédiger avec l'IA | Colonne de droite des articles (et des types cochés) | Des notes en vrac et une longueur → titre, chapô, texte. Relu dans une fenêtre, puis inséré. |
+| Remplir avec l'IA | Colonne de droite d'un bloc créé ici | Des notes → le texte des champs du bloc, d'après sa définition. Relu champ par champ, puis appliqué (Ctrl/Cmd + Z annule). |
+| Extension « AI » | Méta descriptions, extraits, résumés de l'extension de WordPress | Elle lit la page affichée, et non le contenu enregistré où une section n'est qu'un commentaire. |
+
+Deux règles tiennent les consignes : l'IA **n'invente rien** qui ne soit dans
+les notes (ni nom, ni date, ni chiffre), et **tout se relit** avant d'entrer
+dans la page. « Remplir » ne touche qu'aux champs de texte placés dans le
+canevas : ni images, ni adresses de liens, ni réglages de la colonne de droite.
+
+Quand l'IA est surchargée (503) ou le quota atteint (429), on réessaie avec le
+modèle suivant de la liste. Les demandes ont 90 secondes (réglable) : Gemini
+ne renvoie rien tant qu'il réfléchit. Les erreurs reviennent en français, avec
+quoi faire.
+
+---
+
+## Les modules
+
+*Réglages → Modules.* Ce qu'un site demande presque toujours, prêt à servir ;
+un module décoché ne charge pas une ligne.
+
+| Module | Ce qu'il fait |
+|---|---|
+| `maintenance` | Page d'attente en 503 + `Retry-After` pour les visiteurs, site normal pour qui le modifie, interrupteur dans la barre d'outils, *Réglages → Maintenance*. |
+| `cookies` | Google Analytics (Site Kit…) attend l'accord : balises en `text/plain` jusqu'à « Accepter ». Bandeau discret, « Refuser » aussi simple, choix gardé six mois, `#gerer-les-cookies` le rouvre. *Réglages → Cookies*. |
+| `brouillons` | Les réponses d'un `<form data-bc-brouillon>` gardées sur l'appareil (après accord, avec le bandeau), retrouvées au retour. |
+| `sans-auteurs` | Pages d'auteur redirigées, retirées du plan du site, comptes masqués à l'API pour les visiteurs. |
+| `sans-recherche` | `?s=` → 404 sans requête, bloc Rechercher retiré. |
+| `bouton-modifier` | Bouton flottant « Modifier la page » pour qui peut modifier ce qu'il regarde. |
+| `noms-blocs` | Sur une page d'exemple, le nom de chaque bloc au-dessus de lui. |
+
+Un thème impose ceux dont il a besoin :
+`add_theme_support( 'blocs-creator-modules', array( 'maintenance', 'cookies' ) );`.
+Leurs styles prennent les couleurs de `theme.json` (`base`, `contrast`,
+`accent`) et se redéfinissent par des variables CSS. Le détail est dans
+`docs/guide-theme.md`.
+
+---
+
+## Les définitions dans le thème, les migrations, WP-CLI
+
+**`blocs-creator/definitions.json`**, dans le thème, au format de l'export :
+les blocs qui manquent s'installent à l'activation du thème ; *Outils → Le
+fichier du thème* compare le fichier et la base bloc par bloc et recopie dans
+un sens ou dans l'autre.
+
+**Les migrations** : ce qui doit changer en base quand le thème évolue (une
+nouvelle version d'un bloc, une page à refaire), joué une fois à la première
+visite qui suit la mise en ligne. Le thème les déclare par le filtre
+`blocs_creator_migrations` ; une migration qui échoue (un fichier pas encore
+arrivé par FTP) est retentée un quart d'heure plus tard ; ce qui a été fait
+s'affiche une fois aux administrateurs. Aides :
+`blocs_creator_migration_fichiers()`, `blocs_creator_importer_definitions()`,
+`blocs_creator_migration_page()`.
+
+**WP-CLI** :
+
+```
+wp blocs-creator definitions etat | importer [--ecraser] [--seulement=a,b] | exporter
+wp blocs-creator migrations etat | lancer
+wp blocs-creator modules liste | activer <id>… | desactiver <id>…
+wp blocs-creator ia etat
+```
+
+---
+
 ## Import et export
 
 **Blocs Creator → Outils.** L'export produit un JSON qui ne contient que les
@@ -481,6 +645,21 @@ fichier trafiqué ne peut déclarer que des champs du catalogue.
 | `blocs_creator_blocs_proteges` | Les blocs qu'on refuse de retirer de l'inséreur. |
 | `blocs_creator_scenarios_animation` | Ajouter une scène d'apparition. |
 | `blocs_creator_animation_concerne` | L'accès d'un bloc au réglage d'apparition. |
+| `blocs_creator_apparitions_contenu` | La scène de chaque bloc natif du contenu. |
+| `blocs_creator_animations_actives` | Forcer le chargement des apparitions (thème classique). |
+| `blocs_creator_ia_consignes` | Les consignes communes données à l'IA. |
+| `blocs_creator_ia_consignes_article` | Les consignes de « Rédiger avec l'IA ». |
+| `blocs_creator_ia_consignes_section` | Les consignes de « Remplir avec l'IA ». |
+| `blocs_creator_ia_modeles` | Les modèles essayés, dans l'ordre. |
+| `blocs_creator_ia_champ_remplissable` | Ce que l'IA peut remplir dans un bloc. |
+| `blocs_creator_catalogue_modules` | Ajouter un module. |
+| `blocs_creator_module_actif` | Forcer un module, ou l'éteindre. |
+| `blocs_creator_fichier_definitions` | Le chemin du `definitions.json` du thème. |
+| `blocs_creator_migrations` | Les migrations du thème, par source puis par numéro. |
+| `blocs_creator_maintenance_peut_passer` | Qui voit le site pendant la maintenance. |
+| `blocs_creator_maintenance_feuilles` | Les feuilles de la page de maintenance. |
+| `blocs_creator_cookies_balise_retenue` | Les balises qui attendent l'accord du visiteur. |
+| `blocs_creator_email_couleurs` | Les couleurs des e-mails. |
 
 ---
 
@@ -502,7 +681,13 @@ includes/
   class-blocs-creator-reglages.php    Les réglages
   class-blocs-creator-diagnostic.php  Journal des enregistrements, relevé de la machine
   class-blocs-creator-rest.php        Deux routes pour l'éditeur
+  class-blocs-creator-ia.php          L'IA : réglages, appels, routes, panneaux
+  class-blocs-creator-modules.php     Le registre des modules
+  class-blocs-creator-theme.php       Le definitions.json du thème
+  class-blocs-creator-migrations.php  Les migrations déclarées par le thème
+  class-blocs-creator-cli.php         Les commandes WP-CLI
   fonctions.php            L'API des gabarits (blocs_creator_*)
+  emails.php               La boîte à outils des e-mails
 admin/
   class-blocs-creator-admin.php             Menu, écrans, actions
   class-blocs-creator-liste-table.php       L'écran « Tous les blocs »
@@ -516,11 +701,18 @@ admin/
 assets/
   js/editeur.js            L'éditeur générique des blocs générés
   js/animations.js         Révéler un bloc et ses parties quand il entre à l'écran
+  js/ia-article.js         « Rédiger avec l'IA »
+  js/ia-section.js         « Remplir avec l'IA »
+  js/apercus-inertes.js    Les aperçus de l'éditeur ne réagissent pas au clic
   css/editeur.css          Ce que l'éditeur ajoute autour d'un bloc
   css/blocs.css            Le strict minimum côté site
-  css/animations.css       Les dix scènes d'apparition, et l'aperçu
+  css/animations.css       Les dix scènes, les variantes de parties, l'aperçu
+  css/ia.css               Les panneaux d'IA
+modules/<id>/              Un module : module.php, et ses fichiers
+docs/guide-theme.md        Construire un site avec le plugin
 gabarits/secours.php       Le rendu d'un bloc sans gabarit
 packs/                     Les blocs codés livrés avec le plugin
+CLAUDE.md                  Les consignes pour modifier le plugin
 ```
 
 Aucun outil de build : le JavaScript est écrit en natif
@@ -540,3 +732,7 @@ Trois endroits, et pas un de plus :
    se nettoie et ce qu'il rend au gabarit.
 3. `assets/js/editeur.js` (fonction `controle`) et `admin/js/constructeur.js`
    (fonction `reglagesDuType`) fournissent ses contrôles.
+
+Un quatrième, facultatif : si le type est du texte que l'IA doit savoir
+remplir, `Blocs_Creator_Ia::REMPLISSABLES`, avec son schéma dans
+`schema_champ()` et sa fusion dans `fondre()`.

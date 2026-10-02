@@ -1,15 +1,21 @@
 /*
  * Les apparitions : révéler un bloc, et ses parties, quand il entre à l'écran.
  *
- * Le script ne décide de rien visuellement. Il fait trois choses :
+ * Le script ne décide de rien visuellement. Il fait cinq choses :
  *
  *   1. il désigne les PARTIES d'un bloc — son titre, son texte, ses cartes —
  *      et leur donne un rang, pour que le CSS les décale ;
- *   2. il guette l'entrée du bloc à l'écran ;
- *   3. il pose `is-vu`.
+ *   2. il découpe en mots les titres qui le demandent (`data-bc-part="mots"`) ;
+ *   3. il guette l'entrée du bloc à l'écran, et pose `is-vu` ;
+ *   4. il fait attendre leur tour aux parties encore sous l'écran
+ *      (`bc-attend`) : sur un téléphone, une section fait deux écrans de haut ;
+ *   5. il garde un filet : ce qui est à l'écran finit toujours par entrer.
  *
  * Tout le dessin est dans assets/css/animations.css, et c'est PHP qui a posé
  * `data-bc-anim` d'après le réglage du bloc.
+ *
+ * Chaque bloc révélé reçoit l'évènement `blocs-creator:vu` (il remonte) : un
+ * gabarit qui veut lancer quelque chose à l'entrée de son bloc l'écoute.
  *
  * Écrit en JavaScript natif, sans dépendance : le plugin s'installe partout
  * sans outil de build.
@@ -21,6 +27,9 @@
 	/* Un bloc est considéré entré quand il a franchi 10 % du bas de l'écran. */
 	var MARGE = '0px 0px -10% 0px';
 
+	/* La même ligne, en part de la hauteur de l'écran, pour les parties. */
+	var LIGNE_ENTREE = 0.9;
+
 	/*
 	 * Le filet de sécurité, en millisecondes.
 	 *
@@ -30,6 +39,14 @@
 	 * apparition.
 	 */
 	var FILET = 3500;
+
+	/*
+	 * Le second filet : toutes les deux secondes de page réellement regardée,
+	 * ce qui est à l'écran et attend encore entre. C'est lui qui sert le bas
+	 * d'une page : sur un grand écran, le dernier bloc n'atteint jamais la
+	 * ligne d'entrée, 10 % au-dessus du bas de l'écran.
+	 */
+	var RONDE = 2000;
 
 	/*
 	 * Au-delà, le décalage se met à traîner plus qu'il n'accompagne : les
@@ -51,6 +68,29 @@
 
 	/** Au-delà, on n'anime plus une scène, on fait défiler un générique. */
 	var PARTS_MAX = 24;
+
+	/**
+	 * Tous les éléments d'un sélecteur, en tableau.
+	 *
+	 * @param {string}  selecteur Sélecteur CSS.
+	 * @param {Element} contexte  Racine de la recherche.
+	 * @return {Element[]} Les éléments.
+	 */
+	function tous( selecteur, contexte ) {
+		return Array.prototype.slice.call( ( contexte || document ).querySelectorAll( selecteur ) );
+	}
+
+	/**
+	 * L'élément est-il, au moins en partie, à l'écran ?
+	 *
+	 * @param {Element} element L'élément.
+	 * @return {boolean} Vrai s'il se voit.
+	 */
+	function aLEcran( element ) {
+		var boite = element.getBoundingClientRect();
+
+		return !! ( boite.width || boite.height ) && boite.top < window.innerHeight && boite.bottom > 0;
+	}
 
 	/**
 	 * L'élément peut-il porter un geste sans que son dessin en souffre ?
@@ -206,11 +246,9 @@
 	 * @return {Element[]} Les parties déclarées, dans l'ordre du balisage.
 	 */
 	function declarees( bloc ) {
-		return Array.prototype.slice
-			.call( bloc.querySelectorAll( '[data-bc-part]' ) )
-			.filter( function ( partie ) {
-				return partie.closest( '.bc-anim[data-bc-anim]' ) === bloc;
-			} );
+		return tous( '[data-bc-part]', bloc ).filter( function ( partie ) {
+			return partie.closest( '.bc-anim[data-bc-anim]' ) === bloc;
+		} );
 	}
 
 	/**
@@ -249,6 +287,187 @@
 		}
 	}
 
+	/* ------------------------------------------------------------------ *
+	 * Les titres, mot à mot
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Enveloppe chaque mot d'un élément dans deux <span> : le premier cache,
+	 * le second monte. Les balises intérieures (em, br, a…) sont conservées :
+	 * on ne découpe que les nœuds de texte.
+	 *
+	 * Un titre déjà découpé — par ce script, ou par un thème qui le faisait
+	 * avant que le plugin ne sache le faire — n'est pas redécoupé.
+	 *
+	 * @param {Element} element Le titre.
+	 * @return {number} Le nombre de mots.
+	 */
+	function decouper( element ) {
+		if ( element.hasAttribute( 'data-bc-mots' ) || element.hasAttribute( 'data-kahel-mots' ) || element.querySelector( '.bc-mot, .kahel-mot' ) ) {
+			return 0;
+		}
+
+		element.setAttribute( 'data-bc-mots', '' );
+
+		var marcheur = document.createTreeWalker( element, window.NodeFilter.SHOW_TEXT );
+		var textes   = [];
+		var rang     = 0;
+
+		while ( marcheur.nextNode() ) {
+			textes.push( marcheur.currentNode );
+		}
+
+		textes.forEach( function ( noeud ) {
+			var morceaux = noeud.nodeValue.split( /(\s+)/ );
+			var fragment = document.createDocumentFragment();
+
+			morceaux.forEach( function ( morceau ) {
+				if ( '' === morceau ) {
+					return;
+				}
+
+				if ( /^\s+$/.test( morceau ) ) {
+					fragment.appendChild( document.createTextNode( morceau ) );
+					return;
+				}
+
+				var mot    = document.createElement( 'span' );
+				var dedans = document.createElement( 'span' );
+
+				mot.className    = 'bc-mot';
+				dedans.className = 'bc-mot__in';
+				dedans.style.setProperty( '--bc-i', String( rang ) );
+				dedans.textContent = morceau;
+
+				mot.appendChild( dedans );
+				fragment.appendChild( mot );
+				rang++;
+			} );
+
+			noeud.parentNode.replaceChild( fragment, noeud );
+		} );
+
+		return rang;
+	}
+
+	/**
+	 * Appelle `rappel` dès que `test` rend vrai — tout de suite si c'est déjà
+	 * le cas, sinon au premier changement de classe de l'élément qui le rend
+	 * vrai.
+	 *
+	 * @param {Element}  element L'élément surveillé.
+	 * @param {Function} test    Rend vrai quand c'est le moment.
+	 * @param {Function} rappel  Appelé une seule fois.
+	 */
+	function quand( element, test, rappel ) {
+		if ( test() ) {
+			rappel();
+			return;
+		}
+
+		var guetteur = new window.MutationObserver( function () {
+			if ( test() ) {
+				guetteur.disconnect();
+				rappel();
+			}
+		} );
+
+		guetteur.observe( element, { attributes: true, attributeFilter: [ 'class' ] } );
+	}
+
+	/**
+	 * Découpe les titres qui le demandent, et leur rend leurs débords une fois
+	 * les mots posés.
+	 */
+	function titres() {
+		tous( '.bc-anim[data-bc-anim] [data-bc-part="mots"]' ).forEach( function ( titre ) {
+			var nombre = decouper( titre );
+			var bloc   = titre.closest( '.bc-anim[data-bc-anim]' );
+
+			if ( ! nombre || ! bloc ) {
+				return;
+			}
+
+			quand( bloc, function () {
+				return bloc.classList.contains( 'is-vu' );
+			}, function () {
+				quand( titre, function () {
+					return ! titre.classList.contains( 'bc-attend' );
+				}, function () {
+					window.setTimeout( function () {
+						titre.classList.add( 'bc-mots-poses' );
+					}, 1800 + nombre * 55 );
+				} );
+			} );
+		} );
+	}
+
+	/* ------------------------------------------------------------------ *
+	 * Révéler
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Révèle un bloc, et le dit.
+	 *
+	 * @param {Element} bloc Le bloc.
+	 */
+	function reveler( bloc ) {
+		if ( bloc.classList.contains( 'is-vu' ) ) {
+			return;
+		}
+
+		bloc.classList.add( 'is-vu' );
+
+		if ( 'function' === typeof window.CustomEvent ) {
+			bloc.dispatchEvent( new window.CustomEvent( 'blocs-creator:vu', { bubbles: true } ) );
+		}
+	}
+
+	/**
+	 * Fait attendre leur tour aux parties encore sous l'écran.
+	 *
+	 * Un bloc est révélé dès que son haut entre à l'écran : toutes ses parties
+	 * joueraient alors leur entrée, y compris celles qui sont deux écrans plus
+	 * bas. Chacune d'elles garde donc son état de départ (`bc-attend`) jusqu'à
+	 * ce qu'elle arrive elle-même à la ligne d'entrée. Les parties qui arrivent
+	 * ensemble gardent leur décalage.
+	 *
+	 * @param {Element[]} blocs Les blocs animés de la page.
+	 * @return {Element[]} Les parties mises en attente.
+	 */
+	function mettreEnAttente( blocs ) {
+		var ligne   = window.innerHeight * LIGNE_ENTREE;
+		var attente = [];
+
+		/*
+		 * Pas d'écran mesurable (page pré-rendue, onglet ouvert sans fenêtre) :
+		 * on ne saurait pas ce qui est « sous l'écran ». Personne n'attend.
+		 */
+		if ( window.innerHeight < 100 ) {
+			return attente;
+		}
+
+		blocs.forEach( function ( bloc ) {
+			if ( bloc.classList.contains( 'is-vu' ) ) {
+				return;
+			}
+
+			declarees( bloc ).forEach( function ( partie ) {
+				var boite = partie.getBoundingClientRect();
+
+				// Ni ce qui ne s'affiche pas (une étape de formulaire masquée), ni ce qui est déjà à l'écran.
+				if ( ( ! boite.width && ! boite.height ) || boite.top < ligne ) {
+					return;
+				}
+
+				partie.classList.add( 'bc-attend' );
+				attente.push( partie );
+			} );
+		} );
+
+		return attente;
+	}
+
 	function demarrer() {
 		var racine = document.documentElement;
 
@@ -256,13 +475,14 @@
 			return;
 		}
 
-		var blocs = Array.prototype.slice.call( document.querySelectorAll( '.bc-anim[data-bc-anim]' ) );
+		var blocs = tous( '.bc-anim[data-bc-anim]' );
 
 		if ( ! blocs.length ) {
 			return;
 		}
 
 		blocs.forEach( preparer );
+		titres();
 
 		/*
 		 * Le filet posé par le script d'en-tête a couvert le temps de
@@ -274,8 +494,10 @@
 		window.clearTimeout( window.bcAnimFilet );
 
 		function tout_montrer() {
-			blocs.forEach( function ( bloc ) {
-				bloc.classList.add( 'is-vu' );
+			blocs.forEach( reveler );
+
+			tous( '.bc-attend' ).forEach( function ( partie ) {
+				partie.classList.remove( 'bc-attend' );
 			} );
 		}
 
@@ -284,7 +506,8 @@
 			return;
 		}
 
-		var revele = false;
+		var revele  = false;
+		var attente = mettreEnAttente( blocs );
 
 		var observateur = new window.IntersectionObserver(
 			function ( entrees ) {
@@ -293,9 +516,15 @@
 						return;
 					}
 
-					entree.target.classList.add( 'is-vu' );
 					observateur.unobserve( entree.target );
-					revele = true;
+
+					if ( entree.target.classList.contains( 'bc-attend' ) ) {
+						entree.target.classList.remove( 'bc-attend' );
+						attente.splice( attente.indexOf( entree.target ), 1 );
+					} else {
+						reveler( entree.target );
+						revele = true;
+					}
 				} );
 			},
 			{ rootMargin: MARGE }
@@ -305,12 +534,43 @@
 			observateur.observe( bloc );
 		} );
 
+		attente.forEach( function ( partie ) {
+			observateur.observe( partie );
+		} );
+
 		var armer = function () {
 			window.setTimeout( function () {
 				if ( ! revele ) {
 					tout_montrer();
 				}
 			}, FILET );
+
+			var ronde = window.setInterval( function () {
+				if ( 'hidden' === document.visibilityState ) {
+					return;
+				}
+
+				var restants = blocs.filter( function ( bloc ) {
+					if ( ! bloc.classList.contains( 'is-vu' ) && aLEcran( bloc ) ) {
+						reveler( bloc );
+						revele = true;
+					}
+
+					return ! bloc.classList.contains( 'is-vu' );
+				} );
+
+				attente.slice().forEach( function ( partie ) {
+					if ( aLEcran( partie ) ) {
+						partie.classList.remove( 'bc-attend' );
+						observateur.unobserve( partie );
+						attente.splice( attente.indexOf( partie ), 1 );
+					}
+				} );
+
+				if ( ! restants.length && ! attente.length ) {
+					window.clearInterval( ronde );
+				}
+			}, RONDE );
 		};
 
 		if ( 'hidden' === document.visibilityState ) {

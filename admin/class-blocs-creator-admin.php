@@ -685,6 +685,15 @@ class Blocs_Creator_Admin {
 			(array) ( $brut[ Blocs_Creator_Animations::OPTION ] ?? array() )
 		);
 
+		// Les cases décochées n'envoient rien : leur absence vaut « non ».
+		Blocs_Creator_Animations::enregistrer_contenu( ! empty( $brut['bc_anim_contenu'] ) );
+
+		Blocs_Creator_Ia::enregistrer_depuis_formulaire(
+			(array) ( $brut[ Blocs_Creator_Ia::OPTION ] ?? array() )
+		);
+
+		Blocs_Creator_Modules::enregistrer( (array) ( $brut['bc_modules'] ?? array() ) );
+
 		$onglet = isset( $_POST['bc_onglet'] ) ? sanitize_key( wp_unslash( $_POST['bc_onglet'] ) ) : 'general';
 
 		if ( $resultat['ecrit'] ) {

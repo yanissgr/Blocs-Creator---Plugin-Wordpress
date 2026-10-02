@@ -1146,3 +1146,144 @@
 .bc-metabox .bc-apparition {
 	max-width: none;
 }
+
+/* ------------------------------------------------------------------ *
+ * Apparitions : les blocs du contenu, en liste serrée
+ * ------------------------------------------------------------------ */
+
+.bc-variantes.bc-variantes--compactes {
+	grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+	margin-bottom: 1em;
+}
+
+.bc-variantes--compactes li {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 0;
+	padding: 4px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.bc-variantes--compactes .bc-variantes__quoi {
+	display: inline;
+}
+
+/* ------------------------------------------------------------------ *
+ * IA
+ * ------------------------------------------------------------------ */
+
+.bc-ia-types {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 18px;
+	margin-top: 10px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Modules
+ * ------------------------------------------------------------------ */
+
+.bc-modules {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+	max-width: 72rem;
+	margin: 0 0 1.5em;
+}
+
+.bc-modules__item {
+	margin: 0;
+	padding: 14px 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+}
+
+.bc-modules__item.est-actif {
+	border-color: #2271b1;
+	box-shadow: inset 3px 0 0 #2271b1;
+}
+
+.bc-modules__case {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+}
+
+.bc-modules__nom {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.bc-modules__quoi {
+	margin: 8px 0 0;
+	color: #646970;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.bc-modules__meta {
+	display: flex;
+	gap: 12px;
+	margin: 8px 0 0;
+	font-size: 12px;
+}
+
+.bc-modules__meta:empty {
+	display: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Outils : le fichier du thème
+ * ------------------------------------------------------------------ */
+
+.bc-theme-etat {
+	margin: 0 0 1em;
+}
+
+.bc-theme-etat td,
+.bc-theme-etat th {
+	padding: 6px 10px;
+}
+
+.bc-etat {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.bc-etat--absent {
+	background: #fcf0e3;
+	color: #8a4b0f;
+}
+
+.bc-etat--different {
+	background: #fcf9e8;
+	color: #6d5c00;
+}
+
+.bc-etat--identique {
+	background: #edfaef;
+	color: #1e6b2c;
+}
+
+.bc-etat--base {
+	background: #f0f6fc;
+	color: #135e96;
+}
+
+.bc-theme-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.bc-theme-actions form {
+	margin: 0;
+}

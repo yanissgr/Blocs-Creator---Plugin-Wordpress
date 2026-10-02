@@ -11,6 +11,25 @@
 	display: none;
 }
 
+/*
+ * L'aperçu d'un bloc est une image : rien n'y réagit.
+ *
+ * Le rendu serveur montre de vrais liens, boutons, cases à cocher, questions
+ * dépliables. Un clic dessus ne doit rien déclencher — ni quitter l'éditeur
+ * par un lien, ni cocher une case : il sélectionne le bloc, c'est tout. Le
+ * pointeur traverse donc l'aperçu, et assets/js/apercus-inertes.js le rend
+ * aussi inerte au clavier. Les blocs imbriqués restent modifiables.
+ *
+ * Un thème qui dessine ses propres aperçus dans l'éditeur leur pose
+ * `data-bc-apercu` : même traitement.
+ */
+.bc-editeur--apercu > :not(.bc-editeur__imbriques),
+[data-bc-apercu] {
+	pointer-events: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
 .bc-editeur__formulaire {
 	padding: 16px;
 	border: 1px solid #dcdcde;

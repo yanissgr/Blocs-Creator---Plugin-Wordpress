@@ -4,7 +4,7 @@
  *
  * C'est la seule partie du plugin qu'on écrit tous les jours : l'API d'un
  * fichier de rendu. Elle tient en une quinzaine de fonctions, toutes préfixées
- * `bc_`, toutes utilisables sans rien connaître du reste.
+ * `blocs_creator_`, toutes utilisables sans rien connaître du reste.
  *
  * Deux principes :
  *
@@ -334,4 +334,33 @@ function blocs_creator_rappel( $message ) {
  */
 function blocs_creator_bloc() {
 	return Blocs_Creator_Rendu::definition();
+}
+
+/**
+ * Traduit le balisage léger d'un texte : **gras**, _italique_ et retours à
+ * la ligne.
+ *
+ * Les valeurs par défaut d'une définition s'écrivent en texte brut — une
+ * balise y serait effacée. Un titre par défaut s'écrit donc « Éduquer,
+ * partager, **se balader ensemble.** » et devient du HTML ici. Le plugin s'en
+ * sert pour les valeurs par défaut des champs « Texte enrichi » ; un gabarit
+ * ou un réglage de thème peut s'en servir pour les siennes.
+ *
+ * Un texte qui contient déjà une balise est rendu tel quel : il a été écrit
+ * dans l'éditeur, et l'on ne touche à rien — pas même au souligné d'une URL.
+ *
+ * @param string $texte Texte brut, ou HTML.
+ * @return string
+ */
+function blocs_creator_balisage_leger( $texte ) {
+	$texte = (string) $texte;
+
+	if ( str_contains( $texte, '<' ) ) {
+		return $texte;
+	}
+
+	$texte = (string) preg_replace( '/\*\*(.+?)\*\*/su', '<strong>$1</strong>', $texte );
+	$texte = (string) preg_replace( '/(?<![\p{L}\p{N}])_(.+?)_(?![\p{L}\p{N}])/su', '<em>$1</em>', $texte );
+
+	return str_replace( array( "\r\n", "\n" ), '<br>', $texte );
 }

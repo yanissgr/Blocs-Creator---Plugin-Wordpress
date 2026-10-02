@@ -2,7 +2,7 @@
 /**
  * L'écran des réglages.
  *
- * Trois onglets, un seul formulaire : tout est envoyé d'un coup, quel que soit
+ * Cinq onglets, un seul formulaire : tout est envoyé d'un coup, quel que soit
  * l'onglet ouvert. C'est ce qui permet de cocher trois blocs ici, de changer
  * une animation là, et de n'appuyer qu'une fois sur « Enregistrer ».
  *
@@ -43,7 +43,7 @@ $blocs_creator_ecartes    = count( Blocs_Creator_Disponibilite::ecartes() );
 // L'onglet qu'on avait sous les yeux. Il voyage dans l'adresse : c'est ce qui
 // permet à l'enregistrement de revenir là où l'on était, et à un signet de
 // pointer sur la bonne section.
-$blocs_creator_onglets = array( 'general', 'disponibilite', 'animations' );
+$blocs_creator_onglets = array( 'general', 'disponibilite', 'animations', 'ia', 'modules' );
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Simple état d'affichage.
 $blocs_creator_onglet = isset( $_GET['bc_onglet'] ) ? sanitize_key( wp_unslash( $_GET['bc_onglet'] ) ) : 'general';
 $blocs_creator_onglet = in_array( $blocs_creator_onglet, $blocs_creator_onglets, true ) ? $blocs_creator_onglet : 'general';
@@ -70,6 +70,23 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 		</button>
 		<button type="button" class="nav-tab<?php echo 'animations' === $blocs_creator_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="animations">
 			<?php esc_html_e( 'Apparitions', 'blocs-creator' ); ?>
+		</button>
+		<button type="button" class="nav-tab<?php echo 'ia' === $blocs_creator_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="ia">
+			<?php esc_html_e( 'IA', 'blocs-creator' ); ?>
+		</button>
+		<button type="button" class="nav-tab<?php echo 'modules' === $blocs_creator_onglet ? ' nav-tab-active' : ''; ?>" data-bc-onglet="modules">
+			<?php esc_html_e( 'Modules', 'blocs-creator' ); ?>
+			<?php
+			$blocs_creator_nb_modules = count(
+				array_filter(
+					array_keys( Blocs_Creator_Modules::catalogue() ),
+					array( 'Blocs_Creator_Modules', 'actif' )
+				)
+			);
+			?>
+			<?php if ( $blocs_creator_nb_modules > 0 ) : ?>
+				<span class="bc-pastille"><?php echo esc_html( (string) $blocs_creator_nb_modules ); ?></span>
+			<?php endif; ?>
 		</button>
 	</nav>
 
@@ -395,6 +412,45 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 			$blocs_creator_opt_anim  = Blocs_Creator_Animations::OPTION;
 			?>
 
+			<h2 class="bc-groupe-blocs__titre"><?php esc_html_e( 'Les blocs du contenu', 'blocs-creator' ); ?></h2>
+
+			<p>
+				<label>
+					<input type="checkbox" name="bc_anim_contenu" value="1" <?php checked( Blocs_Creator_Animations::contenu_actif() ); ?>>
+					<?php esc_html_e( 'Faire entrer aussi les blocs natifs posés dans le contenu des pages', 'blocs-creator' ); ?>
+				</label>
+			</p>
+			<p class="description">
+				<?php esc_html_e( 'Paragraphes, titres, images, listes, citations… : chacun entre avec la scène de son type, ci-dessous. Un groupe ou des colonnes n\'entrent pas eux-mêmes : ce sont leurs enfants qui entrent, l\'un après l\'autre. Un bloc qui entre emmène ses enfants. L\'en-tête et le pied de page ne sont pas concernés ; vos blocs gardent leur propre apparition, et un bloc réglé plus bas garde la sienne.', 'blocs-creator' ); ?>
+			</p>
+
+			<ul class="bc-variantes bc-variantes--compactes">
+				<?php foreach ( Blocs_Creator_Animations::apparitions_contenu() as $blocs_creator_bloc_nom => $blocs_creator_scene ) : ?>
+					<?php
+					$blocs_creator_type = WP_Block_Type_Registry::get_instance()->get_registered( $blocs_creator_bloc_nom );
+
+					if ( ! $blocs_creator_type || '' === (string) $blocs_creator_scene ) {
+						continue;
+					}
+					?>
+					<li>
+						<span class="bc-variantes__nom"><?php echo esc_html( $blocs_creator_type->title ? $blocs_creator_type->title : $blocs_creator_bloc_nom ); ?></span>
+						<span class="bc-variantes__quoi"><?php echo esc_html( $blocs_creator_scenarios[ $blocs_creator_scene ]['libelle'] ?? $blocs_creator_scene ); ?></span>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+
+			<p class="description">
+				<?php
+				printf(
+					/* translators: 1: nom du filtre, 2: exemple de classe CSS. */
+					esc_html__( 'Le filtre %1$s change ces scènes. Pour un seul bloc — dans un modèle du thème, un pied de page, ou par « Classes CSS supplémentaires » dans l\'éditeur —, la classe %2$s lui donne une scène à lui.', 'blocs-creator' ),
+					'<code>blocs_creator_apparitions_contenu</code>',
+					'<code>bc-apparition-cascade</code>'
+				);
+				?>
+			</p>
+
 			<h2 class="bc-groupe-blocs__titre"><?php esc_html_e( 'Les blocs qui entrent en scène', 'blocs-creator' ); ?></h2>
 
 			<?php if ( empty( $blocs_creator_apparitions ) ) : ?>
@@ -526,9 +582,159 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 			</p>
 		</section>
 
+		<!-- ---------------------------------------------------------- -->
+		<section class="bc-onglet" data-bc-panneau="ia" <?php echo 'ia' === $blocs_creator_onglet ? '' : 'hidden'; ?>>
+			<?php
+			$blocs_creator_ia     = Blocs_Creator_Ia::reglages();
+			$blocs_creator_opt_ia = Blocs_Creator_Ia::OPTION;
+			?>
+
+			<p class="bc-chapo">
+				<?php esc_html_e( 'L\'IA aide à écrire, elle ne publie rien : tout ce qu\'elle propose se relit avant d\'entrer dans la page. Le plugin ne garde aucune clé — il passe par le client d\'IA de WordPress, branché dans Réglages › Connecteurs (Google, Anthropic, OpenAI).', 'blocs-creator' ); ?>
+			</p>
+
+			<?php if ( ! Blocs_Creator_Ia::disponible() ) : ?>
+				<div class="notice notice-warning inline">
+					<p><?php esc_html_e( 'Le client d\'IA de WordPress n\'est pas disponible ici (il arrive avec WordPress 7.0, et peut être coupé par la constante WP_AI_SUPPORT). Ces réglages attendront.', 'blocs-creator' ); ?></p>
+				</div>
+			<?php else : ?>
+				<p>
+					<a class="button" href="<?php echo esc_url( admin_url( 'options-connectors.php' ) ); ?>"><?php esc_html_e( 'Brancher une IA : Réglages › Connecteurs', 'blocs-creator' ); ?></a>
+				</p>
+			<?php endif; ?>
+
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Rédiger un article', 'blocs-creator' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" value="1" name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[articles]" <?php checked( ! empty( $blocs_creator_ia['articles'] ) ); ?>>
+							<?php esc_html_e( 'Panneau « Rédiger avec l\'IA » dans la colonne de droite', 'blocs-creator' ); ?>
+						</label>
+						<p class="description"><?php esc_html_e( 'Des notes en vrac et une longueur : l\'IA écrit titre, chapô et texte, sans rien inventer d\'autre. On relit, puis on insère.', 'blocs-creator' ); ?></p>
+						<fieldset class="bc-ia-types">
+							<legend class="screen-reader-text"><?php esc_html_e( 'Pour quels contenus', 'blocs-creator' ); ?></legend>
+							<?php foreach ( get_post_types( array( 'show_in_rest' => true, 'show_ui' => true ), 'objects' ) as $blocs_creator_type ) : ?>
+								<?php
+								if ( in_array( $blocs_creator_type->name, array( 'attachment', 'wp_block', 'wp_template', 'wp_template_part', 'wp_navigation', Blocs_Creator_Definition::TYPE ), true ) ) {
+									continue;
+								}
+								?>
+								<label>
+									<input type="checkbox" value="<?php echo esc_attr( $blocs_creator_type->name ); ?>"
+										name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[types][]"
+										<?php checked( in_array( $blocs_creator_type->name, (array) $blocs_creator_ia['types'], true ) ); ?>>
+									<?php echo esc_html( $blocs_creator_type->labels->name ); ?>
+								</label>
+							<?php endforeach; ?>
+						</fieldset>
+					</td>
+				</tr>
+
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Remplir une section', 'blocs-creator' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" value="1" name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[sections]" <?php checked( ! empty( $blocs_creator_ia['sections'] ) ); ?>>
+							<?php esc_html_e( 'Panneau « Remplir avec l\'IA » sur les blocs créés ici', 'blocs-creator' ); ?>
+						</label>
+						<p class="description"><?php esc_html_e( 'L\'IA propose le texte des champs du bloc — titre, texte, libellés, lignes d\'un répéteur — d\'après sa définition. Ni les images, ni les adresses, ni les réglages de la colonne de droite. Le filtre blocs_creator_ia_champ_remplissable change ce qu\'elle peut toucher.', 'blocs-creator' ); ?></p>
+					</td>
+				</tr>
+
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Extension « AI »', 'blocs-creator' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" value="1" name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[extension]" <?php checked( ! empty( $blocs_creator_ia['extension'] ) ); ?>>
+							<?php esc_html_e( 'Lui faire lire le texte des blocs créés ici', 'blocs-creator' ); ?>
+						</label>
+						<p class="description"><?php esc_html_e( 'Un bloc créé ici garde son texte dans ses réglages : l\'extension « AI » de WordPress (méta descriptions, extraits, résumés) trouvait vide une page faite de sections. Elle reçoit désormais la page affichée.', 'blocs-creator' ); ?></p>
+					</td>
+				</tr>
+
+				<tr>
+					<th scope="row"><label for="bc-ia-consignes"><?php esc_html_e( 'Qui écrit, pour qui', 'blocs-creator' ); ?></label></th>
+					<td>
+						<textarea id="bc-ia-consignes" class="large-text" rows="5"
+							name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[consignes]"
+							placeholder="<?php echo esc_attr( Blocs_Creator_Ia::consignes_communes() ); ?>"><?php echo esc_textarea( $blocs_creator_ia['consignes'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Les consignes données à l\'IA à chaque demande : ce qu\'est le site, à qui il parle, sur quel ton. Exemple : « Tu écris pour un club d\'éducation canine tenu par des bénévoles. Ton chaleureux et simple ; vouvoie le lecteur. » Vide : la phrase grisée.', 'blocs-creator' ); ?></p>
+					</td>
+				</tr>
+
+				<tr>
+					<th scope="row"><label for="bc-ia-modeles"><?php esc_html_e( 'Modèles, dans l\'ordre', 'blocs-creator' ); ?></label></th>
+					<td>
+						<textarea id="bc-ia-modeles" class="regular-text code" rows="4"
+							name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[modeles]"><?php echo esc_textarea( $blocs_creator_ia['modeles'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Un par ligne. Quand l\'IA est surchargée (503) ou le quota atteint (429), on réessaie avec le suivant. Un modèle que l\'IA branchée ne connaît pas est ignoré.', 'blocs-creator' ); ?></p>
+					</td>
+				</tr>
+
+				<tr>
+					<th scope="row"><label for="bc-ia-delai"><?php esc_html_e( 'Délai de réponse', 'blocs-creator' ); ?></label></th>
+					<td>
+						<input type="number" id="bc-ia-delai" class="small-text" min="30" max="300" step="1"
+							name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[delai]"
+							value="<?php echo esc_attr( (string) (int) $blocs_creator_ia['delai'] ); ?>">
+						<span class="bc-vide"><?php esc_html_e( 'secondes', 'blocs-creator' ); ?></span>
+						<p class="description"><?php esc_html_e( 'Certaines IA réfléchissent avant d\'écrire et ne renvoient rien tant qu\'elles n\'ont pas fini : 30 secondes ne suffisent pas toujours. 90 par défaut.', 'blocs-creator' ); ?></p>
+					</td>
+				</tr>
+			</table>
+		</section>
+
+		<!-- ---------------------------------------------------------- -->
+		<section class="bc-onglet" data-bc-panneau="modules" <?php echo 'modules' === $blocs_creator_onglet ? '' : 'hidden'; ?>>
+
+			<p class="bc-chapo">
+				<?php esc_html_e( 'Ce qu\'un site demande presque toujours, prêt à servir. Un module décoché ne charge pas une ligne ; ses réglages restent en base pour le jour où on le recoche.', 'blocs-creator' ); ?>
+			</p>
+
+			<ul class="bc-modules">
+				<?php foreach ( Blocs_Creator_Modules::catalogue() as $blocs_creator_slug => $blocs_creator_module ) : ?>
+					<?php
+					$blocs_creator_impose = Blocs_Creator_Modules::impose( $blocs_creator_slug );
+					$blocs_creator_actif  = Blocs_Creator_Modules::actif( $blocs_creator_slug );
+					?>
+					<li class="bc-modules__item<?php echo $blocs_creator_actif ? ' est-actif' : ''; ?>">
+						<label class="bc-modules__case">
+							<input type="checkbox" name="bc_modules[]" value="<?php echo esc_attr( $blocs_creator_slug ); ?>"
+								<?php checked( $blocs_creator_actif ); ?>
+								<?php disabled( $blocs_creator_impose ); ?>>
+							<span class="bc-modules__nom"><?php echo esc_html( $blocs_creator_module['nom'] ); ?></span>
+							<code class="bc-code"><?php echo esc_html( $blocs_creator_slug ); ?></code>
+						</label>
+
+						<p class="bc-modules__quoi"><?php echo esc_html( $blocs_creator_module['description'] ); ?></p>
+
+						<p class="bc-modules__meta">
+							<?php if ( $blocs_creator_impose ) : ?>
+								<span class="bc-blocs__protege"><?php esc_html_e( 'imposé par le thème', 'blocs-creator' ); ?></span>
+							<?php endif; ?>
+							<?php if ( $blocs_creator_actif && '' !== (string) $blocs_creator_module['reglages'] ) : ?>
+								<a href="<?php echo esc_url( admin_url( $blocs_creator_module['reglages'] ) ); ?>"><?php esc_html_e( 'Ses réglages', 'blocs-creator' ); ?></a>
+							<?php endif; ?>
+						</p>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+
+			<p class="description">
+				<?php
+				printf(
+					/* translators: %s: exemple de code. */
+					esc_html__( 'Un thème qui a besoin d\'un module l\'impose dans son functions.php : %s. Il ne se décoche plus ici.', 'blocs-creator' ),
+					'<code>add_theme_support( \'blocs-creator-modules\', array( \'maintenance\', \'cookies\' ) );</code>'
+				);
+				?>
+			</p>
+		</section>
+
 		<div class="bc-barre-envoi">
 			<?php submit_button( __( 'Enregistrer les réglages', 'blocs-creator' ), 'primary', 'submit', false ); ?>
-			<span class="bc-barre-envoi__note"><?php esc_html_e( 'Un seul bouton pour les trois onglets.', 'blocs-creator' ); ?></span>
+			<span class="bc-barre-envoi__note"><?php esc_html_e( 'Un seul bouton pour tous les onglets.', 'blocs-creator' ); ?></span>
 
 			<?php
 			/*

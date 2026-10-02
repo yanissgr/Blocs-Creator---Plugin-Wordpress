@@ -413,6 +413,10 @@ class Blocs_Creator_Champs {
 			case 'contenu':
 				return 0;
 
+			case 'texte-riche':
+				// « **gras** » et « _italique_ » : un défaut s'écrit en texte brut.
+				return blocs_creator_balisage_leger( isset( $options['defaut'] ) ? (string) $options['defaut'] : (string) $type['defaut'] );
+
 			default:
 				return isset( $options['defaut'] ) ? (string) $options['defaut'] : (string) $type['defaut'];
 		}

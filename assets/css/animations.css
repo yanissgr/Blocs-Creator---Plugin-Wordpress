@@ -32,6 +32,18 @@
 	--bc-anim-courbe: cubic-bezier(0.22, 0.68, 0.36, 1);
 	/* Le déplacement d'entrée : assez pour se voir, trop peu pour sauter. */
 	--bc-anim-ecart: 1.75rem;
+
+	/*
+	 * Les courbes des variantes travaillées (5.0) : une sortie longue qui se
+	 * pose sans traîner, une douce, un ressort. Un thème les redéfinit ici
+	 * pour donner à tout le site le même mouvement.
+	 */
+	--bc-anim-courbe-expo: cubic-bezier(0.19, 1, 0.22, 1);
+	--bc-anim-courbe-douce: cubic-bezier(0.16, 1, 0.3, 1);
+	--bc-anim-courbe-ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	/* Le décalage entre deux mots d'un titre qui monte mot à mot. */
+	--bc-anim-cadence-mots: 55ms;
 }
 
 /* ------------------------------------------------------------------ *
@@ -340,6 +352,201 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Les variantes travaillées (5.0)
+ *
+ * Nées sur un site, remontées ici parce qu'elles servent partout. Une règle
+ * les tient : ON ANIME LES ÉLÉMENTS, PAS LES BLOCS. Un titre qui monte mot à
+ * mot, une image qui se découvre, des cartes qui se posent l'une après
+ * l'autre racontent la page ; un bloc qui s'allume d'un coup se remarque à
+ * peine.
+ *
+ * `mots` vaut dans toutes les scènes ; les autres, dans « Composée ».
+ * ------------------------------------------------------------------ */
+
+/*
+ * Mots — le titre reste en place, chaque mot monte de sous sa ligne.
+ *
+ * Le script enveloppe chaque mot dans deux <span> : le premier cache, le
+ * second monte. Les balises intérieures (em, strong, br, a) sont gardées.
+ * Une fois les mots posés, `bc-mots-poses` leur rend leurs débords : un
+ * italique ou un accent ne reste pas rogné.
+ */
+.bc-mot {
+	display: inline-block;
+	padding: 0.1em 0.06em 0.2em;
+	margin: -0.1em -0.06em -0.2em;
+	overflow: hidden;
+	vertical-align: top;
+}
+
+.bc-mot__in {
+	display: inline-block;
+}
+
+.bc-mots-poses .bc-mot {
+	overflow: visible;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="mots"] {
+	opacity: 1;
+	transform: none;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part="mots"] .bc-mot__in {
+	transform: translate3d(0, 110%, 0) rotate(4deg);
+	transform-origin: 0 100%;
+	transition: transform 1050ms var(--bc-anim-courbe-expo) calc(var(--bc-p-delai, 0ms) + var(--bc-i, 0) * var(--bc-anim-cadence-mots));
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim].is-vu [data-bc-part="mots"] .bc-mot__in {
+	transform: none;
+}
+
+/*
+ * Masque — un rideau qui se lève ; l'image derrière se pose en dézoomant.
+ * L'arrivée garde une découpe (élargie), et non `none` : on ne passe pas en
+ * douceur d'une découpe à rien du tout, le rideau sauterait.
+ */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="masque"] {
+	opacity: 1;
+	transform: none;
+	clip-path: inset(100% 0 0 0);
+	transition: clip-path 1250ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"] {
+	clip-path: inset(-12% -12% -12% -12%);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="masque"] :is(img, video, [data-bc-masque-media]) {
+	scale: 1.16;
+	transition: scale 1700ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"] :is(img, video, [data-bc-masque-media]) {
+	scale: 1;
+}
+
+/* Flou — le texte sort de la brume en montant d'un rien. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="flou"] {
+	--bc-p-y: 0.6rem;
+
+	filter: blur(12px);
+	transition:
+		opacity 900ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
+		transform 900ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms),
+		filter 900ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms);
+}
+
+/* Trait — une ligne, un filet, un soulignement qui se tire de gauche à droite. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="trait"] {
+	opacity: 1;
+	transform: scaleX(0);
+	transform-origin: 0 50%;
+	transition: transform 1100ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
+}
+
+/* Pop — petit, penché, puis posé d'un rebond. Pour une icône, un guillemet, une étiquette. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="pop"] {
+	transform: scale(0.4) rotate(-14deg);
+	transition:
+		opacity 500ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
+		transform 900ms var(--bc-anim-courbe-ressort) var(--bc-p-delai, 0ms);
+}
+
+/* Carte — monte de loin, légèrement tournée, et se redresse. Une sur deux tourne dans l'autre sens. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="carte"] {
+	transform: translate3d(0, 3.2rem, 0) rotate(var(--bc-carte-rot, 2.5deg)) scale(0.96);
+	transform-origin: 50% 100%;
+	transition:
+		opacity 700ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
+		transform 1200ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="carte"]:nth-child(even) {
+	--bc-carte-rot: -2.5deg;
+}
+
+/* Ligne — une rangée de liste qui glisse depuis la gauche. */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="ligne"] {
+	--bc-p-x: -1.75rem;
+
+	transition:
+		opacity 700ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
+		transform 1000ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
+}
+
+/* ------------------------------------------------------------------ *
+ * Les parties qui attendent leur tour (5.0)
+ *
+ * Un bloc est révélé d'un seul coup, dès que son haut entre à l'écran. Sur
+ * un téléphone, une section fait souvent deux écrans de haut : ses cartes,
+ * son image, son bouton jouaient leur entrée hors de l'écran, et l'on
+ * arrivait sur des éléments déjà posés.
+ *
+ * Le script pose donc `bc-attend` sur chaque partie encore sous l'écran au
+ * chargement. Elle garde son état de départ — `bc-attend` l'emporte sur
+ * l'arrivée commune — jusqu'à ce qu'elle arrive elle-même à l'écran. Mêmes
+ * états de départ que plus haut ; c'est pourquoi ces règles viennent après
+ * toutes les autres.
+ *
+ * Une nouvelle variante qui a un état de départ à elle doit l'écrire ici
+ * aussi, sans quoi elle partirait de l'état commun.
+ * ------------------------------------------------------------------ */
+
+.bc-anim-prete .bc-anim[data-bc-anim].is-vu [data-bc-part].bc-attend {
+	opacity: 0;
+	transform: translate3d(0, 1.1rem, 0);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part].bc-attend {
+	opacity: 0;
+	transform: translate3d(var(--bc-p-x, 0), var(--bc-p-y, 0), 0) scale(var(--bc-p-echelle, 1));
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="flou"].bc-attend {
+	filter: blur(12px);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="trait"].bc-attend {
+	opacity: 1;
+	transform: scaleX(0);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="pop"].bc-attend {
+	transform: scale(0.4) rotate(-14deg);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="carte"].bc-attend {
+	transform: translate3d(0, 3.2rem, 0) rotate(var(--bc-carte-rot, 2.5deg)) scale(0.96);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"].bc-attend {
+	opacity: 1;
+	transform: none;
+	clip-path: inset(100% 0 0 0);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"].bc-attend :is(img, video, [data-bc-masque-media]) {
+	scale: 1.16;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="pinceau"].bc-attend {
+	opacity: 1;
+	transform: none;
+	clip-path: polygon(-30% 0%, -2% 0%, -18% 100%, -30% 100%);
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="mots"].bc-attend {
+	opacity: 1;
+	transform: none;
+}
+
+.bc-anim-prete .bc-anim[data-bc-anim].is-vu [data-bc-part="mots"].bc-attend .bc-mot__in {
+	transform: translate3d(0, 110%, 0) rotate(4deg);
+}
+
+/* ------------------------------------------------------------------ *
  * Moins d'animations
  *
  * Le script d'en-tête ne pose déjà pas `bc-anim-prete` dans ce cas, et il
@@ -349,11 +556,17 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.bc-anim-prete .bc-anim[data-bc-anim],
-	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part] {
+	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part],
+	.bc-anim-prete .bc-anim[data-bc-anim] .bc-mot__in {
 		opacity: 1;
 		clip-path: none;
 		filter: none;
 		transform: none;
+		transition: none;
+	}
+
+	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part] :is(img, video, [data-bc-masque-media]) {
+		scale: 1;
 		transition: none;
 	}
 }

@@ -34,16 +34,37 @@ foreach ( $blocs_creator_blocs as $blocs_creator_id ) {
 	wp_delete_post( (int) $blocs_creator_id, true );
 }
 
-delete_option( 'blocs_creator_reglages' );
-delete_option( 'blocs_creator_version' );
+$blocs_creator_options = array(
+	'blocs_creator_reglages',
+	'blocs_creator_version',
+	'blocs_creator_journal',
+	'blocs_creator_animations',
+	'blocs_creator_animations_contenu',
+	'blocs_creator_ia',
+	'blocs_creator_modules',
+	'blocs_creator_maintenance',
+	'blocs_creator_cookies',
+	'blocs_creator_migrations',
+	'blocs_creator_migrations_journal',
+);
+
+foreach ( $blocs_creator_options as $blocs_creator_option ) {
+	delete_option( $blocs_creator_option );
+}
+
+delete_post_meta_by_key( '_blocs_creator_noms_blocs' );
 
 global $wpdb;
 
 $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 	$wpdb->prepare(
 		"DELETE FROM {$wpdb->options}
-		 WHERE option_name LIKE %s OR option_name LIKE %s",
+		 WHERE option_name LIKE %s OR option_name LIKE %s
+		    OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
 		$wpdb->esc_like( '_transient_bc_' ) . '%',
-		$wpdb->esc_like( '_transient_timeout_bc_' ) . '%'
+		$wpdb->esc_like( '_transient_timeout_bc_' ) . '%',
+		$wpdb->esc_like( '_transient_blocs_creator_migration_' ) . '%',
+		$wpdb->esc_like( '_transient_timeout_blocs_creator_migration_' ) . '%',
+		$wpdb->esc_like( 'blocs_creator_migration_verrou_' ) . '%'
 	)
 );

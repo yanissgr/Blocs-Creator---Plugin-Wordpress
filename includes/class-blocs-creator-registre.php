@@ -74,6 +74,27 @@ class Blocs_Creator_Registre {
 		add_action( 'init', array( $this, 'enregistrer_blocs' ), 20 );
 		add_filter( 'block_categories_all', array( $this, 'categorie' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'donnees_editeur' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'apercus_inertes' ) );
+	}
+
+	/**
+	 * Rend inertes les aperçus des blocs, dans le canevas de l'éditeur.
+	 *
+	 * Le crochet sert aussi sur le site, où il n'a rien à faire : seulement
+	 * dans l'administration. Voir assets/js/apercus-inertes.js.
+	 */
+	public function apercus_inertes() {
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'blocs-creator-apercus-inertes',
+			BLOCS_CREATOR_URL . 'assets/js/apercus-inertes.js',
+			array(),
+			$this->version( 'assets/js/apercus-inertes.js' ),
+			true
+		);
 	}
 
 	/* ------------------------------------------------------------------ *

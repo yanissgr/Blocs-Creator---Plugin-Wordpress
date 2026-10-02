@@ -4,7 +4,7 @@ Tags: blocks, gutenberg, custom blocks, fields, acf
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 4.2.1
+Stable tag: 5.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,8 +43,18 @@ The plugin ships with a French admin interface. Translations are welcome.
   can be undone block by block.
 * **Inserter housekeeping**: one checkbox per block — those of WordPress, those
   of other plugins — so that the "+" only offers what is actually used.
-* **Entrances**: nine scroll-triggered scenes, chosen once for the block, with
-  a preview at the moment of choice.
+* **Entrances**: ten scroll-triggered scenes, chosen once for the block, with
+  a preview at the moment of choice — headings rising word by word, images
+  unveiled behind a curtain, cards settling one by one.
+* **AI in the editor** (WordPress 7.0+, through Settings › Connectors): draft a
+  post from loose notes, fill a block's text fields from notes, and let the
+  WordPress "AI" plugin read the text of your blocks.
+* **Optional modules**, one checkbox each: maintenance mode, cookie banner
+  (Google Analytics waits for consent), form drafts, no author pages, no site
+  search, a floating "Edit page" button, block names on a sample page.
+* **Theme tooling**: block definitions travel with the theme
+  (`blocs-creator/definitions.json`), migrations push database changes to a
+  live site, and WP-CLI commands do it all from the command line.
 
 = Field types =
 
@@ -126,7 +136,7 @@ block screen for the ones you create, in the settings for those of WordPress and
 other plugins — and every occurrence enters the same way, everywhere. A preview
 plays it at the moment of choice.
 
-An entrance is a scene, not a gesture: each of the nine says what the block does
+An entrance is a scene, not a gesture: each of the ten says what the block does
 AND what its parts do — its heading, its text, its cards — with an offset
 between them.
 
@@ -181,6 +191,46 @@ uninstall, if that is what you want.
 4. The help screen for writing a template.
 
 == Changelog ==
+
+= 5.0.0 =
+What used to be rewritten for every site joins the plugin. Nothing changes on
+an existing site until something is ticked: the new features are settings,
+disabled modules, or functions a theme calls.
+
+* **Entrances, reworked.** Seven new part variants for the "Composed" scene:
+  `mots` (the heading rises word by word, in every scene), `masque` (a curtain
+  lifts while the image settles), `flou`, `trait`, `pop`, `carte`, `ligne`.
+* Parts still below the screen now **wait for their turn** instead of playing
+  their entrance out of sight on phones; whatever is on screen always ends up
+  revealed, including the very bottom of the page.
+* Every revealed block dispatches a `blocs-creator:vu` event.
+* **Native blocks in the content** can enter too (paragraphs, headings,
+  images, lists…), each with the scene of its type; layout blocks let their
+  children enter one by one. A `bc-apparition-<scene>` class gives a scene to a
+  single block (templates, footer).
+* **AI** (WordPress 7.0+): "Write with AI" for posts, "Fill with AI" for blocks
+  created here, the WordPress "AI" plugin now reads the text of these blocks,
+  a 90-second timeout, fallback to the next model on 503/429, errors explained
+  in French. No API key is stored by the plugin.
+* **Modules**: maintenance mode (503 + Retry-After, admin bar toggle), cookie
+  banner (Analytics tags held as `text/plain` until consent), form drafts,
+  no author pages, no site search, floating "Edit page" button, block names on
+  a sample page. A theme can impose them with
+  `add_theme_support( 'blocs-creator-modules', … )`.
+* **Theme tooling**: `blocs-creator/definitions.json` installs missing blocks
+  when the theme is activated, and the Tools screen compares and copies it
+  both ways; theme migrations (`blocs_creator_migrations`) run once on the live
+  site, retry a quarter of an hour later when files are not uploaded yet;
+  `wp blocs-creator definitions|migrations|modules|ia`.
+* **E-mail helpers** for theme forms: laid-out HTML with a plain-text part,
+  confirmation e-mail that never echoes the visitor's text.
+* **Editor**: block previews no longer react to clicks (a link in a preview
+  cannot leave the editor), and rich-text default values understand
+  `**bold**` and `_italic_`.
+* Uninstalling with data removal now also clears the entrance, AI, module and
+  migration options.
+* New files `CLAUDE.md` and `docs/guide-theme.md`: how to work on the plugin,
+  and how to build a theme with it.
 
 = 4.2.1 =
 * **Fixed: the settings could not be saved.** The "Duration" field of the

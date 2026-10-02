@@ -1,0 +1,181 @@
+/*
+ * Les petits messages des brouillons (blocs_creator_brouillon_messages()), en
+ * tête d'un formulaire.
+ *
+ * Discrets : une ligne de texte courant sur un fond à peine teinté, qui ne
+ * bouscule rien. La note « vos réponses ne sont pas gardées » se ferme d'une
+ * croix ; « vos réponses vous attendaient » propose de tout effacer.
+ *
+ * Un thème redéfinit les couleurs d'un coup en posant --bc-brouillon-accent
+ * et --bc-brouillon-ok sur .bc-brouillon.
+ */
+
+.bc-brouillon {
+	--bc-brouillon-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
+	--bc-brouillon-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+	--bc-brouillon-ok: #3f7a3a;
+	--bc-brouillon-doux: color-mix(in srgb, var(--bc-brouillon-texte) 70%, transparent);
+
+	margin: 0 0 24px;
+}
+
+.bc-brouillon:not(:has(> :not([hidden]))) {
+	display: none;
+}
+
+.bc-brouillon__message {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 14px 12px 12px;
+	border-radius: 12px;
+	color: var(--bc-brouillon-doux);
+	font-size: 0.875rem;
+	line-height: 1.55;
+}
+
+.bc-brouillon__message[hidden] {
+	display: none;
+}
+
+.bc-brouillon__message.is-note {
+	background: color-mix(in srgb, var(--bc-brouillon-accent) 9%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bc-brouillon-accent) 22%, transparent);
+}
+
+.bc-brouillon__message.is-retrouve {
+	align-items: center;
+	background: color-mix(in srgb, var(--bc-brouillon-ok) 10%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bc-brouillon-ok) 24%, transparent);
+	color: var(--bc-brouillon-texte);
+}
+
+.bc-brouillon__picto {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background: var(--bc-brouillon-accent);
+	color: #fff;
+}
+
+.is-retrouve .bc-brouillon__picto {
+	background: var(--bc-brouillon-ok);
+}
+
+.bc-brouillon__corps {
+	display: flex;
+	flex: 1 1 auto;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 14px;
+	min-width: 0;
+}
+
+.bc-brouillon .bc-brouillon__corps .bc-brouillon__texte {
+	flex: 1 1 260px;
+}
+
+.bc-brouillon .bc-brouillon__texte {
+	flex: 1 1 auto;
+	margin: 3px 0 0;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.bc-brouillon .is-retrouve .bc-brouillon__texte {
+	margin-top: 0;
+	font-weight: 600;
+}
+
+.bc-brouillon__fermer,
+.bc-brouillon__effacer,
+.bc-brouillon__accepter {
+	flex: 0 0 auto;
+	margin: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+.bc-brouillon__fermer {
+	display: grid;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border-radius: 50%;
+	font-size: 18px;
+	line-height: 1;
+}
+
+.bc-brouillon__fermer:is(:hover, :focus-visible) {
+	background: color-mix(in srgb, var(--bc-brouillon-texte) 8%, transparent);
+	color: var(--bc-brouillon-texte);
+}
+
+.bc-brouillon__effacer {
+	padding: 6px 12px;
+	border-radius: 999px;
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bc-brouillon-texte) 25%, transparent);
+	color: var(--bc-brouillon-texte);
+	font-size: 0.8125rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.bc-brouillon__effacer:is(:hover, :focus-visible) {
+	box-shadow: inset 0 0 0 1.5px var(--bc-brouillon-accent);
+	color: var(--bc-brouillon-accent);
+}
+
+/* « Accepter les cookies » : la couleur d'accent, comme le bouton du bandeau. */
+.bc-brouillon__accepter {
+	padding: 7px 14px;
+	border-radius: 999px;
+	background: var(--bc-brouillon-accent);
+	color: #fff;
+	font-size: 0.8125rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.bc-brouillon__accepter:is(:hover, :focus-visible) {
+	background: color-mix(in srgb, var(--bc-brouillon-accent) 85%, #000);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.bc-brouillon__message {
+		animation: bc-brouillon-entree 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	}
+}
+
+@keyframes bc-brouillon-entree {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (max-width: 480px) {
+	.bc-brouillon__message.is-retrouve {
+		flex-wrap: wrap;
+	}
+
+	.bc-brouillon__message.is-retrouve .bc-brouillon__texte {
+		flex-basis: calc(100% - 40px);
+	}
+
+	.bc-brouillon__effacer {
+		margin-left: 38px;
+	}
+}

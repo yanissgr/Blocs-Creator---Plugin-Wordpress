@@ -1,0 +1,194 @@
+/*
+ * La page de maintenance (modules/maintenance/module.php) : une page seule,
+ * sans en-tête ni pied de page.
+ *
+ * Elle prend les couleurs et les polices du thème quand il les déclare dans
+ * theme.json sous les noms les plus courants (base/contrast,
+ * background/foreground, accent/primary) ; sinon, une palette sobre. Un thème
+ * qui veut mieux ajoute sa propre feuille (filtre
+ * `blocs_creator_maintenance_feuilles`) ou son propre gabarit
+ * (`blocs-creator/maintenance.php`).
+ */
+
+.bc-maintenance-page {
+	--bc-m-fond: var(--wp--preset--color--base, var(--wp--preset--color--background, #fbfaf8));
+	--bc-m-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
+	--bc-m-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+	--bc-m-doux: color-mix(in srgb, var(--bc-m-texte) 68%, transparent);
+	--bc-m-filet: color-mix(in srgb, var(--bc-m-texte) 14%, transparent);
+	--bc-m-courbe: cubic-bezier(0.16, 1, 0.3, 1);
+
+	position: relative;
+	min-height: 100svh;
+	margin: 0;
+	overflow-x: hidden;
+	background: var(--bc-m-fond);
+	color: var(--bc-m-texte);
+}
+
+/* Un halo de la couleur d'accent, derrière le texte. */
+.bc-maintenance-page::before {
+	content: "";
+	position: fixed;
+	z-index: 0;
+	top: -30vmax;
+	right: -25vmax;
+	width: 80vmax;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: radial-gradient(circle, color-mix(in srgb, var(--bc-m-accent) 22%, transparent) 0%, transparent 62%);
+	pointer-events: none;
+}
+
+.bc-maintenance {
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+	max-width: 46rem;
+	min-height: 100svh;
+	margin: 0 auto;
+	padding: clamp(32px, 7vw, 88px) clamp(16px, 5vw, 48px);
+}
+
+.bc-maintenance__marque {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 clamp(40px, 8vw, 96px);
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.bc-maintenance__logo {
+	display: block;
+	flex-shrink: 0;
+	width: 56px;
+	height: auto;
+}
+
+.bc-maintenance__surtitre {
+	margin: 0 0 14px;
+	color: var(--bc-m-accent);
+	font-size: 0.8rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.bc-maintenance__titre {
+	max-width: 14ch;
+	margin: 0;
+	font-size: clamp(2.4rem, 7vw, 4.4rem);
+	line-height: 1.02;
+	text-wrap: balance;
+}
+
+.bc-maintenance__titre strong {
+	color: var(--bc-m-accent);
+}
+
+.bc-maintenance__message {
+	max-width: 34em;
+	margin: 26px 0 0;
+	color: var(--bc-m-doux);
+	font-size: 1.15rem;
+	line-height: 1.6;
+}
+
+.bc-maintenance__message a {
+	color: inherit;
+	text-underline-offset: 3px;
+}
+
+/* Le retour prévu : une pastille, avec son horloge. */
+.bc-maintenance__retour {
+	display: inline-flex;
+	align-self: flex-start;
+	align-items: center;
+	gap: 10px;
+	margin: 30px 0 0;
+	padding: 10px 18px 10px 14px;
+	border: 1px solid var(--bc-m-filet);
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--bc-m-fond) 80%, #fff);
+	font-size: 0.95rem;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.bc-maintenance__retour svg {
+	flex-shrink: 0;
+	color: var(--bc-m-accent);
+}
+
+/* L'aperçu réservé aux personnes connectées : une fine bande en haut. */
+.bc-maintenance-apercu {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 6px 20px;
+	margin: 0;
+	padding: 10px clamp(16px, 5vw, 48px);
+	background: var(--bc-m-texte);
+	color: var(--bc-m-fond);
+	font-size: 0.9rem;
+	line-height: 1.4;
+}
+
+.bc-maintenance-apercu strong {
+	color: var(--bc-m-accent);
+}
+
+.bc-maintenance-apercu__liens {
+	display: flex;
+	gap: 18px;
+	font-weight: 600;
+}
+
+.bc-maintenance-apercu a:is(:link, :visited) {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* L'arrivée : les lignes du texte montent l'une après l'autre. */
+@media (prefers-reduced-motion: no-preference) {
+	.bc-maintenance > * {
+		animation: bc-maintenance-monte 900ms var(--bc-m-courbe) both;
+	}
+
+	.bc-maintenance > :nth-child(2) {
+		animation-delay: 90ms;
+	}
+
+	.bc-maintenance > :nth-child(3) {
+		animation-delay: 180ms;
+	}
+
+	.bc-maintenance > :nth-child(4) {
+		animation-delay: 270ms;
+	}
+
+	.bc-maintenance > :nth-child(5) {
+		animation-delay: 360ms;
+	}
+}
+
+@keyframes bc-maintenance-monte {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}

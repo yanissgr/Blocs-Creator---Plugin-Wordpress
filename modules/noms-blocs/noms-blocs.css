@@ -1,0 +1,47 @@
+/*
+ * Le nom des blocs, au-dessus de chacun, sur une page d'exemple
+ * (modules/noms-blocs/module.php) : une ligne pointillée qui marque où le
+ * bloc commence, sa famille dans l'outil d'insertion, son nom, et ce qu'il
+ * contient.
+ */
+
+.bc-nom-bloc {
+	--bc-nom-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
+	--bc-nom-fond: var(--wp--preset--color--base, var(--wp--preset--color--background, #fff));
+	--bc-nom-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 12px;
+	margin-block: clamp(28px, 4vw, 48px) 14px;
+	padding-top: 14px;
+	border-top: 1.5px dashed color-mix(in srgb, var(--bc-nom-texte) 28%, transparent);
+	color: color-mix(in srgb, var(--bc-nom-texte) 70%, transparent);
+	font-size: 0.8125rem;
+	line-height: 1.4;
+}
+
+.bc-nom-bloc:first-child {
+	margin-top: 0;
+	border-top: 0;
+}
+
+.bc-nom-bloc__famille {
+	color: var(--bc-nom-accent);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.bc-nom-bloc__titre {
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: var(--bc-nom-texte);
+	color: var(--bc-nom-fond);
+	font-size: 0.875rem;
+}
+
+.bc-nom-bloc__enfants {
+	flex-basis: 100%;
+}

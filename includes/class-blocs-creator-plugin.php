@@ -3,7 +3,7 @@
  * Bootstrap du plugin.
  *
  * Une seule instance, un seul point de chargement. Les classes sont requises
- * ici plutôt que par un autoloader : à quinze fichiers, une liste explicite se
+ * ici plutôt que par un autoloader : à une vingtaine de fichiers, une liste explicite se
  * lit mieux qu'une convention de nommage.
  *
  * @package BlocsCreator
@@ -89,8 +89,17 @@ final class Blocs_Creator_Plugin {
 		Blocs_Creator_Animations::demarrer();
 		Blocs_Creator_Disponibilite::demarrer();
 
+		Blocs_Creator_Theme::demarrer();
+		Blocs_Creator_Migrations::demarrer();
+		Blocs_Creator_Ia::demarrer();
+		Blocs_Creator_Modules::demarrer();
+
 		if ( is_admin() ) {
 			( new Blocs_Creator_Admin() )->demarrer();
+		}
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			Blocs_Creator_Cli::declarer();
 		}
 	}
 
@@ -111,8 +120,17 @@ final class Blocs_Creator_Plugin {
 			'includes/class-blocs-creator-animations.php',
 			'includes/class-blocs-creator-diagnostic.php',
 			'includes/class-blocs-creator-rest.php',
+			'includes/class-blocs-creator-theme.php',
+			'includes/class-blocs-creator-migrations.php',
+			'includes/class-blocs-creator-ia.php',
+			'includes/class-blocs-creator-modules.php',
 			'includes/fonctions.php',
+			'includes/emails.php',
 		);
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			$fichiers[] = 'includes/class-blocs-creator-cli.php';
+		}
 
 		if ( is_admin() ) {
 			$fichiers[] = 'admin/class-blocs-creator-admin.php';
@@ -175,6 +193,22 @@ final class Blocs_Creator_Plugin {
 
 			$this->packs[ $slug ]['dossier'] = dirname( $fichier );
 		}
+	}
+
+	/**
+	 * Retourne une version d'asset basée sur la date du fichier.
+	 *
+	 * En développement, le cache du navigateur s'invalide à chaque
+	 * enregistrement ; en production, la date ne bouge plus. Sert les
+	 * modules et l'IA, qui chargent leurs fichiers à part.
+	 *
+	 * @param string $chemin Chemin relatif à la racine du plugin.
+	 * @return string
+	 */
+	public static function version_fichier( $chemin ) {
+		$fichier = BLOCS_CREATOR_DIR . ltrim( $chemin, '/' );
+
+		return file_exists( $fichier ) ? (string) filemtime( $fichier ) : BLOCS_CREATOR_VERSION;
 	}
 
 	/**

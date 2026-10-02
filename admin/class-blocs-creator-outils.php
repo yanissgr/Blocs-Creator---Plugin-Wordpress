@@ -28,6 +28,68 @@ class Blocs_Creator_Outils {
 	public function demarrer() {
 		add_action( 'admin_post_bc_exporter', array( $this, 'exporter' ) );
 		add_action( 'admin_post_bc_importer', array( $this, 'importer' ) );
+		add_action( 'admin_post_bc_theme_importer', array( $this, 'theme_importer' ) );
+		add_action( 'admin_post_bc_theme_exporter', array( $this, 'theme_exporter' ) );
+	}
+
+	/**
+	 * Recopie les définitions du fichier du thème en base.
+	 *
+	 * `mode` : `manquants` (n'écrase rien), `tout` (remplace tout), ou le nom
+	 * d'un seul bloc à remplacer.
+	 */
+	public function theme_importer() {
+		if ( ! current_user_can( Blocs_Creator_Admin::CAP ) || ! wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ?? '' ), 'bc_theme_importer' ) ) {
+			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
+		}
+
+		$mode = isset( $_POST['mode'] ) ? sanitize_text_field( wp_unslash( $_POST['mode'] ) ) : 'manquants';
+
+		if ( 'manquants' === $mode ) {
+			$bilan = Blocs_Creator_Theme::importer( false );
+		} elseif ( 'tout' === $mode ) {
+			$bilan = Blocs_Creator_Theme::importer( true );
+		} else {
+			$bilan = Blocs_Creator_Theme::importer( true, array( $mode ) );
+		}
+
+		if ( $bilan['erreurs'] ) {
+			$this->retour( 'erreur', implode( ' ; ', $bilan['erreurs'] ) );
+		}
+
+		$this->retour(
+			'succes',
+			sprintf(
+				/* translators: 1: nombre de blocs importés, 2: nombre de blocs laissés tels quels. */
+				_n( '%1$d bloc recopié depuis le thème, %2$d laissé tel quel.', '%1$d blocs recopiés depuis le thème, %2$d laissés tels quels.', $bilan['importes'], 'blocs-creator' ),
+				$bilan['importes'],
+				$bilan['ignores']
+			)
+		);
+	}
+
+	/**
+	 * Écrit les définitions de la base dans le fichier du thème.
+	 */
+	public function theme_exporter() {
+		if ( ! current_user_can( Blocs_Creator_Admin::CAP ) || ! wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ?? '' ), 'bc_theme_exporter' ) ) {
+			wp_die( esc_html__( 'Action non autorisée.', 'blocs-creator' ), 403 );
+		}
+
+		$resultat = Blocs_Creator_Theme::exporter();
+
+		if ( is_wp_error( $resultat ) ) {
+			$this->retour( 'erreur', $resultat->get_error_message() );
+		}
+
+		$this->retour(
+			'succes',
+			sprintf(
+				/* translators: %s: chemin du fichier. */
+				__( 'Définitions écrites dans %s.', 'blocs-creator' ),
+				Blocs_Creator_Gabarits::chemin_court( $resultat )
+			)
+		);
 	}
 
 	/**

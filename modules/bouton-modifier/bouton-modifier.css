@@ -1,0 +1,99 @@
+/*
+ * Le bouton flottant « Modifier la page » (modules/bouton-modifier/module.php),
+ * réservé aux personnes connectées.
+ *
+ * Un thème le redessine d'un coup en posant --bc-modifier-fond,
+ * --bc-modifier-texte et --bc-modifier-accent sur .bc-modifier.
+ */
+
+.bc-modifier {
+	--bc-modifier-fond: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
+	--bc-modifier-texte: var(--wp--preset--color--base, var(--wp--preset--color--background, #fff));
+	--bc-modifier-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	z-index: 99980;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 0 18px 0 14px;
+	border-radius: 999px;
+	background: var(--bc-modifier-fond);
+	color: var(--bc-modifier-texte);
+	box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.45);
+	font-size: 0.9rem;
+	font-weight: 800;
+	line-height: 1;
+	text-decoration: none;
+	transition:
+		background-color 180ms ease,
+		color 180ms ease,
+		translate 320ms cubic-bezier(0.16, 1, 0.3, 1),
+		bottom 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bc-modifier:is(:link, :visited) {
+	color: var(--bc-modifier-texte);
+	text-decoration: none;
+}
+
+.bc-modifier:is(:hover, :focus-visible) {
+	background: var(--bc-modifier-accent);
+	color: #fff;
+	translate: 0 -2px;
+}
+
+.bc-modifier:focus-visible {
+	outline: 2px solid var(--bc-modifier-accent);
+	outline-offset: 3px;
+}
+
+.bc-modifier__picto {
+	flex: 0 0 auto;
+	transition: rotate 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bc-modifier:hover .bc-modifier__picto {
+	rotate: -12deg;
+}
+
+/* L'entrée : il glisse depuis le bas, un peu après le chargement. */
+@media (prefers-reduced-motion: no-preference) {
+	.bc-modifier {
+		/* `backwards` : une fois entré, le survol reprend la main sur `translate`. */
+		animation: bc-modifier-entree 720ms cubic-bezier(0.16, 1, 0.3, 1) 600ms backwards;
+	}
+}
+
+@keyframes bc-modifier-entree {
+	from {
+		opacity: 0;
+		translate: 0 24px;
+	}
+
+	to {
+		opacity: 1;
+		translate: 0 0;
+	}
+}
+
+@media (max-width: 600px) {
+	.bc-modifier {
+		right: 12px;
+		bottom: 12px;
+	}
+
+	/* Le bandeau cookies prend toute la largeur : le bouton passe au-dessus. */
+	.bc-cookies-ouvert .bc-modifier {
+		bottom: calc(12px + var(--bc-cookies-hauteur, 0px) + 10px);
+	}
+}
+
+@media print {
+	.bc-modifier {
+		display: none !important;
+	}
+}
