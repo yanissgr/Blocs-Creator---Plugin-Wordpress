@@ -1,6 +1,6 @@
 <?php
 /**
- * Métabox « Champs du bloc » — le constructeur.
+ * Métabox « Champs du bloc » : le constructeur.
  *
  * Le PHP ne pose ici qu'une coquille : la liste vivante est construite en
  * JavaScript (admin/js/constructeur.js) à partir du JSON déposé dans le champ

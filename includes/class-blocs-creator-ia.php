@@ -5,14 +5,14 @@
  *
  * Le plugin ne parle à aucune IA lui-même et ne garde aucune clé : il passe
  * par le client d'IA de WordPress (7.0 et plus), branché dans Réglages ›
- * Connecteurs — Google, Anthropic, OpenAI. Sans connecteur, ou avec un
+ * Connecteurs : Google, Anthropic, OpenAI. Sans connecteur, ou avec un
  * WordPress plus ancien, rien de tout cela n'apparaît.
  *
  * Trois services :
  *
  *   1. RÉDIGER UN ARTICLE. Dans la colonne de droite de l'éditeur d'article,
- *      des notes en vrac et une longueur ; l'IA écrit un brouillon — titre,
- *      chapô, texte en Markdown — que l'éditeur change en blocs et qu'on
+ *      des notes en vrac et une longueur ; l'IA écrit un brouillon (titre,
+ *      chapô, texte en Markdown) que l'éditeur change en blocs et qu'on
  *      relit avant de l'insérer. Rien n'est publié tout seul.
  *   2. REMPLIR UNE SECTION. Dans la colonne de droite d'un bloc créé ici, des
  *      notes ; l'IA propose le contenu de ses champs de texte (titre, texte,
@@ -100,7 +100,7 @@ class Blocs_Creator_Ia {
 	/**
 	 * Les réglages d'un site qui existait avant la 5.0 : tout éteint.
 	 *
-	 * Un site en place ne doit rien voir changer tant qu'on ne coche rien —
+	 * Un site en place ne doit rien voir changer tant qu'on ne coche rien :
 	 * et il a peut-être déjà son propre panneau d'IA dans son thème (c'est le
 	 * cas du site d'où ces services viennent) : deux « Rédiger avec l'IA »
 	 * côte à côte, et un minimum de texte compté deux fois.
@@ -244,7 +244,7 @@ class Blocs_Creator_Ia {
 	 * ------------------------------------------------------------------ */
 
 	/**
-	 * Le nombre de caractères de texte d'un contenu, espaces non compris — la
+	 * Le nombre de caractères de texte d'un contenu, espaces non compris : la
 	 * mesure de l'extension.
 	 *
 	 * @param string $html Contenu (HTML ou blocs).
@@ -730,7 +730,7 @@ CONSIGNES;
 		}
 
 		$options     = (array) ( $champ['options'] ?? array() );
-		$description = $champ['libelle'] . ( '' !== (string) ( $champ['aide'] ?? '' ) ? ' — ' . $champ['aide'] : '' );
+		$description = $champ['libelle'] . ( '' !== (string) ( $champ['aide'] ?? '' ) ? ' : ' . $champ['aide'] : '' );
 
 		switch ( $champ['type'] ) {
 			case 'texte':
@@ -802,7 +802,7 @@ CONSIGNES;
 
 				$tableau = array(
 					'type'        => 'array',
-					'description' => $description . ( ! empty( $options['libelle_ligne'] ) ? ' — une ligne par « ' . $options['libelle_ligne'] . ' »' : '' ),
+					'description' => $description . ( ! empty( $options['libelle_ligne'] ) ? ' : une ligne par « ' . $options['libelle_ligne'] . ' »' : '' ),
 					'items'       => $objet,
 				);
 
@@ -995,7 +995,7 @@ Tu remplis une section d'une page web : le bloc « %1$s »%2$s. On te donne les 
 Règles :
 - Pars des notes. Ce qu'elles ne disent pas, reprends-le des valeurs actuelles si elles conviennent, sinon écris un texte simple et général.
 - N'invente aucun nom, aucune date, aucun horaire, aucun lieu, aucun prix, aucun chiffre, aucune citation qui ne soit ni dans les notes ni dans les valeurs actuelles.
-- Respecte la longueur et le rôle de chaque champ : un titre est court, un surtitre tient en quelques mots, un libellé de bouton en deux à quatre mots.
+- Respecte la longueur et le rôle de chaque champ : un titre est court, un libellé de bouton en deux à quatre mots.
 - Pour une liste de lignes (cartes, questions, étapes…), propose le nombre de lignes que les notes demandent ; sans indication, garde le nombre actuel.
 - Pas d'emoji, pas de hashtag, pas de lien.
 CONSIGNES,

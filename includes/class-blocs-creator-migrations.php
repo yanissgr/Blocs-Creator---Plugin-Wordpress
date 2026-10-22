@@ -5,7 +5,7 @@
  *
  * Un site en ligne reçoit ses fichiers par FTP, ou par Git : ni ligne de
  * commande, ni accès direct à la base. Or certaines évolutions touchent à ce
- * qui vit en base — la définition d'un bloc, le contenu d'une page, un
+ * qui vit en base : la définition d'un bloc, le contenu d'une page, un
  * réglage. Chacune s'écrit donc comme une migration numérotée, qui s'exécute
  * une fois, toute seule, à la première visite qui suit la mise en ligne :
  *
@@ -19,7 +19,7 @@
  *
  * Une migration est une fonction sans argument qui rend la liste de ce
  * qu'elle a fait (des phrases, montrées une fois aux administrateurs), ou un
- * WP_Error : elle est alors retentée un quart d'heure plus tard — le temps,
+ * WP_Error : elle est alors retentée un quart d'heure plus tard : le temps,
  * par exemple, que le reste des fichiers finisse d'arriver.
  *
  * Trois règles, apprises en production :
@@ -224,8 +224,8 @@ class Blocs_Creator_Migrations {
  * Les fichiers d'une version sont-ils tous en ligne ?
  *
  * Chaque fichier est donné avec un TÉMOIN : un bout de texte que seule la
- * nouvelle version contient. Un fichier présent mais encore ancien — ou à
- * moitié écrit par un envoi FTP en cours — ne passe pas.
+ * nouvelle version contient. Un fichier présent mais encore ancien (ou à
+ * moitié écrit par un envoi FTP en cours) ne passe pas.
  *
  * @param array<string, string> $temoins Témoin, par chemin relatif au thème.
  * @return true|WP_Error
@@ -293,4 +293,153 @@ function blocs_creator_migration_page( $post, $contenu ) {
 	kses_init();
 
 	return $resultat;
+}
+
+/**
+ * Une valeur écrite en zone de texte (ou en texte simple), prête pour un
+ * champ « Texte enrichi » : le texte est échappé, `**gras**` et `_italique_`
+ * deviennent des balises, les retours à la ligne des `<br>` (l'éditeur les
+ * montre comme tels). Une valeur qui a déjà des balises garde les siennes.
+ *
+ * @param mixed $valeur Valeur enregistrée.
+ * @return mixed La valeur convertie ; telle quelle si ce n'est pas un texte.
+ */
+function blocs_creator_vers_texte_riche( $valeur ) {
+	if ( ! is_string( $valeur ) || '' === $valeur ) {
+		return $valeur;
+	}
+
+	$valeur = str_replace( "\r\n", "\n", $valeur );
+
+	if ( str_contains( $valeur, '<' ) ) {
+		return str_replace( "\n", '<br>', $valeur );
+	}
+
+	return blocs_creator_balisage_leger( esc_html( $valeur ) );
+}
+
+/**
+ * Passe au texte enrichi des champs déjà écrits, dans tous les contenus du
+ * site : pages, articles, modèles, compositions.
+ *
+ * Changer le type d'un champ dans sa définition ne touche pas aux pages : le
+ * texte brut d'une ancienne zone de texte (retours à la ligne, `**gras**`)
+ * s'afficherait tel quel dans l'éditeur. Une migration du thème appelle donc
+ * cette fonction après avoir importé les définitions :
+ *
+ *     $bilan = blocs_creator_migration_texte_riche( array(
+ *         'mon-theme/hero'   => array( 'chapo' ),
+ *         'mon-theme/cartes' => array( 'intro', 'cartes.titre', 'cartes.texte' ),
+ *     ) );
+ *
+ * « repeteur.champ » désigne le champ d'un répéteur (chaque ligne) ou d'un
+ * groupe. Un contenu modifié garde son état d'avant dans ses révisions ; un
+ * contenu qui n'a rien à convertir n'est pas réécrit.
+ *
+ * @param array<string, string[]> $champs Chemins des champs, par nom complet de bloc.
+ * @return int|WP_Error Le nombre de contenus modifiés.
+ */
+function blocs_creator_migration_texte_riche( $champs ) {
+	global $wpdb;
+
+	$propres = array();
+
+	foreach ( (array) $champs as $bloc => $chemins ) {
+		$bloc = (string) $bloc;
+
+		if ( preg_match( '#^[a-z0-9-]+/[a-z0-9-]+$#', $bloc ) ) {
+			$propres[ $bloc ] = array_values( array_filter( array_map( 'strval', (array) $chemins ) ) );
+		}
+	}
+
+	if ( ! $propres ) {
+		return 0;
+	}
+
+	$conditions = array();
+	$valeurs    = array();
+
+	foreach ( array_keys( $propres ) as $bloc ) {
+		$conditions[] = 'post_content LIKE %s';
+		$valeurs[]    = '%' . $wpdb->esc_like( '<!-- wp:' . $bloc . ' ' ) . '%';
+	}
+
+	$ids = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts} WHERE post_type <> 'revision' AND ( " . implode( ' OR ', $conditions ) . ' )', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$valeurs
+		)
+	);
+
+	$convertir = static function ( $blocs ) use ( &$convertir, $propres ) {
+		foreach ( $blocs as $i => $bloc ) {
+			if ( ! empty( $bloc['innerBlocks'] ) ) {
+				$blocs[ $i ]['innerBlocks'] = $convertir( $bloc['innerBlocks'] );
+			}
+
+			$nom = (string) $bloc['blockName'];
+
+			if ( ! isset( $propres[ $nom ] ) ) {
+				continue;
+			}
+
+			$attrs = (array) $bloc['attrs'];
+
+			foreach ( $propres[ $nom ] as $chemin ) {
+				$parties = explode( '.', $chemin, 2 );
+
+				if ( 1 === count( $parties ) ) {
+					if ( isset( $attrs[ $chemin ] ) ) {
+						$attrs[ $chemin ] = blocs_creator_vers_texte_riche( $attrs[ $chemin ] );
+					}
+					continue;
+				}
+
+				list( $parent, $cle ) = $parties;
+
+				if ( ! isset( $attrs[ $parent ] ) || ! is_array( $attrs[ $parent ] ) ) {
+					continue;
+				}
+
+				// Un groupe est une seule ligne ; un répéteur, une liste de lignes.
+				if ( ! wp_is_numeric_array( $attrs[ $parent ] ) ) {
+					if ( isset( $attrs[ $parent ][ $cle ] ) ) {
+						$attrs[ $parent ][ $cle ] = blocs_creator_vers_texte_riche( $attrs[ $parent ][ $cle ] );
+					}
+					continue;
+				}
+
+				foreach ( $attrs[ $parent ] as $rang => $ligne ) {
+					if ( is_array( $ligne ) && isset( $ligne[ $cle ] ) ) {
+						$attrs[ $parent ][ $rang ][ $cle ] = blocs_creator_vers_texte_riche( $ligne[ $cle ] );
+					}
+				}
+			}
+
+			$blocs[ $i ]['attrs'] = $attrs;
+		}
+
+		return $blocs;
+	};
+
+	$modifies = 0;
+
+	foreach ( $ids as $id ) {
+		$avant = (string) get_post_field( 'post_content', (int) $id, 'raw' );
+		$apres = serialize_blocks( $convertir( parse_blocks( $avant ) ) );
+
+		if ( $apres === $avant || $apres === serialize_blocks( parse_blocks( $avant ) ) ) {
+			continue;
+		}
+
+		$resultat = blocs_creator_migration_page( (int) $id, $apres );
+
+		if ( is_wp_error( $resultat ) ) {
+			return $resultat;
+		}
+
+		++$modifies;
+	}
+
+	return $modifies;
 }

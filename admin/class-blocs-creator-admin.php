@@ -615,7 +615,7 @@ class Blocs_Creator_Admin {
 	 *
 	 * C'est aussi la sortie de secours d'une reprise dont le dossier de code a
 	 * disparu : « Rendre au code » refuse, à juste titre, de rendre la main à
-	 * un bloc qui n'existe plus — mais il n'y avait alors plus aucun moyen de
+	 * un bloc qui n'existe plus, mais il n'y avait alors plus aucun moyen de
 	 * retirer la définition de la liste.
 	 */
 	public function action_supprimer() {

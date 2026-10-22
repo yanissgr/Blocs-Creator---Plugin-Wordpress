@@ -32,7 +32,7 @@
 	var CHAMP_ECARTES = 'blocs_ecartes';
 
 	/**
-	 * Retourne le préfixe des champs du formulaire — le nom de l'option.
+	 * Retourne le préfixe des champs du formulaire : le nom de l'option.
 	 *
 	 * On le lit sur un champ existant plutôt que de l'écrire ici : c'est le PHP
 	 * qui décide comment l'option s'appelle.
@@ -328,7 +328,7 @@
 	 * Remplace les cases par un seul champ au moment de l'envoi.
 	 *
 	 * C'est fait ici, et pas plus tôt, pour que la page reste utilisable telle
-	 * quelle : on coche, on décoche, on cherche — et ce n'est qu'en appuyant
+	 * quelle : on coche, on décoche, on cherche, et ce n'est qu'en appuyant
 	 * sur « Enregistrer » que la liste se compose.
 	 */
 	function envoi() {
@@ -377,7 +377,7 @@
 	 *
 	 * Un champ invalide bloque l'envoi, et c'est le navigateur qui le décide :
 	 * la requête ne part pas, le journal du diagnostic reste vide. S'il est dans
-	 * un onglet masqué, le navigateur ne peut ni le montrer ni dire pourquoi —
+	 * un onglet masqué, le navigateur ne peut ni le montrer ni dire pourquoi :
 	 * le bouton a l'air mort. On ouvre donc l'onglet qui le porte, puis on lui
 	 * redemande son message, une fois l'onglet affiché.
 	 */
@@ -427,7 +427,7 @@
 	 *
 	 * Sert le diagnostic : il vit au bas d'une page très longue, et le lien qui
 	 * y mène est dans la barre collante. Sans le déplier ni y descendre, le
-	 * lien ne ferait rien de visible — exactement le défaut qu'il est censé
+	 * lien ne ferait rien de visible : exactement le défaut qu'il est censé
 	 * aider à comprendre.
 	 */
 	function ouvreurs() {

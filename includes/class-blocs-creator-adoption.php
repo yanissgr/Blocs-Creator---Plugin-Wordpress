@@ -7,8 +7,8 @@
  * peut ni lui ajouter un champ ni lui changer son icône sans ouvrir un
  * éditeur de code.
  *
- * Reprendre la main, c'est traduire ce dossier en définition — la même chose
- * qu'on aurait saisie dans le back-office — et poser son `rendu.php` dans le
+ * Reprendre la main, c'est traduire ce dossier en définition (la même chose
+ * qu'on aurait saisie dans le back-office) et poser son `rendu.php` dans le
  * thème comme gabarit. Après quoi le bloc se modifie comme les autres.
  *
  * Trois promesses tiennent cette classe, et rien ne doit les entamer :
@@ -17,8 +17,8 @@
  *      pages qui le portent ne voient pas la différence.
  *   2. LE DESSIN NE BOUGE PAS. Le `rendu.php` est recopié tel quel, et les
  *      feuilles de style que le bloc déclarait restent attachées.
- *   3. RIEN NE SE PERD. Un attribut qu'aucun type de champ ne sait porter —
- *      un point focal, une structure à soi — est conservé tel quel plutôt
+ *   3. RIEN NE SE PERD. Un attribut qu'aucun type de champ ne sait porter (
+ *      un point focal, une structure à soi) est conservé tel quel plutôt
  *      qu'abandonné. Les variantes et les styles de bloc aussi.
  *
  * Et l'opération se défait : « Rendre au code » supprime la définition, le
@@ -99,7 +99,7 @@ class Blocs_Creator_Adoption {
 		 * d'obtenir une reprise EXACTE : un `pointFocal` redevient un point de
 		 * cadrage, un `sens` redevient deux boutons, et rien ne finit en champ
 		 * de texte faute de mieux. Sans cette clé, on lit le manifeste au
-		 * mieux — voir champ() plus bas.
+		 * mieux : voir champ() plus bas.
 		 */
 		$declare = isset( $meta['blocsCreator'] ) && is_array( $meta['blocsCreator'] ) ? $meta['blocsCreator'] : array();
 
@@ -224,7 +224,7 @@ class Blocs_Creator_Adoption {
 	 * Retourne les identifiants d'assets à garder attachés au bloc.
 	 *
 	 * Le script d'éditeur, lui, n'est pas repris : c'est justement celui que
-	 * la reprise remplace. Les feuilles de style le sont — sans elles, le bloc
+	 * la reprise remplace. Les feuilles de style le sont : sans elles, le bloc
 	 * changerait d'aspect, ce qui est exactement ce qu'on a promis d'éviter.
 	 *
 	 * @param array $meta Le manifeste.
@@ -260,7 +260,7 @@ class Blocs_Creator_Adoption {
 	 * dire : variantes, styles de bloc, exemple d'inséreur.
 	 *
 	 * On le transporte tel quel jusqu'à `register_block_type()`. Le
-	 * constructeur ne le montre pas — il n'y a rien à y régler — mais rien ne
+	 * constructeur ne le montre pas (il n'y a rien à y régler) mais rien ne
 	 * se perd.
 	 *
 	 * @param array $meta Le manifeste.
@@ -282,8 +282,8 @@ class Blocs_Creator_Adoption {
 	 * Retourne les blocs codés qui se déclarent enfants de celui-ci.
 	 *
 	 * C'est ainsi qu'on devine qu'un bloc en accueille d'autres : son
-	 * `block.json` ne le dit pas — les blocs imbriqués se déclarent en
-	 * JavaScript — mais ses enfants, eux, le disent par leur `parent`.
+	 * `block.json` ne le dit pas (les blocs imbriqués se déclarent en
+	 * JavaScript) mais ses enfants, eux, le disent par leur `parent`.
 	 *
 	 * @param string $nom Nom du bloc.
 	 * @return array<int, string>
@@ -317,7 +317,7 @@ class Blocs_Creator_Adoption {
 	 *
 	 * Retourne deux listes : les champs, et les attributs conservés tels
 	 * quels. Un attribut passe dans la seconde quand aucun type de champ ne
-	 * sait le porter sans en changer la forme — car en changer la forme, c'est
+	 * sait le porter sans en changer la forme : car en changer la forme, c'est
 	 * casser le `rendu.php` qui le lit.
 	 *
 	 * @param array $attributs Les attributs déclarés.
@@ -423,7 +423,7 @@ class Blocs_Creator_Adoption {
 			}
 		} else {
 			// Tableaux et objets : une galerie, un point focal, une structure
-			// à soi. Rien ici ne permet de trancher — on conserve.
+			// à soi. Rien ici ne permet de trancher : on conserve.
 			return null;
 		}
 
@@ -546,7 +546,7 @@ class Blocs_Creator_Adoption {
 	 *
 	 * C'est le geste qu'on fait une fois, au début : après lui, il n'y a plus
 	 * de blocs codés sur le site, seulement des blocs qui se modifient. Chaque
-	 * bloc est repris pour son compte — l'échec de l'un n'empêche pas les
+	 * bloc est repris pour son compte : l'échec de l'un n'empêche pas les
 	 * autres, et le compte rendu dit lesquels.
 	 *
 	 * @return array{repris:array<int, string>, echecs:array<int, string>, avertissements:array<int, string>}
@@ -581,7 +581,7 @@ class Blocs_Creator_Adoption {
 	/**
 	 * Rend un bloc au code : supprime la définition, le dossier reprend.
 	 *
-	 * Le gabarit recopié dans le thème n'est pas supprimé — il n'appartient
+	 * Le gabarit recopié dans le thème n'est pas supprimé : il n'appartient
 	 * plus au plugin dès qu'il est écrit. Il ne sert simplement plus à rien,
 	 * et ne gêne pas.
 	 *

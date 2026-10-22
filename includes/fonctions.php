@@ -58,7 +58,7 @@ function blocs_creator_brut( $cle, $defaut = null ) {
 /**
  * Le champ est-il rempli ?
  *
- * Un zéro numérique compte comme rempli — c'est une valeur. Une chaîne vide,
+ * Un zéro numérique compte comme rempli : c'est une valeur. Une chaîne vide,
  * un tableau vide, un null ne comptent pas.
  *
  * @param string $cle Clé du champ.
@@ -123,7 +123,7 @@ function blocs_creator_contenu() {
 /**
  * Retourne la balise `<img>` d'un champ image.
  *
- * Si le champ est vide, retourne une surface d'attente — un `<span>` vide que
+ * Si le champ est vide, retourne une surface d'attente : un `<span>` vide que
  * le thème peut habiller. Une section reste ainsi présentable pendant que la
  * rédaction cherche son visuel.
  *
@@ -340,14 +340,15 @@ function blocs_creator_bloc() {
  * Traduit le balisage léger d'un texte : **gras**, _italique_ et retours à
  * la ligne.
  *
- * Les valeurs par défaut d'une définition s'écrivent en texte brut — une
- * balise y serait effacée. Un titre par défaut s'écrit donc « Éduquer,
- * partager, **se balader ensemble.** » et devient du HTML ici. Le plugin s'en
+ * Les valeurs par défaut d'une définition s'écrivent en texte brut : une
+ * balise y serait effacée. Un titre par défaut s'écrit donc « Votre projet,
+ * **de A à Z.** » et devient du HTML ici ; deux retours à la ligne y
+ * séparent deux paragraphes (blocs_creator_paragraphes()). Le plugin s'en
  * sert pour les valeurs par défaut des champs « Texte enrichi » ; un gabarit
  * ou un réglage de thème peut s'en servir pour les siennes.
  *
  * Un texte qui contient déjà une balise est rendu tel quel : il a été écrit
- * dans l'éditeur, et l'on ne touche à rien — pas même au souligné d'une URL.
+ * dans l'éditeur, et l'on ne touche à rien : pas même au souligné d'une URL.
  *
  * @param string $texte Texte brut, ou HTML.
  * @return string
@@ -363,4 +364,121 @@ function blocs_creator_balisage_leger( $texte ) {
 	$texte = (string) preg_replace( '/(?<![\p{L}\p{N}])_(.+?)_(?![\p{L}\p{N}])/su', '<em>$1</em>', $texte );
 
 	return str_replace( array( "\r\n", "\n" ), '<br>', $texte );
+}
+
+/* ---------------------------------------------------------------------- *
+ * Textes enrichis (6.0)
+ *
+ * Un champ « Texte enrichi » posé dans le bloc reçoit gras, italique et
+ * liens, et va à la ligne par `<br>` (Maj + Entrée, ou Entrée quand le champ
+ * n'est fait que d'un paragraphe). Ces trois fonctions le rendent selon
+ * l'endroit : des paragraphes, une ligne courte, une liste. Elles prennent
+ * aussi le texte brut d'une ancienne zone de texte (retours à la ligne,
+ * balisage léger) : un champ passé au texte enrichi s'affiche bien avant
+ * comme après sa migration (blocs_creator_migration_texte_riche()).
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Un texte enrichi en paragraphes.
+ *
+ * Deux retours à la ligne de suite ouvrent un nouveau paragraphe : c'est le
+ * geste qu'on fait naturellement dans un champ qui n'en fait qu'un.
+ *
+ *     echo blocs_creator_paragraphes( blocs_creator_champ( 'texte' ) );
+ *
+ * @param string $texte Texte enrichi, ou texte brut.
+ * @return string Paragraphes `<p>`, filtrés ; vide si le texte l'est.
+ */
+function blocs_creator_paragraphes( $texte ) {
+	$html = trim( str_replace( "\r\n", "\n", (string) $texte ) );
+
+	if ( '' === trim( wp_strip_all_tags( $html ) ) ) {
+		return '';
+	}
+
+	$html     = blocs_creator_balisage_leger( $html );
+	$morceaux = preg_split( '#(?:\s*<br\s*/?>\s*){2,}|\n\s*\n#i', $html );
+	$sortie   = '';
+
+	foreach ( (array) $morceaux as $morceau ) {
+		$morceau = trim( (string) preg_replace( '#^(<br\s*/?>\s*)+|(<br\s*/?>\s*)+$#i', '', (string) $morceau ) );
+
+		if ( '' !== $morceau ) {
+			$sortie .= '<p>' . wp_kses_post( $morceau ) . '</p>';
+		}
+	}
+
+	return $sortie;
+}
+
+/**
+ * Un texte enrichi court (un titre de carte, une légende, un libellé) :
+ * gras, italique et liens, sans paragraphe.
+ *
+ *     <h3><?php echo blocs_creator_texte_court( $carte['titre'] ); ?></h3>
+ *
+ * @param string $texte Texte enrichi, ou texte brut.
+ * @return string HTML filtré ; vide si le texte l'est.
+ */
+function blocs_creator_texte_court( $texte ) {
+	$html = trim( (string) $texte );
+
+	if ( '' === trim( wp_strip_all_tags( $html ) ) ) {
+		return '';
+	}
+
+	return wp_kses( blocs_creator_balisage_leger( $html ), blocs_creator_balises_courtes() );
+}
+
+/**
+ * Les lignes non vides d'un texte, une par point de liste : un texte
+ * enrichi va à la ligne par `<br>`, un texte brut par un retour à la ligne.
+ *
+ *     <ul>
+ *         <?php foreach ( blocs_creator_lignes( blocs_creator_champ( 'points' ) ) as $point ) : ?>
+ *             <li><?php echo blocs_creator_texte_court( $point ); ?></li>
+ *         <?php endforeach; ?>
+ *     </ul>
+ *
+ * @param string $texte Texte enrichi, ou texte brut.
+ * @return string[] Les lignes, encore brutes : à passer par blocs_creator_texte_court().
+ */
+function blocs_creator_lignes( $texte ) {
+	return array_values( array_filter( array_map( 'trim', preg_split( '#\r\n|\r|\n|<br\s*/?>#i', (string) $texte ) ) ) );
+}
+
+/**
+ * Les balises permises dans un texte court ou un point de liste.
+ *
+ * @return array
+ */
+function blocs_creator_balises_courtes() {
+	$balises = array(
+		'strong' => array(),
+		'b'      => array(),
+		'em'     => array(),
+		'i'      => array(),
+		's'      => array(),
+		'sub'    => array(),
+		'sup'    => array(),
+		'mark'   => array(
+			'class' => true,
+			'style' => true,
+		),
+		'code'   => array(),
+		'kbd'    => array(),
+		'br'     => array(),
+		'a'      => array(
+			'href'   => true,
+			'target' => true,
+			'rel'    => true,
+		),
+	);
+
+	/**
+	 * Filtre les balises permises dans un texte court.
+	 *
+	 * @param array $balises Balises et attributs permis, au format de wp_kses().
+	 */
+	return (array) apply_filters( 'blocs_creator_balises_courtes', $balises );
 }

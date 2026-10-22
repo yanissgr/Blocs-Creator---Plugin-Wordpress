@@ -7,7 +7,7 @@
  *
  *   - LES BLOCS GÉNÉRÉS, décrits dans le back-office (Blocs_Creator_Definition). Leurs
  *     attributs sont déduits de leurs champs, leur rendu passe par Blocs_Creator_Rendu.
- *   - LES BLOCS CODÉS, découverts sur le disque à leur `block.json` — dans un
+ *   - LES BLOCS CODÉS, découverts sur le disque à leur `block.json` : dans un
  *     pack du plugin, dans le thème, ou dans `wp-content/blocs-creator/`.
  *     Le registre ne fait que les enregistrer : leur rendu et leur éditeur
  *     sont leur affaire.
@@ -179,7 +179,7 @@ class Blocs_Creator_Registre {
 			 *
 			 * Même titre sous un autre slug : il n'y a rien à ajouter non
 			 * plus. Deux sections du même nom dans l'inséreur ne sont pas deux
-			 * rangements, c'est le même coupé en deux — et plus personne ne
+			 * rangements, c'est le même coupé en deux, et plus personne ne
 			 * sait dans laquelle chercher. La section qui existe déjà gagne ;
 			 * pour y ranger vos blocs, choisissez-la dans les réglages.
 			 */
@@ -260,7 +260,7 @@ class Blocs_Creator_Registre {
 	 *
 	 * Un bloc codé est déclaré deux fois : en PHP par son `block.json`, et en
 	 * JavaScript par le script de son pack, qui lui donne son `edit`. Quand on
-	 * reprend le bloc en main, le PHP passe à la définition — mais le script
+	 * reprend le bloc en main, le PHP passe à la définition, mais le script
 	 * du pack, lui, continue de tourner pour ses autres blocs, et
 	 * réenregistrerait celui-là par-dessus le nôtre.
 	 *
@@ -362,7 +362,7 @@ class Blocs_Creator_Registre {
 	 * Enregistre tous les blocs, codés puis générés.
 	 *
 	 * Les codés d'abord : si un bloc généré porte par accident le même nom,
-	 * c'est le code qui gagne — il est plus difficile à corriger qu'une
+	 * c'est le code qui gagne : il est plus difficile à corriger qu'une
 	 * définition, et c'est lui qui a probablement des pages derrière lui.
 	 */
 	public function enregistrer_blocs() {
@@ -454,7 +454,7 @@ class Blocs_Creator_Registre {
 		/*
 		 * Un bloc repris au code garde les feuilles et les scripts que son
 		 * `block.json` déclarait, et tout ce que la définition ne sait pas
-		 * dire — ses variantes, ses styles de bloc, son exemple d'inséreur.
+		 * dire : ses variantes, ses styles de bloc, son exemple d'inséreur.
 		 * Sans quoi la reprise changerait son aspect, ce qu'elle promet de ne
 		 * pas faire.
 		 */
@@ -634,7 +634,7 @@ class Blocs_Creator_Registre {
 	 * Découvre les blocs codés.
 	 *
 	 * Un bloc codé est un dossier portant un `block.json`. On lit ce fichier
-	 * pour l'afficher dans l'écran de liste — nom, titre, description, icône —
+	 * pour l'afficher dans l'écran de liste (nom, titre, description, icône)
 	 * et on retient son dossier pour l'enregistrement.
 	 *
 	 * @return array<int, array>

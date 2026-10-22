@@ -218,7 +218,7 @@ add_action( 'wp_enqueue_scripts', 'blocs_creator_cookies_assets' );
 
 /**
  * Écrit le bandeau, caché : le script le montre si le visiteur n'a pas
- * encore choisi. Sans JavaScript, il reste caché — et Google Analytics, qui
+ * encore choisi. Sans JavaScript, il reste caché, et Google Analytics, qui
  * en a besoin, ne se charge pas non plus.
  */
 function blocs_creator_cookies_bandeau() {
@@ -383,7 +383,7 @@ function blocs_creator_cookies_ecran() {
 								'name'              => $nom( 'page' ), // phpcs:ignore WordPress.Security.EscapeOutput -- échappé par wp_dropdown_pages().
 								'id'                => 'bc-cookies-page',
 								'selected'          => (int) $reglages['page'],
-								'show_option_none'  => esc_html__( '— Aucune —', 'blocs-creator' ),
+								'show_option_none'  => esc_html__( '- Aucune -', 'blocs-creator' ),
 								'option_none_value' => '0',
 							)
 						);
@@ -401,7 +401,7 @@ function blocs_creator_cookies_ecran() {
 					<th scope="row"><?php esc_html_e( 'Rouvrir le bandeau', 'blocs-creator' ); ?></th>
 					<td>
 						<code>#<?php echo esc_html( BLOCS_CREATOR_COOKIES_ANCRE ); ?></code>
-						<p class="description"><?php esc_html_e( 'Un lien vers cette adresse — dans un menu, un texte ou un bouton — rouvre le bandeau pour changer d\'avis. Mettez-en un sur la page des cookies.', 'blocs-creator' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Un lien vers cette adresse (dans un menu, un texte ou un bouton) rouvre le bandeau pour changer d\'avis. Mettez-en un sur la page des cookies.', 'blocs-creator' ); ?></p>
 					</td>
 				</tr>
 				<tr>

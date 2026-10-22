@@ -2,11 +2,11 @@
  * Les apparitions.
  *
  * Un scénario n'est pas un geste : c'est une SCÈNE. Chacun décrit ce que fait
- * le bloc, et ce que font ses parties — son titre, son texte, ses images —
+ * le bloc, et ce que font ses parties (son titre, son texte, ses images)
  * avec un décalage entre elles. C'est ce décalage qui fait la différence entre
  * une page qui s'allume d'un bloc et une page qui se compose sous les yeux.
  *
- * La mécanique tient en deux règles, et les neuf scénarios ne font que poser
+ * La mécanique tient en deux règles, et les huit scénarios ne font que poser
  * des variables :
  *
  *   --bc-a-*  l'état de départ du BLOC     (a comme « animation »)
@@ -34,16 +34,13 @@
 	--bc-anim-ecart: 1.75rem;
 
 	/*
-	 * Les courbes des variantes travaillées (5.0) : une sortie longue qui se
-	 * pose sans traîner, une douce, un ressort. Un thème les redéfinit ici
-	 * pour donner à tout le site le même mouvement.
+	 * Trois courbes de plus, pour les variantes d'un thème : une sortie
+	 * longue qui se pose sans traîner, une douce, un ressort. Un thème les
+	 * redéfinit ici pour donner à tout le site le même mouvement.
 	 */
 	--bc-anim-courbe-expo: cubic-bezier(0.19, 1, 0.22, 1);
 	--bc-anim-courbe-douce: cubic-bezier(0.16, 1, 0.3, 1);
 	--bc-anim-courbe-ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-	/* Le décalage entre deux mots d'un titre qui monte mot à mot. */
-	--bc-anim-cadence-mots: 55ms;
 }
 
 /* ------------------------------------------------------------------ *
@@ -53,8 +50,7 @@
  * C'est plus bavard qu'une transformation composée de variables, et c'est
  * voulu : `transform: translate3d(0,0,0)` n'est pas `transform: none`. Une
  * transformation, même identité, fait du bloc le référent de ses enfants
- * positionnés en absolu — et le cercle de la bannière, l'aplat peint d'une
- * carte, tomberaient de leur place. Un scénario qui ne déplace pas le bloc ne
+ * positionnés en absolu : un décor posé en absolu tomberait de sa place. Un scénario qui ne déplace pas le bloc ne
  * doit donc rien lui poser du tout.
  *
  * Le socle ne gère que ce qui est commun : l'opacité, la transition, et le
@@ -94,7 +90,7 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Les neuf scènes
+ * Les huit scènes
  *
  * Rangées de la plus sobre à la plus appuyée, dans le même ordre que le
  * menu. Ajouter une scène, c'est ajouter un bloc ici et une entrée dans
@@ -104,13 +100,13 @@
  * et ne pose aucune transformation : c'est son contenu qui travaille.
  * ------------------------------------------------------------------ */
 
-/* 1. Montée — le bloc entier, et rien d'autre. */
+/* 1. Montée : le bloc entier, et rien d'autre. */
 .bc-anim-prete .bc-anim[data-bc-anim="montee"] {
 	transform: translate3d(0, var(--bc-anim-ecart), 0);
 }
 
 /*
- * 2. Cascade — le bloc ne bouge pas, son contenu monte l'un après l'autre.
+ * 2. Cascade : le bloc ne bouge pas, son contenu monte l'un après l'autre.
  *    C'est le geste d'une section qui se lit de haut en bas : le titre, puis
  *    le chapô, puis le bouton.
  */
@@ -127,7 +123,7 @@
 }
 
 /*
- * 3. Croisement — une partie sur deux vient de la gauche, l'autre de la
+ * 3. Croisement : une partie sur deux vient de la gauche, l'autre de la
  *    droite. Pour un bloc en deux moitiés : un texte et une image, un titre
  *    et un bandeau.
  */
@@ -148,7 +144,7 @@
 }
 
 /*
- * 4. Déploiement — un store qu'on déroule. Le masque garde la place du bloc
+ * 4. Déploiement : un store qu'on déroule. Le masque garde la place du bloc
  *    pendant toute son entrée, ce qui compte quand ses voisins sont déjà là.
  */
 .bc-anim-prete .bc-anim[data-bc-anim="deploiement"] {
@@ -166,29 +162,7 @@
 }
 
 /*
- * 5. Signature — un balayage de la gauche vers la droite, comme le coup de
- *    pinceau du menu. Sa courbe lui est propre : franche au départ, elle
- *    s'arrête net, là où la courbe commune se déposerait mollement. Elle passe
- *    par la variable, et non par `transition-timing-function` : le socle est
- *    plus spécifique, il gagnerait.
- */
-.bc-anim-prete .bc-anim[data-bc-anim="signature"] {
-	opacity: 1;
-	clip-path: inset(0 100% 0 0);
-
-	--bc-anim-courbe: cubic-bezier(0.65, 0.02, 0.28, 1);
-	--bc-p-courbe: cubic-bezier(0.22, 0.68, 0.36, 1);
-	--bc-a-repose: 1;
-	--bc-p-cadence: 60ms;
-	--bc-p-depart: 220ms;
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="signature"] [data-bc-part] {
-	opacity: 0;
-}
-
-/*
- * 6. Pastilles — chaque partie apparaît petite et se pose, vite. Une grille
+ * 5. Pastilles : chaque partie apparaît petite et se pose, vite. Une grille
  *    de cartes se remplit alors au lieu de s'allumer d'un coup.
  */
 .bc-anim-prete .bc-anim[data-bc-anim="pastilles"] {
@@ -205,7 +179,7 @@
 }
 
 /*
- * 7. Souffle — le bloc arrive flou et trop grand, et se pose net. Le flou est
+ * 6. Souffle : le bloc arrive flou et trop grand, et se pose net. Le flou est
  *    le seul endroit du fichier où l'on pose un `filter` : il fait du bloc le
  *    référent de ses enfants en absolu, le temps de l'entrée seulement.
  */
@@ -222,7 +196,7 @@
 }
 
 /*
- * 8. Bascule — le bloc pivote vers vous depuis sa base. La perspective est
+ * 7. Bascule : le bloc pivote vers vous depuis sa base. La perspective est
  *    posée sur le bloc, donc la bascule reste douce quelle que soit sa
  *    hauteur.
  */
@@ -240,7 +214,7 @@
 }
 
 /*
- * 9. Ressort — le bloc dépasse sa place et y revient. C'est la courbe qui le
+ * 8. Ressort : le bloc dépasse sa place et y revient. C'est la courbe qui le
  *    fait, pas une image-clé : la courbe commune, qui se dépose sans
  *    rebondir, annulerait tout l'effet.
  */
@@ -258,22 +232,27 @@
 }
 
 /*
- * 10. Composée — le gabarit distribue les rôles.
+ * 9. Composée : le gabarit distribue les rôles.
  *
- *     Les neuf scènes d'au-dessus décident pour tout le monde : un même geste
+ *     Les huit scènes d'au-dessus décident pour tout le monde : un même geste
  *     pour toutes les parties, décalé dans le temps. C'est ce qu'il faut la
  *     plupart du temps, et c'est insuffisant dès qu'un bloc est fait de deux
- *     moitiés qui n'entrent pas de la même façon — un texte qui monte et une
- *     image qui s'installe, deux colonnes qui se croisent, un coup de pinceau
- *     qui se peint.
+ *     moitiés qui n'entrent pas de la même façon : un texte qui monte et une
+ *     image qui s'installe, deux colonnes qui se croisent.
  *
  *     Ici, chaque partie porte sa propre variante dans la valeur de
  *     `data-bc-part` : `data-bc-part="zoom"` sur l'image, `data-bc-part="haut"`
  *     sur le texte. Le gabarit compose donc sa scène, et le réglage du bloc
- *     reste libre : on peut toujours lui préférer une des neuf autres.
+ *     reste libre : on peut toujours lui préférer une des huit autres.
  *
- *     Les variantes ne décrivent que l'état de DÉPART. L'arrivée est commune —
+ *     Les variantes ne décrivent que l'état de DÉPART. L'arrivée est commune :
  *     c'est ce qui garantit qu'aucune ne laisse un élément décalé.
+ *
+ *     Le plugin ne donne que des gestes sobres, qui vont à tous les sites.
+ *     Ce qui fait l'allure d'un site (un titre qui se dévoile, une photo qui
+ *     s'ouvre) est une variante de son thème, écrite dans sa feuille sur
+ *     `.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="…"]`,
+ *     avec son état `bc-attend` (fin de ce fichier).
  */
 .bc-anim-prete .bc-anim[data-bc-anim="composee"] {
 	opacity: 1;
@@ -286,7 +265,7 @@
 	/*
 	 * Remises à zéro d'abord : une propriété personnalisée se transmet aux
 	 * descendants, et une partie imbriquée dans une autre hériterait sinon du
-	 * déplacement de son aînée — un trait au milieu d'un texte qui vient de la
+	 * déplacement de son aînée : un trait au milieu d'un texte qui vient de la
 	 * gauche partirait de la gauche lui aussi.
 	 */
 	--bc-p-x: 0;
@@ -325,7 +304,7 @@
 
 /*
  * Les cartes : elles montent en se dépliant. Le déplacement est plus court
- * que partout ailleurs — une grille entière qui parcourt deux centimètres
+ * que partout ailleurs : une grille entière qui parcourt deux centimètres
  * donne le mal de mer.
  */
 .bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="pastille"] {
@@ -335,139 +314,7 @@
 	--bc-p-courbe: cubic-bezier(0.34, 1.42, 0.64, 1);
 }
 
-/*
- * Le coup de pinceau se peint, il n'apparaît pas : une découpe inclinée qui
- * balaie la largeur. Il ne prend donc ni opacité ni déplacement.
- */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="pinceau"] {
-	opacity: 1;
-	transform: none;
-	clip-path: polygon(-30% 0%, -2% 0%, -18% 100%, -30% 100%);
-	transition: clip-path 560ms var(--bc-anim-courbe) var(--bc-p-delai);
-}
-
-/* Après la règle commune d'arrivée, qui remettrait `clip-path: none`. */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="pinceau"] {
-	clip-path: polygon(-30% 0%, 118% 0%, 102% 100%, -30% 100%);
-}
-
-/* ------------------------------------------------------------------ *
- * Les variantes travaillées (5.0)
- *
- * Nées sur un site, remontées ici parce qu'elles servent partout. Une règle
- * les tient : ON ANIME LES ÉLÉMENTS, PAS LES BLOCS. Un titre qui monte mot à
- * mot, une image qui se découvre, des cartes qui se posent l'une après
- * l'autre racontent la page ; un bloc qui s'allume d'un coup se remarque à
- * peine.
- *
- * `mots` vaut dans toutes les scènes ; les autres, dans « Composée ».
- * ------------------------------------------------------------------ */
-
-/*
- * Mots — le titre reste en place, chaque mot monte de sous sa ligne.
- *
- * Le script enveloppe chaque mot dans deux <span> : le premier cache, le
- * second monte. Les balises intérieures (em, strong, br, a) sont gardées.
- * Une fois les mots posés, `bc-mots-poses` leur rend leurs débords : un
- * italique ou un accent ne reste pas rogné.
- */
-.bc-mot {
-	display: inline-block;
-	padding: 0.1em 0.06em 0.2em;
-	margin: -0.1em -0.06em -0.2em;
-	overflow: hidden;
-	vertical-align: top;
-}
-
-.bc-mot__in {
-	display: inline-block;
-}
-
-.bc-mots-poses .bc-mot {
-	overflow: visible;
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="mots"] {
-	opacity: 1;
-	transform: none;
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part="mots"] .bc-mot__in {
-	transform: translate3d(0, 110%, 0) rotate(4deg);
-	transform-origin: 0 100%;
-	transition: transform 1050ms var(--bc-anim-courbe-expo) calc(var(--bc-p-delai, 0ms) + var(--bc-i, 0) * var(--bc-anim-cadence-mots));
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim].is-vu [data-bc-part="mots"] .bc-mot__in {
-	transform: none;
-}
-
-/*
- * Masque — un rideau qui se lève ; l'image derrière se pose en dézoomant.
- * L'arrivée garde une découpe (élargie), et non `none` : on ne passe pas en
- * douceur d'une découpe à rien du tout, le rideau sauterait.
- */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="masque"] {
-	opacity: 1;
-	transform: none;
-	clip-path: inset(100% 0 0 0);
-	transition: clip-path 1250ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"] {
-	clip-path: inset(-12% -12% -12% -12%);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="masque"] :is(img, video, [data-bc-masque-media]) {
-	scale: 1.16;
-	transition: scale 1700ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"] :is(img, video, [data-bc-masque-media]) {
-	scale: 1;
-}
-
-/* Flou — le texte sort de la brume en montant d'un rien. */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="flou"] {
-	--bc-p-y: 0.6rem;
-
-	filter: blur(12px);
-	transition:
-		opacity 900ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
-		transform 900ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms),
-		filter 900ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms);
-}
-
-/* Trait — une ligne, un filet, un soulignement qui se tire de gauche à droite. */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="trait"] {
-	opacity: 1;
-	transform: scaleX(0);
-	transform-origin: 0 50%;
-	transition: transform 1100ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
-}
-
-/* Pop — petit, penché, puis posé d'un rebond. Pour une icône, un guillemet, une étiquette. */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="pop"] {
-	transform: scale(0.4) rotate(-14deg);
-	transition:
-		opacity 500ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
-		transform 900ms var(--bc-anim-courbe-ressort) var(--bc-p-delai, 0ms);
-}
-
-/* Carte — monte de loin, légèrement tournée, et se redresse. Une sur deux tourne dans l'autre sens. */
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="carte"] {
-	transform: translate3d(0, 3.2rem, 0) rotate(var(--bc-carte-rot, 2.5deg)) scale(0.96);
-	transform-origin: 50% 100%;
-	transition:
-		opacity 700ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
-		transform 1200ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="carte"]:nth-child(even) {
-	--bc-carte-rot: -2.5deg;
-}
-
-/* Ligne — une rangée de liste qui glisse depuis la gauche. */
+/* Une rangée de liste qui glisse depuis la gauche. */
 .bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="ligne"] {
 	--bc-p-x: -1.75rem;
 
@@ -485,8 +332,8 @@
  * arrivait sur des éléments déjà posés.
  *
  * Le script pose donc `bc-attend` sur chaque partie encore sous l'écran au
- * chargement. Elle garde son état de départ — `bc-attend` l'emporte sur
- * l'arrivée commune — jusqu'à ce qu'elle arrive elle-même à l'écran. Mêmes
+ * chargement. Elle garde son état de départ (`bc-attend` l'emporte sur
+ * l'arrivée commune) jusqu'à ce qu'elle arrive elle-même à l'écran. Mêmes
  * états de départ que plus haut ; c'est pourquoi ces règles viennent après
  * toutes les autres.
  *
@@ -504,48 +351,6 @@
 	transform: translate3d(var(--bc-p-x, 0), var(--bc-p-y, 0), 0) scale(var(--bc-p-echelle, 1));
 }
 
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="flou"].bc-attend {
-	filter: blur(12px);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="trait"].bc-attend {
-	opacity: 1;
-	transform: scaleX(0);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="pop"].bc-attend {
-	transform: scale(0.4) rotate(-14deg);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="carte"].bc-attend {
-	transform: translate3d(0, 3.2rem, 0) rotate(var(--bc-carte-rot, 2.5deg)) scale(0.96);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"].bc-attend {
-	opacity: 1;
-	transform: none;
-	clip-path: inset(100% 0 0 0);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="masque"].bc-attend :is(img, video, [data-bc-masque-media]) {
-	scale: 1.16;
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="pinceau"].bc-attend {
-	opacity: 1;
-	transform: none;
-	clip-path: polygon(-30% 0%, -2% 0%, -18% 100%, -30% 100%);
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="mots"].bc-attend {
-	opacity: 1;
-	transform: none;
-}
-
-.bc-anim-prete .bc-anim[data-bc-anim].is-vu [data-bc-part="mots"].bc-attend .bc-mot__in {
-	transform: translate3d(0, 110%, 0) rotate(4deg);
-}
-
 /* ------------------------------------------------------------------ *
  * Moins d'animations
  *
@@ -556,17 +361,11 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.bc-anim-prete .bc-anim[data-bc-anim],
-	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part],
-	.bc-anim-prete .bc-anim[data-bc-anim] .bc-mot__in {
+	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part] {
 		opacity: 1;
 		clip-path: none;
 		filter: none;
 		transform: none;
-		transition: none;
-	}
-
-	.bc-anim-prete .bc-anim[data-bc-anim] [data-bc-part] :is(img, video, [data-bc-masque-media]) {
-		scale: 1;
 		transition: none;
 	}
 }
@@ -574,8 +373,8 @@
 /* ------------------------------------------------------------------ *
  * L'aperçu du back-office
  *
- * Une scène de quatre parties — un titre, deux lignes, une rangée de
- * pastilles — qui rejoue le scénario choisi. Elle vit ici, et non dans la
+ * Une scène de quatre parties (un titre, deux lignes, une rangée de
+ * pastilles) qui rejoue le scénario choisi. Elle vit ici, et non dans la
  * feuille de l'administration, pour une raison : c'est cette feuille-ci qui
  * décrit les scénarios, et l'aperçu doit en dépendre. Une scène stylée
  * ailleurs finirait par montrer autre chose que le site.

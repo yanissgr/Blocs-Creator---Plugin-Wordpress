@@ -4,7 +4,7 @@
  *
  * Ce que Gutenberg ajoutera par-dessus le bloc : l'ancre, l'alignement, les
  * couleurs. Chaque case cochée ajoute une section dans la colonne de droite de
- * l'éditeur — d'où la retenue par défaut : on coche ce qu'on va utiliser.
+ * l'éditeur : d'où la retenue par défaut : on coche ce qu'on va utiliser.
  *
  * @package BlocsCreator
  *

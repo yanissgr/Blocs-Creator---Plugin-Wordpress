@@ -8,7 +8,7 @@
  *
  * La recherche est un LIKE sur le contenu des publications. C'est grossier,
  * mais c'est exact : un bloc dans une page y laisse toujours son commentaire
- * `<!-- wp:espace/slug `, espace compris — et c'est cet espace qui fait toute
+ * `<!-- wp:espace/slug `, espace compris, et c'est cet espace qui fait toute
  * la différence. Sans lui, « mes-blocs/carte » compterait aussi les « cartes »
  * et les « carte-libre ». Le résultat est mis en cache : une liste de blocs ne
  * doit pas coûter une requête par ligne à chaque affichage.
@@ -37,7 +37,7 @@ class Blocs_Creator_Usage {
 	 * Retourne le motif à chercher dans le contenu d'une publication.
 	 *
 	 * L'espace final n'est pas décoratif : le sérialiseur de Gutenberg écrit
-	 * toujours `<!-- wp:nom ` — avec attributs, sans attributs, ouvrant ou
+	 * toujours `<!-- wp:nom ` : avec attributs, sans attributs, ouvrant ou
 	 * auto-fermant. C'est lui qui empêche « mes-blocs/carte » de compter les
 	 * « mes-blocs/cartes ».
 	 *

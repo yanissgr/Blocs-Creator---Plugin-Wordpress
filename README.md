@@ -3,13 +3,46 @@
 Créez vos blocs Gutenberg en déclarant leurs champs, puis dessinez-les dans un
 fichier PHP de votre thème.
 
-Auteur : **Yanis Singer** — Licence GPL-2.0-or-later — WordPress 6.5+, PHP 8.0+
+Auteur : **Yanis Singer** · Licence GPL-2.0-or-later · WordPress 6.5+, PHP 8.0+
 (l'IA demande WordPress 7.0+)
 
 > **Deux lectures avant de commencer.** `docs/guide-theme.md` pour construire
 > un site avec le plugin (le thème, le format de `definitions.json`, les
 > apparitions, les modules, les migrations). `CLAUDE.md` pour modifier le
 > plugin lui-même (conventions, pièges connus, comment tester).
+
+---
+
+## Nouveautés de la 6.0 : un plugin sans allure à lui
+
+Blocs Creator est né sur un site, et il en gardait l'allure : des variantes
+d'apparition très reconnaissables, une page de maintenance avec son surtitre
+et son halo, des exemples tirés de ce site-là. Suivies à la lettre, elles
+donnaient à chaque nouveau projet le même air. La 6.0 ne garde que des
+**outils** ; le dessin, lui, revient au thème de chaque site.
+
+- **Variantes retirées** : `mots` (titres mot à mot), `masque`, `flou`,
+  `trait`, `pop`, `carte`, `pinceau`, et la scène **Signature**. Restent les
+  gestes sobres : `haut`, `bas`, `gauche`, `droite`, `zoom`, `fondu`,
+  `pastille`, `ligne`, et les neuf scènes. Un bloc réglé sur « Signature »
+  entre désormais en « Déploiement ». Un site qui s'en servait reste en 5.x,
+  ou redessine ces variantes dans son thème (voir `docs/guide-theme.md`).
+- **Page de maintenance** : plus de surtitre ni de halo ; un encadré
+  **« Nous joindre »** (titre, texte, téléphones, e-mail, réseaux sociaux
+  reconnus à leur adresse), réglé dans *Réglages → Maintenance*. Un thème
+  propose ses coordonnées pour les champs laissés vides
+  (`blocs_creator_maintenance_contact_repli`) et ses textes par défaut
+  (`blocs_creator_maintenance_defauts`) ; son propre gabarit lit l'encadré par
+  `blocs_creator_maintenance_contact()`.
+- **Couleurs de secours neutres** : sans couleurs dans `theme.json`, les
+  modules (maintenance, cookies, brouillons, bouton Modifier, noms des blocs)
+  et les e-mails prennent les gris et le bleu de WordPress, plus l'orange et
+  le beige d'un site. Les e-mails n'ont plus de surtitre en capitales.
+- **Textes enrichis** : `blocs_creator_paragraphes()`,
+  `blocs_creator_texte_court()` et `blocs_creator_lignes()` rendent un champ
+  « Texte enrichi » en paragraphes, en ligne courte ou en liste ; une
+  migration passe des champs déjà écrits au texte enrichi dans tous les
+  contenus : `blocs_creator_migration_texte_riche()`.
 
 ---
 
@@ -21,9 +54,8 @@ tant qu'on ne les coche pas ; seuls le moteur d'apparitions et l'éditeur
 s'améliorent d'eux-mêmes. Sur un site neuf, l'IA est allumée d'office (dès
 qu'une IA est branchée).
 
-- **Des apparitions plus travaillées.** Sept variantes de parties de plus
-  (`mots`, `masque`, `flou`, `trait`, `pop`, `carte`, `ligne`) ; les titres
-  `data-bc-part="mots"` montent mot à mot ; les parties encore sous l'écran
+- **Des apparitions plus travaillées.** Une variante de partie de plus,
+  `ligne` (les six autres de la 5.0 sont retirées en 6.0) ; les parties encore sous l'écran
   **attendent leur tour** au lieu de jouer hors de vue sur un téléphone ; le
   bas de page entre toujours.
 - **Les blocs du contenu.** Une case fait entrer chaque paragraphe, titre,
@@ -47,9 +79,8 @@ qu'une IA est branchée).
   ne fait plus quitter l'éditeur), et les valeurs par défaut des champs
   enrichis comprennent `**gras**` et `_italique_`.
 
-Ce qui reste au thème, délibérément : les micro-interactions (compteurs,
-cartes inclinables, boutons aimantés, parallaxe, accordéons, en-tête qui se
-cache…). Elles se dessinent pour chaque projet.
+Ce qui reste au thème, délibérément : les micro-interactions et tout ce qui
+fait l'allure d'un site. Elles se dessinent pour chaque projet.
 
 ---
 
@@ -69,7 +100,7 @@ demandent quatre caractères au minimum.
 `blocs_creator_` dans `wp-content/themes/<thème>/blocs/`. La boîte « Fiche du
 bloc » de l'écran d'un bloc donne les nouvelles lignes, prêtes à copier.
 
-Ce qui **ne bouge pas** — parce que c'est écrit en base ou dans le contenu des
+Ce qui **ne bouge pas** : parce que c'est écrit en base ou dans le contenu des
 pages : les noms de blocs, le type de publication `bc_bloc`, les options, les
 crochets (déjà en `blocs_creator_*`), les arguments d'URL et les classes CSS
 `bc-*`.
@@ -104,7 +135,7 @@ automatisable.
 
 > **Si ce n'est pas vous qui dessinez.** L'écran du bloc porte une boîte
 > « Fiche du bloc » : identifiant, fichier à écrire, et chaque champ avec la
-> ligne qui va le chercher. Elle se copie d'un bouton et se lit telle quelle —
+> ligne qui va le chercher. Elle se copie d'un bouton et se lit telle quelle :
 > c'est le pont entre les deux moitiés du plugin quand elles ne sont pas faites
 > par la même personne.
 
@@ -138,14 +169,18 @@ Et une quinzaine de fonctions :
 | `blocs_creator_lien_attrs( $cle )` | `href`, `target` et `rel`, déjà échappés. |
 | `blocs_creator_lien_titre( $cle, $defaut )` | Le libellé du lien. |
 | `blocs_creator_lien_url( $cle )` | L'URL seule. |
-| `blocs_creator_boucle( $cle )` | Les lignes d'un répéteur — toujours un tableau. |
+| `blocs_creator_boucle( $cle )` | Les lignes d'un répéteur : toujours un tableau. |
 | `blocs_creator_compte( $cle )` | Le nombre de lignes d'un répéteur. |
 | `blocs_creator_couleur( $cle, $defaut )` | Une couleur utilisable en CSS. |
 | `blocs_creator_niveau( $cle, $minimum = 2 )` | Un niveau de titre borné. |
 | `blocs_creator_rappel( $message )` | Un rappel visible des seuls rédacteurs. |
 | `blocs_creator_bloc()` | La définition du bloc en cours. |
+| `blocs_creator_paragraphes( $texte )` | Un texte enrichi en paragraphes `<p>` (6.0). |
+| `blocs_creator_texte_court( $texte )` | Un texte enrichi court : gras, italique, liens, sans paragraphe (6.0). |
+| `blocs_creator_lignes( $texte )` | Les lignes d'un texte, une par point de liste (6.0). |
+| `blocs_creator_balisage_leger( $texte )` | `**gras**` et `_italique_` d'un texte brut en HTML. |
 
-Ce qui sort échappé sort échappé — `blocs_creator_image()`, `blocs_creator_lien_attrs()` et
+Ce qui sort échappé sort échappé : `blocs_creator_image()`, `blocs_creator_lien_attrs()` et
 `blocs_creator_attributs()` rendent du HTML prêt à poser. Les valeurs de texte sortent
 brutes : le gabarit choisit son échappement, parce que lui seul sait s'il écrit
 dans un attribut, dans une balise ou dans une URL.
@@ -169,7 +204,7 @@ defined( 'ABSPATH' ) || exit;
     <ul class="temoignages__liste">
         <?php foreach ( blocs_creator_boucle( 'lignes' ) as $ligne ) : ?>
             <li>
-                <blockquote><?php echo wp_kses_post( $ligne['citation'] ); ?></blockquote>
+                <blockquote><?php echo blocs_creator_paragraphes( $ligne['citation'] ); ?></blockquote>
                 <cite><?php echo esc_html( $ligne['auteur'] ); ?></cite>
             </li>
         <?php endforeach; ?>
@@ -218,7 +253,7 @@ Ce que `blocs_creator_champ()` rend, par type :
 | publications | `WP_Post[]` |
 | terme | `WP_Term` ou `WP_Term[]` |
 | groupe | `array` |
-| répéteur | `array[]` — une entrée par ligne |
+| répéteur | `array[]` : une entrée par ligne |
 | blocs imbriqués | rien : passe par `$content` / `blocs_creator_contenu()` |
 
 **La structure ne s'imbrique qu'un cran.** Un répéteur contient des champs
@@ -232,7 +267,7 @@ l'interface lisible et les gabarits écrivables.
 Blocs Creator découvre et enregistre tout dossier portant un `block.json`,
 dans l'ordre :
 
-1. `blocs-creator/packs/*/blocs/*/` — les packs livrés avec le plugin ;
+1. `blocs-creator/packs/*/blocs/*/` : les packs livrés avec le plugin ;
 2. `<thème enfant>/blocs/*/` ;
 3. `<thème parent>/blocs/*/` ;
 4. `wp-content/blocs-creator/blocs/*/`.
@@ -286,11 +321,11 @@ l'opération :
 
 1. **Le nom ne bouge pas.** `mon-pack/banniere` reste `mon-pack/banniere` : les
    pages qui le portent ne voient pas la différence.
-2. **Le dessin ne bouge pas.** Le `rendu.php` est recopié tel quel — il lit
-   `$attributes`, que le plugin lui passe sous le même nom — et les feuilles de
+2. **Le dessin ne bouge pas.** Le `rendu.php` est recopié tel quel (il lit
+   `$attributes`, que le plugin lui passe sous le même nom) et les feuilles de
    style que le `block.json` déclarait restent attachées.
 3. **Rien ne se perd.** Un attribut qu'aucun type de champ ne sait porter sans
-   en changer la forme — un point focal, une structure à soi — est conservé tel
+   en changer la forme (un point focal, une structure à soi) est conservé tel
    quel. Les variantes, les styles de bloc et l'exemple d'inséreur aussi.
 
 L'écran de confirmation montre la traduction avant de la faire : quel attribut
@@ -302,7 +337,7 @@ thème, où il ne gêne pas.
 
 Le bandeau de l'écran « Tous les blocs » propose de **tout reprendre d'un
 coup** : c'est le geste qu'on fait une fois, au début, après quoi il n'y a plus
-de blocs codés sur le site — seulement des blocs qui se modifient.
+de blocs codés sur le site : seulement des blocs qui se modifient.
 
 > Ce que la reprise remplace, c'est l'éditeur sur mesure du bloc : un sélecteur
 > maison, une barre d'outils dessinée pour lui. Le bloc se règle ensuite par le
@@ -341,7 +376,7 @@ blocs d'un pack devraient la porter : c'est ce qui rend la reprise exacte.
 ## Les blocs disponibles
 
 **Réglages → Blocs disponibles** liste tous les blocs enregistrés, groupés par
-provenance — WordPress, vos blocs, chaque extension — avec une case à cocher.
+provenance (WordPress, vos blocs, chaque extension) avec une case à cocher.
 
 Deux règles tiennent l'écran :
 
@@ -364,11 +399,11 @@ Deux décisions tiennent cette partie, et elles se voient à l'usage.
 sur l'écran du bloc pour ceux que vous créez, dans *Réglages → Apparitions* pour
 ceux de WordPress et des autres extensions. Toutes ses occurrences entrent donc
 de la même façon, sur toutes les pages. Un réglage posé page par page finit
-toujours par diverger — trois bannières, trois entrées différentes, et un site
+toujours par diverger : trois bannières, trois entrées différentes, et un site
 qui a l'air improvisé. Un aperçu joue la scène au moment du choix.
 
 **Une apparition est une scène, pas un geste.** Un bloc n'est pas une boîte :
-c'est un titre, un chapô, une image, des cartes. Chacune des dix scènes dit ce
+c'est un titre, un chapô, une image, des cartes. Chacune des neuf scènes dit ce
 que fait le bloc ET ce que font ses parties, avec un décalage entre elles.
 
 | Scène | Ce qui se passe |
@@ -377,7 +412,6 @@ que fait le bloc ET ce que font ses parties, avec un décalage entre elles.
 | Cascade | Le bloc reste en place ; son contenu monte l'un après l'autre. |
 | Croisement | Les parties arrivent alternativement de la gauche et de la droite. |
 | Déploiement | Le bloc se dévoile du bas, son contenu monte derrière. |
-| Signature | Un balayage découvre le bloc, comme un coup de pinceau. |
 | Pastilles | Chaque partie apparaît petite et se pose, en cascade rapide. |
 | Souffle | Le bloc arrive flou et trop grand, puis se pose net. |
 | Bascule | Le bloc pivote vers vous depuis sa base, en perspective. |
@@ -385,23 +419,23 @@ que fait le bloc ET ce que font ses parties, avec un décalage entre elles.
 | **Composée** | Chaque partie entre à sa façon, celle que le dessin lui donne. |
 
 Les **parties** sont désignées par le script : les enfants directs du bloc, et
-si l'un n'est qu'un conteneur — un `div`, une `ul` — ses propres enfants à sa
+si l'un n'est qu'un conteneur (un `div`, une `ul`) ses propres enfants à sa
 place. Une grille de cartes donne donc ses cartes, et une colonne de texte donne
 son titre, son paragraphe et son bouton. Un élément qui porte déjà une
 transformation ou un filtre est laissé tranquille : les lui reprendre le ferait
 sauter de sa place.
 
-Leur **rang** — le décalage entre elles — repart à chaque conteneur, et à chaque
+Leur **rang** (le décalage entre elles) repart à chaque conteneur, et à chaque
 rangée d'une grille. Deux moitiés qui doivent se croiser partent donc ensemble,
 et la quatrième carte d'une grille à trois colonnes n'hérite pas du retard d'une
 quatrième.
 
 ### Composer une scène depuis le gabarit
 
-Les neuf premières scènes appliquent **un même geste à toutes les parties**.
+Les huit premières scènes appliquent **un même geste à toutes les parties**.
 C'est ce qu'il faut la plupart du temps, et c'est insuffisant dès qu'un bloc est
-fait de moitiés qui n'entrent pas de la même façon — un texte qui monte pendant
-qu'une image s'installe, un trait qui se peint.
+fait de moitiés qui n'entrent pas de la même façon : un texte qui monte pendant
+qu'une image s'installe.
 
 La scène **Composée** rend la main au gabarit : chaque partie porte sa variante
 dans la valeur de `data-bc-part`, et le script s'en tient à cette liste au lieu
@@ -423,17 +457,15 @@ de deviner.
 |---|---|
 | `haut` / `bas` | décalé verticalement |
 | `gauche` / `droite` | décalé horizontalement |
-| `zoom` | légèrement réduit — pour une image qui s'installe |
-| `pastille` | réduit et décalé d'un rien — pour une grille de cartes |
+| `zoom` | légèrement réduit : pour une image qui s'installe |
+| `pastille` | réduit et décalé d'un rien : pour une grille de cartes |
 | `fondu` | l'opacité seule, sans déplacement |
-| `pinceau` | une découpe inclinée qui balaie la largeur |
-| `mots` | le titre reste en place, chaque mot monte de sous sa ligne (vaut dans **toutes** les scènes) |
-| `masque` | un rideau se lève, l'image derrière se pose en dézoomant |
-| `flou` | sort de la brume en montant d'un rien |
-| `trait` | une ligne qui se tire de gauche à droite |
-| `pop` | petit, penché, puis posé d'un rebond — une icône, un guillemet |
-| `carte` | monte de loin, légèrement tournée, et se redresse (une sur deux dans l'autre sens) |
 | `ligne` | une rangée de liste qui glisse depuis la gauche |
+
+Ces variantes sont volontairement sobres : elles vont à tous les sites. Celles
+qui donnent son allure à un site s'écrivent dans son thème, sur
+`.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="ma-variante"]`,
+avec leur état `bc-attend` (voir la fin de `assets/css/animations.css`).
 
 Un `data-bc-part` posé par le gabarit est toujours respecté, quelle que soit la
 scène ; un `--bc-anim-rang` posé en style en ligne l'est aussi. Une scène qui ne
@@ -442,10 +474,6 @@ plutôt que de ne rien jouer.
 
 ### Ce que le moteur fait tout seul (5.0)
 
-- **Les titres mot à mot.** Un élément `data-bc-part="mots"` est découpé en
-  mots (`bc-mot` / `bc-mot__in`) ; les balises intérieures restent. Une fois
-  posés, les mots rendent leurs débords (`bc-mots-poses`) : un italique n'est
-  pas rogné.
 - **Les parties qui attendent leur tour.** Un bloc est révélé dès que son haut
   entre à l'écran ; sur un téléphone, ses cartes du bas joueraient leur entrée
   deux écrans plus bas. Chaque partie encore sous l'écran au chargement
@@ -459,20 +487,20 @@ plutôt que de ne rien jouer.
 ### Les blocs du contenu, et la classe `bc-apparition-*`
 
 *Réglages → Apparitions → Les blocs du contenu* : une case fait entrer chaque
-bloc natif posé dans le contenu d'une page, avec la scène de son type —
-titre et paragraphe montent, une liste en cascade, une image se déploie, une
-citation signe… (filtre `blocs_creator_apparitions_contenu`). Un groupe ou des
+bloc natif posé dans le contenu d'une page, avec la scène de son type :
+titre, paragraphe et citation montent, une liste en cascade, une image se
+déploie… (filtre `blocs_creator_apparitions_contenu`). Un groupe ou des
 colonnes n'entrent pas eux-mêmes : leurs enfants entrent, l'un après l'autre.
 Un bloc qui entre emmène ses enfants. L'en-tête et le pied de page ne sont pas
 concernés.
 
-Pour un bloc seul — dans un modèle du thème, un pied de page, ou par
-« Classes CSS supplémentaires » — la classe `bc-apparition-cascade` (ou
+Pour un bloc seul (dans un modèle du thème, un pied de page, ou par
+« Classes CSS supplémentaires ») la classe `bc-apparition-cascade` (ou
 `-montee`, `-souffle`…) lui donne cette scène.
 
 Le rythme de tout le site se règle sur `:root` : `--bc-anim-duree`,
 `--bc-anim-courbe`, `--bc-anim-courbe-expo`, `--bc-anim-courbe-douce`,
-`--bc-anim-courbe-ressort`, `--bc-anim-cadence-mots`, `--bc-anim-ecart`.
+`--bc-anim-courbe-ressort`, `--bc-anim-ecart`.
 
 Trois garde-fous :
 
@@ -509,15 +537,15 @@ la déclare, des règles CSS sur `[data-bc-anim="…"]` la dessinent.
 | Modules | aucun, sauf ceux que le thème impose |
 
 > **Une seule catégorie.** Le plugin n'ajoute sa section à l'inséreur que si
-> personne ne l'a déjà déclarée — ni sous ce slug, ni sous ce titre. Deux
+> personne ne l'a déjà déclarée : ni sous ce slug, ni sous ce titre. Deux
 > sections du même nom ne sont pas deux rangements : c'est le même, coupé en
 > deux.
 
 ### L'enregistrement, et son diagnostic
 
 Le formulaire ne passe pas par `options.php`. L'API des réglages de WordPress
-fait dépendre une écriture de quatre choses qu'on ne voit pas — groupe autorisé,
-capacité filtrée, jeton, transitoire de trente secondes pour le message — et
+fait dépendre une écriture de quatre choses qu'on ne voit pas (groupe autorisé,
+capacité filtrée, jeton, transitoire de trente secondes pour le message) et
 quand l'une lâche, elle renvoie l'écran à l'identique, sans un mot. Le bouton
 passe alors pour mort.
 
@@ -526,7 +554,7 @@ relecture ne rend pas ce qu'on vient d'écrire, la ligne est écrite directement
 en base : un filtre `pre_update_option` posé par une autre extension ou un cache
 d'objets qui ne se vide pas ne sont pas des raisons d'abandonner en silence.
 
-L'onglet **Blocs disponibles** n'envoie pas un champ par bloc — cent trente
+L'onglet **Blocs disponibles** n'envoie pas un champ par bloc : cent trente
 dépasseraient `max_input_vars` sur bien des hébergements, et le formulaire
 arriverait tronqué, c'est-à-dire avec des blocs qu'on croirait cochés. Il envoie
 la liste des blocs écartés en un seul champ, composé à l'envoi, et un envoi
@@ -537,7 +565,7 @@ d'enregistrement : limites de PHP, présence de la ligne en base, cache d'objets
 extensions actives, et le journal des huit dernières tentatives. S'il reste vide
 après un clic, la requête n'est jamais arrivée jusqu'au plugin. Première cause à
 écarter : un champ que le navigateur refuse, qui bloque l'envoi avant qu'il ne
-parte — l'écran ouvre alors l'onglet du champ, et le navigateur dit pourquoi.
+parte : l'écran ouvre alors l'onglet du champ, et le navigateur dit pourquoi.
 Ensuite seulement, on cherche du côté de l'hébergement.
 
 > **Une valeur pré-remplie doit passer les contraintes de son champ.** En 4.1 et 4.2.0,
@@ -551,7 +579,7 @@ Ensuite seulement, on cherche du côté de l'hébergement.
 
 *Réglages → IA.* Le plugin ne parle à aucune IA lui-même et ne garde aucune
 clé : il passe par le client d'IA de WordPress (7.0 et plus), branché dans
-*Réglages → Connecteurs* — Google, Anthropic, OpenAI. Sans connecteur, rien
+*Réglages → Connecteurs* : Google, Anthropic, OpenAI. Sans connecteur, rien
 n'apparaît.
 
 | Service | Où | Ce qu'il fait |
@@ -579,7 +607,7 @@ un module décoché ne charge pas une ligne.
 
 | Module | Ce qu'il fait |
 |---|---|
-| `maintenance` | Page d'attente en 503 + `Retry-After` pour les visiteurs, site normal pour qui le modifie, interrupteur dans la barre d'outils, *Réglages → Maintenance*. |
+| `maintenance` | Page d'attente en 503 + `Retry-After` pour les visiteurs, site normal pour qui le modifie, interrupteur dans la barre d'outils, *Réglages → Maintenance* (textes, retour prévu, encadré « Nous joindre »). |
 | `cookies` | Google Analytics (Site Kit…) attend l'accord : balises en `text/plain` jusqu'à « Accepter ». Bandeau discret, « Refuser » aussi simple, choix gardé six mois, `#gerer-les-cookies` le rouvre. *Réglages → Cookies*. |
 | `brouillons` | Les réponses d'un `<form data-bc-brouillon>` gardées sur l'appareil (après accord, avec le bandeau), retrouvées au retour. |
 | `sans-auteurs` | Pages d'auteur redirigées, retirées du plan du site, comptes masqués à l'API pour les visiteurs. |
@@ -609,7 +637,8 @@ visite qui suit la mise en ligne. Le thème les déclare par le filtre
 arrivé par FTP) est retentée un quart d'heure plus tard ; ce qui a été fait
 s'affiche une fois aux administrateurs. Aides :
 `blocs_creator_migration_fichiers()`, `blocs_creator_importer_definitions()`,
-`blocs_creator_migration_page()`.
+`blocs_creator_migration_page()`, `blocs_creator_migration_texte_riche()`
+(des champs passés au texte enrichi, convertis dans tous les contenus).
 
 **WP-CLI** :
 
@@ -625,7 +654,7 @@ wp blocs-creator ia etat
 ## Import et export
 
 **Blocs Creator → Outils.** L'export produit un JSON qui ne contient que les
-définitions — les gabarits sont des fichiers de thème, qu'on copie comme le
+définitions : les gabarits sont des fichiers de thème, qu'on copie comme le
 reste du thème. Le JSON importé repasse entièrement par la normalisation : un
 fichier trafiqué ne peut déclarer que des champs du catalogue.
 
@@ -660,6 +689,10 @@ fichier trafiqué ne peut déclarer que des champs du catalogue.
 | `blocs_creator_migrations` | Les migrations du thème, par source puis par numéro. |
 | `blocs_creator_maintenance_peut_passer` | Qui voit le site pendant la maintenance. |
 | `blocs_creator_maintenance_feuilles` | Les feuilles de la page de maintenance. |
+| `blocs_creator_maintenance_defauts` | Les textes par défaut de la page de maintenance (6.0). |
+| `blocs_creator_maintenance_contact_repli` | Téléphones, e-mail et réseaux proposés par le thème pour les champs laissés vides (6.0). |
+| `blocs_creator_maintenance_contact` | L'encadré « Nous joindre », prêt à afficher (6.0). |
+| `blocs_creator_balises_courtes` | Les balises permises dans un texte court (6.0). |
 | `blocs_creator_cookies_balise_retenue` | Les balises qui attendent l'accord du visiteur. |
 | `blocs_creator_email_couleurs` | Les couleurs des e-mails. |
 
@@ -708,7 +741,7 @@ assets/
   js/apercus-inertes.js    Les aperçus de l'éditeur ne réagissent pas au clic
   css/editeur.css          Ce que l'éditeur ajoute autour d'un bloc
   css/blocs.css            Le strict minimum côté site
-  css/animations.css       Les dix scènes, les variantes de parties, l'aperçu
+  css/animations.css       Les neuf scènes, les variantes de parties, l'aperçu
   css/ia.css               Les panneaux d'IA
 modules/<id>/              Un module : module.php, et ses fichiers
 docs/guide-theme.md        Construire un site avec le plugin
@@ -727,7 +760,7 @@ partout sans `npm install`.
 
 Trois endroits, et pas un de plus :
 
-1. `Blocs_Creator_Champs::catalogue()` — ou le filtre `blocs_creator_catalogue_champs` —
+1. `Blocs_Creator_Champs::catalogue()` (ou le filtre `blocs_creator_catalogue_champs`)
    déclare le type : son attribut Gutenberg, sa valeur par défaut, ses
    réglages.
 2. `Blocs_Creator_Champs::assainir_valeur()` et `Blocs_Creator_Champs::preparer()` disent comment il

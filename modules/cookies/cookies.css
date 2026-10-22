@@ -13,8 +13,8 @@
 
 .bc-cookies {
 	--bc-cookies-fond: var(--wp--preset--color--base, var(--wp--preset--color--background, #fff));
-	--bc-cookies-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
-	--bc-cookies-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+	--bc-cookies-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1e1e1e));
+	--bc-cookies-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #3858e9));
 	--bc-cookies-sur-accent: #fff;
 	--bc-cookies-doux: color-mix(in srgb, var(--bc-cookies-texte) 68%, transparent);
 	--bc-cookies-filet: color-mix(in srgb, var(--bc-cookies-texte) 14%, transparent);

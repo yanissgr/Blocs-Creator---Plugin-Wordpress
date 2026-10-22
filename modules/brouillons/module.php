@@ -6,7 +6,7 @@
  *
  * Tout se passe dans le navigateur (brouillons.js) : les réponses sont
  * rangées dans son stockage local, jamais envoyées au site avant l'envoi du
- * formulaire, et effacées dès que celui-ci est parti — au plus tard au bout
+ * formulaire, et effacées dès que celui-ci est parti : au plus tard au bout
  * de 30 jours. Les fichiers joints et les champs cachés ne sont jamais
  * gardés.
  *

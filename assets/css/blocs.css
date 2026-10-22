@@ -3,7 +3,7 @@
  *
  * L'apparence d'un bloc appartient à son gabarit et au thème : ce fichier ne
  * dessine rien de ce que le visiteur est venu lire. Il ne couvre que deux cas
- * qui, sans lui, seraient illisibles — une image qui manque, et un rappel
+ * qui, sans lui, seraient illisibles : une image qui manque, et un rappel
  * adressé à la rédaction.
  */
 
@@ -26,7 +26,7 @@
 }
 
 /*
- * Le rendu de secours — celui d'un bloc qui n'a pas encore de gabarit. Il
+ * Le rendu de secours : celui d'un bloc qui n'a pas encore de gabarit. Il
  * disparaît du site dès que le fichier de rendu existe, mais tant qu'il est
  * là, autant qu'il soit lisible.
  */

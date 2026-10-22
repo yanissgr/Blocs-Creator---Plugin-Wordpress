@@ -2,8 +2,8 @@
  * Le panneau « Remplir avec l'IA », dans la colonne de droite d'un bloc créé
  * avec Blocs Creator.
  *
- * Des notes en vrac ; l'IA propose le texte des champs du bloc — titre,
- * texte, libellés des boutons, lignes d'un répéteur — d'après sa définition.
+ * Des notes en vrac ; l'IA propose le texte des champs du bloc (titre,
+ * texte, libellés des boutons, lignes d'un répéteur) d'après sa définition.
  * La proposition se relit dans une fenêtre, champ par champ, avant de
  * remplacer quoi que ce soit. Les images, les adresses des liens et les
  * réglages d'affichage ne sont jamais touchés.
@@ -62,11 +62,11 @@
 									'ol',
 									{},
 									champ.lignes.map( function ( ligne, numero ) {
-										return el( 'li', { key: numero }, ligne || '—' );
+										return el( 'li', { key: numero }, ligne || '-' );
 									} )
 								)
 							)
-							: el( 'dd', {}, champ.texte || '—' )
+							: el( 'dd', {}, champ.texte || '-' )
 					);
 				} )
 			),

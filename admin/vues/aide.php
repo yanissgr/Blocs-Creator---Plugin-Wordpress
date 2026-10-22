@@ -35,11 +35,11 @@ $blocs_creator_retours = array(
 	'taxonomie'       => array( 'WP_Term[]', 'foreach ( blocs_creator_champ( \'categories\' ) as $terme ) : …' ),
 	'groupe'          => array( 'array', '$bloc = blocs_creator_champ( \'entete\' ); echo $bloc[\'titre\'];' ),
 	'repeteur'        => array( 'array[]', 'foreach ( blocs_creator_boucle( \'lignes\' ) as $ligne ) : …' ),
-	'blocs-imbriques' => array( '—', 'echo blocs_creator_contenu();' ),
+	'blocs-imbriques' => array( '-', 'echo blocs_creator_contenu();' ),
 );
 
 $blocs_creator_fonctions = array(
-	array( 'blocs_creator_champ( $cle, $defaut = null )', __( 'La valeur du champ, prête à l\'emploi. La forme dépend du type — voir le tableau ci-dessous.', 'blocs-creator' ) ),
+	array( 'blocs_creator_champ( $cle, $defaut = null )', __( 'La valeur du champ, prête à l\'emploi. La forme dépend du type : voir le tableau ci-dessous.', 'blocs-creator' ) ),
 	array( 'blocs_creator_brut( $cle, $defaut = null )', __( 'La valeur telle qu\'enregistrée. Pour une image, l\'identifiant de la pièce jointe.', 'blocs-creator' ) ),
 	array( 'blocs_creator_a_champ( $cle )', __( 'Le champ est-il rempli ? Un zéro compte comme rempli, une chaîne vide non.', 'blocs-creator' ) ),
 	array( 'blocs_creator_attributs( $classes, $extra )', __( 'Les attributs de la balise racine : classe du bloc, ancre, alignement, couleurs. Indispensable.', 'blocs-creator' ) ),
@@ -73,7 +73,7 @@ $blocs_creator_fonctions = array(
 			<?php
 			printf(
 				/* translators: 1: dossier des gabarits, 2: nom de fichier. */
-				esc_html__( 'Dans %1$s, sous le nom %2$s. Le plugin le crée pour vous à la publication du bloc, avec un point de départ pour chaque champ déclaré — et ne le réécrit plus jamais ensuite.', 'blocs-creator' ),
+				esc_html__( 'Dans %1$s, sous le nom %2$s. Le plugin le crée pour vous à la publication du bloc, avec un point de départ pour chaque champ déclaré, et ne le réécrit plus jamais ensuite.', 'blocs-creator' ),
 				'<code>' . esc_html( Blocs_Creator_Gabarits::chemin_court( get_stylesheet_directory() . '/' . blocs_creator()->reglages->get( 'dossier_gabarits' ) ) ) . '</code>',
 				'<code>identifiant-du-bloc.php</code>'
 			);

@@ -5,7 +5,7 @@
  * et les champs sont des données. Un site à deux blocs et un site à quarante
  * chargent le même fichier.
  *
- * Écrit en JavaScript natif — `wp.element.createElement` plutôt que du JSX —
+ * Écrit en JavaScript natif : `wp.element.createElement` plutôt que du JSX :
  * pour que le plugin s'installe partout sans outil de build. Plus verbeux,
  * mais lisible et modifiable tel quel.
  *
@@ -280,7 +280,7 @@
 					label: champ.libelle,
 					help: champ.aide || undefined,
 					value: valeur || '',
-					options: [ { value: '', label: __( '— Choisir —', 'blocs-creator' ) } ].concat( choixDe( champ ) ),
+					options: [ { value: '', label: __( '- Choisir -', 'blocs-creator' ) } ].concat( choixDe( champ ) ),
 					onChange: ecrire,
 					__next40pxDefaultSize: true,
 					__nextHasNoMarginBottom: true
@@ -452,7 +452,7 @@
 	/**
 	 * Choix du point de cadrage d'une image.
 	 *
-	 * Quand le champ désigne une image du même bloc — réglage « image » —, on
+	 * Quand le champ désigne une image du même bloc (réglage « image »), on
 	 * sert le vrai sélecteur de WordPress, sur la vraie image : on déplace une
 	 * cible sur la photo au lieu de taper deux pourcentages. Sans image
 	 * choisie, ou sans le composant, on retombe sur deux curseurs, qui règlent
@@ -645,7 +645,7 @@
 							ids.length
 								? sprintf(
 									/* translators: %d: nombre d'images. */
-									__( '%d image(s) — modifier', 'blocs-creator' ),
+									__( '%d image(s) : modifier', 'blocs-creator' ),
 									ids.length
 								)
 								: __( 'Choisir des images', 'blocs-creator' )
@@ -862,7 +862,7 @@
 			label: props.champ.libelle,
 			help: props.champ.aide || undefined,
 			value: String( props.valeur || 0 ),
-			options: [ { value: '0', label: __( '— Choisir —', 'blocs-creator' ) } ].concat(
+			options: [ { value: '0', label: __( '- Choisir -', 'blocs-creator' ) } ].concat(
 				liste.map( function ( item ) {
 					return { value: String( item.id ), label: item.titre + ' (' + item.label + ')' };
 				} )
@@ -911,7 +911,7 @@
 				label: props.champ.libelle,
 				help: props.champ.aide || undefined,
 				value: String( choisis[ 0 ] || 0 ),
-				options: [ { value: '0', label: __( '— Choisir —', 'blocs-creator' ) } ].concat(
+				options: [ { value: '0', label: __( '- Choisir -', 'blocs-creator' ) } ].concat(
 					liste.map( function ( terme ) {
 						return { value: String( terme.id ), label: terme.titre };
 					} )
@@ -1134,7 +1134,7 @@
 	 *
 	 * Deux composants plutôt qu'un, et une condition à la fabrication plutôt
 	 * qu'au rendu : `useInnerBlocksProps` est un hook, et un hook ne s'appelle
-	 * pas derrière un `if`. La définition du bloc, elle, ne change jamais —
+	 * pas derrière un `if`. La définition du bloc, elle, ne change jamais :
 	 * le choix se fait donc ici, une fois pour toutes.
 	 *
 	 * @param {Object} definition La définition envoyée par le serveur.
@@ -1382,7 +1382,7 @@
 	/*
 	 * Les blocs sont déjà enregistrés côté PHP : titre, catégorie, icône,
 	 * attributs et supports viennent de là, et WordPress les a transmis à
-	 * l'éditeur avant ce fichier. On ne fournit donc que `edit` et `save` —
+	 * l'éditeur avant ce fichier. On ne fournit donc que `edit` et `save` :
 	 * le reste serait de la redite, donc de la dérive en puissance.
 	 */
 	/*

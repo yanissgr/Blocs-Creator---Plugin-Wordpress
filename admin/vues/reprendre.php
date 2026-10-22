@@ -3,8 +3,8 @@
  * L'écran de confirmation : reprendre un bloc codé.
  *
  * On ne reprend pas un bloc sans avoir vu ce que ça donne. L'écran montre la
- * traduction exacte que la reprise va écrire — les mêmes champs, les mêmes
- * réglages conservés — puis demande confirmation.
+ * traduction exacte que la reprise va écrire (les mêmes champs, les mêmes
+ * réglages conservés) puis demande confirmation.
  *
  * @package BlocsCreator
  *
@@ -99,7 +99,7 @@ $blocs_creator_types    = Blocs_Creator_Champs::catalogue();
 		<h2><?php esc_html_e( 'Ce qui change', 'blocs-creator' ); ?></h2>
 
 		<ul class="bc-liste-puces">
-			<li><?php esc_html_e( 'Le bloc se règle désormais par le formulaire commun — les champs ci-dessous — et non plus par l\'éditeur sur mesure que son pack lui donnait. Un sélecteur maison, une barre d\'outils dessinée pour lui : ces gestes-là sont remplacés par le formulaire.', 'blocs-creator' ); ?></li>
+			<li><?php esc_html_e( 'Le bloc se règle désormais par le formulaire commun (les champs ci-dessous) et non plus par l\'éditeur sur mesure que son pack lui donnait. Un sélecteur maison, une barre d\'outils dessinée pour lui : ces gestes-là sont remplacés par le formulaire.', 'blocs-creator' ); ?></li>
 			<li><?php esc_html_e( 'L\'aperçu dans l\'éditeur passe par le rendu du serveur : c\'est exactement le code qui tournera sur le site.', 'blocs-creator' ); ?></li>
 			<li><?php esc_html_e( 'L\'opération se défait : « Rendre au code » supprime la définition, et le dossier reprend la main. Le dossier n\'est jamais supprimé.', 'blocs-creator' ); ?></li>
 		</ul>
@@ -139,7 +139,7 @@ $blocs_creator_types    = Blocs_Creator_Champs::catalogue();
 			</table>
 
 			<p class="description">
-				<?php esc_html_e( 'Le type proposé est une lecture du code, pas une certitude : après la reprise, l\'écran du bloc permet de le changer. Attention tout de même — la clé, elle, ne se change pas sans casser le gabarit qui la lit.', 'blocs-creator' ); ?>
+				<?php esc_html_e( 'Le type proposé est une lecture du code, pas une certitude : après la reprise, l\'écran du bloc permet de le changer. Attention tout de même : la clé, elle, ne se change pas sans casser le gabarit qui la lit.', 'blocs-creator' ); ?>
 			</p>
 		<?php endif; ?>
 
@@ -147,7 +147,7 @@ $blocs_creator_types    = Blocs_Creator_Champs::catalogue();
 			<h2><?php esc_html_e( 'Les réglages conservés tels quels', 'blocs-creator' ); ?></h2>
 
 			<p>
-				<?php esc_html_e( 'Aucun type de champ ne sait porter ceux-là sans en changer la forme — et en changer la forme casserait le fichier de rendu qui les lit. Ils restent donc enregistrés, avec leur valeur actuelle, mais sans formulaire pour les modifier :', 'blocs-creator' ); ?>
+				<?php esc_html_e( 'Aucun type de champ ne sait porter ceux-là sans en changer la forme, et en changer la forme casserait le fichier de rendu qui les lit. Ils restent donc enregistrés, avec leur valeur actuelle, mais sans formulaire pour les modifier :', 'blocs-creator' ); ?>
 			</p>
 
 			<ul class="bc-liste-puces">

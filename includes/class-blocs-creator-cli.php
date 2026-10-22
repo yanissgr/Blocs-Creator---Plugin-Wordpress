@@ -2,7 +2,7 @@
 /**
  * Les commandes WP-CLI : `wp blocs-creator …`.
  *
- * Elles font en ligne de commande ce que les écrans font à la souris — et
+ * Elles font en ligne de commande ce que les écrans font à la souris : et
  * c'est souvent par là que passe une IA qui monte un site. Chaque commande
  * dit ce qu'elle a fait, et sort en erreur si elle n'a pas pu.
  *

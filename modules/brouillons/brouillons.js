@@ -7,7 +7,7 @@
  * réseau. Elles ne quittent jamais l'appareil, sont effacées à l'envoi du
  * formulaire, et au plus tard au bout de 30 jours.
  *
- * Avec le bandeau cookies, seulement avec l'accord du visiteur — y compris
+ * Avec le bandeau cookies, seulement avec l'accord du visiteur : y compris
  * s'il le donne ou le retire alors que le formulaire est ouvert : un refus
  * efface tous les brouillons.
  *
@@ -335,7 +335,7 @@
 		 * page qui se ferme ne doit pas le réécrire. On regarde après tous les
 		 * autres écouteurs : un formulaire envoyé en arrière-plan (fetch)
 		 * annule l'envoi, et appelle lui-même `effacer()` une fois la réponse
-		 * reçue — un envoi raté garde ainsi son brouillon.
+		 * reçue : un envoi raté garde ainsi son brouillon.
 		 */
 		form.addEventListener( 'submit', function ( evenement ) {
 			window.setTimeout( function () {

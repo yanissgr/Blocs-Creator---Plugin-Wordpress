@@ -4,7 +4,7 @@
  *
  * L'apparition se choisit ici, sur le bloc, et pas dans les pages qui le
  * portent : toutes ses occurrences entrent donc de la même façon, partout.
- * Un réglage posé page par page finit toujours par diverger — trois bannières,
+ * Un réglage posé page par page finit toujours par diverger : trois bannières,
  * trois entrées différentes, et un site qui a l'air improvisé.
  *
  * @package BlocsCreator
@@ -29,7 +29,7 @@ defined( 'ABSPATH' ) || exit;
 			<input type="number" id="bc-animation-duree" name="bc[animation_duree]" class="small-text"
 				min="200" max="3000" step="1"
 				value="<?php echo esc_attr( (string) ( $definition['animation_duree'] > 0 ? $definition['animation_duree'] : 720 ) ); ?>">
-			<span class="bc-aide"><?php esc_html_e( 'En millisecondes. 720 par défaut — la durée commune à tout le site.', 'blocs-creator' ); ?></span>
+			<span class="bc-aide"><?php esc_html_e( 'En millisecondes. 720 par défaut : la durée commune à tout le site.', 'blocs-creator' ); ?></span>
 		</p>
 	<?php else : ?>
 		<input type="hidden" name="bc[animation_duree]" value="<?php echo esc_attr( (string) $definition['animation_duree'] ); ?>">

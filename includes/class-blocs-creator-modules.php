@@ -77,7 +77,7 @@ class Blocs_Creator_Modules {
 			),
 			'sans-recherche'  => array(
 				'nom'         => __( 'Pas de recherche', 'blocs-creator' ),
-				'description' => __( 'Une adresse de recherche (?s=) mène à la page 404 sans interroger la base, le bloc « Rechercher » disparaît de l’éditeur et du site. Pour un site qui n’en a pas l’usage — et que les robots arrosent de spam.', 'blocs-creator' ),
+				'description' => __( 'Une adresse de recherche (?s=) mène à la page 404 sans interroger la base, le bloc « Rechercher » disparaît de l’éditeur et du site. Pour un site qui n’en a pas l’usage, et que les robots arrosent de spam.', 'blocs-creator' ),
 				'reglages'    => '',
 			),
 			'bouton-modifier' => array(

@@ -11,9 +11,9 @@
  */
 
 .bc-maintenance-page {
-	--bc-m-fond: var(--wp--preset--color--base, var(--wp--preset--color--background, #fbfaf8));
-	--bc-m-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
-	--bc-m-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+	--bc-m-fond: var(--wp--preset--color--base, var(--wp--preset--color--background, #ffffff));
+	--bc-m-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1e1e1e));
+	--bc-m-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #3858e9));
 	--bc-m-doux: color-mix(in srgb, var(--bc-m-texte) 68%, transparent);
 	--bc-m-filet: color-mix(in srgb, var(--bc-m-texte) 14%, transparent);
 	--bc-m-courbe: cubic-bezier(0.16, 1, 0.3, 1);
@@ -24,20 +24,6 @@
 	overflow-x: hidden;
 	background: var(--bc-m-fond);
 	color: var(--bc-m-texte);
-}
-
-/* Un halo de la couleur d'accent, derrière le texte. */
-.bc-maintenance-page::before {
-	content: "";
-	position: fixed;
-	z-index: 0;
-	top: -30vmax;
-	right: -25vmax;
-	width: 80vmax;
-	aspect-ratio: 1;
-	border-radius: 50%;
-	background: radial-gradient(circle, color-mix(in srgb, var(--bc-m-accent) 22%, transparent) 0%, transparent 62%);
-	pointer-events: none;
 }
 
 .bc-maintenance {
@@ -68,15 +54,6 @@
 	flex-shrink: 0;
 	width: 56px;
 	height: auto;
-}
-
-.bc-maintenance__surtitre {
-	margin: 0 0 14px;
-	color: var(--bc-m-accent);
-	font-size: 0.8rem;
-	font-weight: 800;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
 }
 
 .bc-maintenance__titre {
@@ -123,6 +100,107 @@
 .bc-maintenance__retour svg {
 	flex-shrink: 0;
 	color: var(--bc-m-accent);
+}
+
+/*
+ * Nous joindre : un filet, un titre, les coordonnées en tuiles cliquables,
+ * les réseaux en pastilles.
+ */
+.bc-maintenance__contact {
+	margin: clamp(40px, 7vw, 72px) 0 0;
+	padding: clamp(28px, 5vw, 40px) 0 0;
+	border-top: 1px solid var(--bc-m-filet);
+}
+
+.bc-maintenance__intertitre {
+	margin: 0;
+	font-size: clamp(1.4rem, 3vw, 1.75rem);
+	line-height: 1.2;
+}
+
+.bc-maintenance__intertitre strong {
+	color: var(--bc-m-accent);
+}
+
+.bc-maintenance__invitation {
+	max-width: 34em;
+	margin: 10px 0 0;
+	color: var(--bc-m-doux);
+	line-height: 1.6;
+}
+
+.bc-maintenance__coordonnees,
+.bc-maintenance__reseaux-liste {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 22px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.bc-maintenance__coordonnee {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 12px 18px;
+	border: 1px solid var(--bc-m-filet);
+	border-radius: 12px;
+	color: inherit;
+	text-decoration: none;
+	transition: border-color 200ms ease, background-color 200ms ease;
+}
+
+.bc-maintenance__coordonnee:is(:hover, :focus-visible) {
+	border-color: var(--bc-m-accent);
+	background: color-mix(in srgb, var(--bc-m-accent) 6%, transparent);
+}
+
+.bc-maintenance__libelle {
+	color: var(--bc-m-doux);
+	font-size: 0.85rem;
+}
+
+.bc-maintenance__valeur {
+	font-weight: 600;
+}
+
+.bc-maintenance__reseaux {
+	margin: 26px 0 0;
+}
+
+.bc-maintenance__reseaux-titre {
+	margin: 0;
+	color: var(--bc-m-doux);
+	font-size: 0.95rem;
+}
+
+.bc-maintenance__reseaux-liste {
+	margin-top: 12px;
+}
+
+.bc-maintenance__reseau {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px 8px 12px;
+	border: 1px solid var(--bc-m-filet);
+	border-radius: 999px;
+	color: inherit;
+	font-size: 0.95rem;
+	text-decoration: none;
+	transition: border-color 200ms ease, color 200ms ease;
+}
+
+.bc-maintenance__reseau:is(:hover, :focus-visible) {
+	border-color: var(--bc-m-accent);
+	color: var(--bc-m-accent);
+}
+
+.bc-maintenance__reseau svg {
+	width: 20px;
+	height: 20px;
+	fill: currentColor;
 }
 
 /* L'aperçu réservé aux personnes connectées : une fine bande en haut. */

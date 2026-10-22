@@ -117,7 +117,7 @@ class Blocs_Creator_Disponibilite {
 	 * Retourne tous les blocs enregistrés, groupés par provenance.
 	 *
 	 * La provenance se lit dans l'espace de noms : `core/` est WordPress,
-	 * `woocommerce/` est WooCommerce. Ce n'est pas une déduction hasardeuse —
+	 * `woocommerce/` est WooCommerce. Ce n'est pas une déduction hasardeuse :
 	 * c'est la convention que Gutenberg impose à tout le monde, et c'est la
 	 * seule information que le registre des blocs porte réellement.
 	 *
@@ -162,8 +162,8 @@ class Blocs_Creator_Disponibilite {
 
 		unset( $groupe );
 
-		// WordPress d'abord — c'est le gros du volume, et c'est là qu'on vient
-		// faire le ménage —, les nôtres ensuite, le reste par ordre d'espace.
+		// WordPress d'abord (c'est le gros du volume, et c'est là qu'on vient
+		// faire le ménage), les nôtres ensuite, le reste par ordre d'espace.
 		uksort(
 			$groupes,
 			static function ( $a, $b ) {

@@ -7,7 +7,7 @@
  * de WordPress n'est touché. Un formulaire de contact, d'inscription ou de
  * devis s'en sert pour envoyer, au site comme au visiteur, des e-mails qui
  * se ressemblent tous : une carte blanche sur un fond doux, le nom du site en
- * petit surtitre, un grand titre, puis le contenu.
+ * tête, un grand titre, puis le contenu.
  *
  *     $html = blocs_creator_email_html( array(
  *         'titre' => 'Nouveau message',
@@ -21,7 +21,7 @@
  *
  * Les styles sont écrits dans les balises : la plupart des messageries
  * ignorent les feuilles de style. Chaque e-mail part aussi en texte brut, à
- * côté du HTML, pour les messageries qui ne lisent pas le HTML — et pour les
+ * côté du HTML, pour les messageries qui ne lisent pas le HTML, et pour les
  * filtres anti-spam, qui s'en méfient moins.
  *
  * Les couleurs se règlent par le filtre `blocs_creator_email_couleurs`.
@@ -45,14 +45,14 @@ function blocs_creator_email_couleurs() {
 	return (array) apply_filters(
 		'blocs_creator_email_couleurs',
 		array(
-			'fond'    => '#f6f5f2',
+			'fond'    => '#f0f0f1',
 			'carte'   => '#ffffff',
-			'encre'   => '#1d1b19',
-			'gris'    => '#5f5a55',
-			'pale'    => '#97908a',
-			'filet'   => '#ebe7e2',
-			'accent'  => '#c2410c',
-			'profond' => '#9a3412',
+			'encre'   => '#1e1e1e',
+			'gris'    => '#50575e',
+			'pale'    => '#8c8f94',
+			'filet'   => '#dcdcde',
+			'accent'  => '#3858e9',
+			'profond' => '#1d35b4',
 		)
 	);
 }
@@ -88,7 +88,7 @@ function blocs_creator_email_html( $morceaux ) {
 		'<!DOCTYPE html><html lang="%10$s"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>%1$s</title></head>'
 		. '<body style="margin:0;padding:24px;background:%6$s;font-family:Arial,Helvetica,sans-serif">'
 		. '<div style="max-width:680px;margin:0 auto;padding:32px;border-radius:16px;background:%7$s">'
-		. '<p style="margin:0 0 6px;color:%8$s;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">%2$s</p>'
+		. '<p style="margin:0 0 18px;padding:0 0 14px;border-bottom:1px solid %11$s;color:%8$s;font-size:15px;font-weight:700">%2$s</p>'
 		. '<h1 style="margin:0 0 10px;color:%9$s;font-size:26px">%1$s</h1>'
 		. '%3$s%4$s%5$s'
 		. '</div></body></html>',
@@ -101,12 +101,13 @@ function blocs_creator_email_html( $morceaux ) {
 		esc_attr( $c['carte'] ),
 		esc_attr( $c['profond'] ),
 		esc_attr( $c['encre'] ),
-		esc_attr( substr( (string) get_bloginfo( 'language' ), 0, 2 ) )
+		esc_attr( substr( (string) get_bloginfo( 'language' ), 0, 2 ) ),
+		esc_attr( $c['filet'] )
 	);
 }
 
 /**
- * Un intertitre de l'e-mail : petites capitales, soulignées.
+ * Un intertitre de l'e-mail : en gras, sur un filet.
  *
  * @param string $texte Texte brut.
  * @return string HTML (une rangée de tableau).
@@ -115,7 +116,7 @@ function blocs_creator_email_intertitre( $texte ) {
 	$c = blocs_creator_email_couleurs();
 
 	return sprintf(
-		'<tr><td colspan="2" style="padding:26px 0 8px;border-bottom:2px solid %1$s;color:%2$s;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">%3$s</td></tr>',
+		'<tr><td colspan="2" style="padding:26px 0 8px;border-bottom:2px solid %1$s;color:%2$s;font-size:16px;font-weight:700">%3$s</td></tr>',
 		esc_attr( $c['accent'] ),
 		esc_attr( $c['profond'] ),
 		esc_html( $texte )

@@ -4,7 +4,7 @@
  *
  * WordPress fournit déjà un écran d'édition solide : un titre, une colonne
  * latérale, un bouton Publier, la corbeille, les révisions. On s'en sert plutôt
- * que d'en réécrire un — le bloc est un type de contenu, ses champs sont des
+ * que d'en réécrire un : le bloc est un type de contenu, ses champs sont des
  * métaboxes. Ce qui est spécifique tient dans une seule : le constructeur.
  *
  * L'enregistrement passe par deux hooks plutôt qu'un :
@@ -60,7 +60,7 @@ class Blocs_Creator_Ecran_Definition {
 	 */
 	public function invite_titre( $texte, $post ) {
 		if ( $post instanceof WP_Post && Blocs_Creator_Definition::TYPE === $post->post_type ) {
-			return __( 'Nom du bloc — « Bannière », « Témoignages »…', 'blocs-creator' );
+			return __( 'Nom du bloc : « Bannière », « Témoignages »…', 'blocs-creator' );
 		}
 
 		return $texte;
@@ -95,8 +95,8 @@ class Blocs_Creator_Ecran_Definition {
 	 * Affiche le parcours d'un bloc : les trois étapes, et où l'on en est.
 	 *
 	 * Un bloc créé ici ne montre rien tant que son dessin n'existe pas. C'est
-	 * la règle qui tient tout le plugin — les champs se déclarent, le dessin
-	 * s'écrit — mais elle se découvrait jusqu'ici en publiant, puis en allant
+	 * la règle qui tient tout le plugin (les champs se déclarent, le dessin
+	 * s'écrit) mais elle se découvrait jusqu'ici en publiant, puis en allant
 	 * voir une page vide. Elle s'annonce maintenant en haut de l'écran, avec
 	 * l'état réel du fichier : il existe, il reste à créer, ou le dossier est
 	 * verrouillé.
@@ -616,7 +616,7 @@ class Blocs_Creator_Ecran_Definition {
 					'success',
 					sprintf(
 						/* translators: %s: chemin du fichier créé. */
-						__( 'Gabarit créé : %s — c\'est là que se dessine le bloc.', 'blocs-creator' ),
+						__( 'Gabarit créé : %s : c\'est là que se dessine le bloc.', 'blocs-creator' ),
 						Blocs_Creator_Gabarits::chemin_court( $resultat )
 					)
 				);

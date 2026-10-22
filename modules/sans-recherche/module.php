@@ -3,7 +3,7 @@
  * Module « Pas de recherche » : pour un site qui n'en a pas l'usage.
  *
  *   - une adresse de recherche (`?s=…`, `/search/…`) mène à la page 404,
- *     sans rien chercher en base — les robots qui y glissent du spam tombent
+ *     sans rien chercher en base : les robots qui y glissent du spam tombent
  *     dans le vide ;
  *   - un bloc « Rechercher » qui traînerait dans une page ou un menu ne
  *     s'affiche pas, et il disparaît de l'outil d'ajout de blocs ;

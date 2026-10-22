@@ -5,7 +5,7 @@
  * rejoue le scénario retenu, à chaque changement, et sur demande.
  *
  * Elle emprunte la feuille du site (assets/css/animations.css) plutôt que
- * d'avoir la sienne — ce qu'on voit en choisissant est littéralement ce que le
+ * d'avoir la sienne : ce qu'on voit en choisissant est littéralement ce que le
  * visiteur verra. Les parties de la scène sont marquées `data-bc-part` dans le
  * balisage, sans rang : quatre parties, quatre rangs, c'est leur ordre.
  */
@@ -27,7 +27,7 @@
 			return;
 		}
 
-		/* Sans cette classe sur <html>, le CSS ne cache rien — donc rien à révéler. */
+		/* Sans cette classe sur <html>, le CSS ne cache rien, donc rien à révéler. */
 		document.documentElement.classList.add( 'bc-anim-prete' );
 
 		Array.prototype.forEach.call( bloc.querySelectorAll( '[data-bc-part]' ), function ( partie, rang ) {

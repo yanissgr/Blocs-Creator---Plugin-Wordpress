@@ -10,17 +10,17 @@
  *
  *   1. L'ÉCRAN DIT CE QU'IL A FAIT. Un formulaire qui se recharge à l'identique
  *      sans un mot ressemble à un bouton cassé. Le formulaire n'est donc plus
- *      envoyé à `options.php` — qui fait dépendre l'enregistrement de quatre
- *      choses qu'on ne voit pas, et se tait quand l'une lâche — mais à notre
+ *      envoyé à `options.php` (qui fait dépendre l'enregistrement de quatre
+ *      choses qu'on ne voit pas, et se tait quand l'une lâche) mais à notre
  *      propre gestionnaire, qui écrit, relit, compare, et revient sur l'onglet
  *      qu'on avait sous les yeux. Voir Blocs_Creator_Admin::action_reglages().
  *   2. L'ONGLET DES BLOCS N'ENVOIE PAS CENT TRENTE CHAMPS. Il en envoie un seul,
  *      la liste des blocs écartés, composée au moment de l'envoi. Un champ par
  *      bloc dépasserait `max_input_vars` sur un site fourni, et le formulaire
- *      arriverait tronqué — c'est-à-dire avec des blocs qu'on croirait cochés.
+ *      arriverait tronqué : c'est-à-dire avec des blocs qu'on croirait cochés.
  *      Sans JavaScript, les cases repartent comme avant : rien n'est perdu.
  *   3. AUCUN CHAMP NE BLOQUE L'ENVOI EN SILENCE. Le navigateur refuse d'envoyer
- *      un formulaire dont un champ est invalide — et si ce champ est dans un
+ *      un formulaire dont un champ est invalide, et si ce champ est dans un
  *      onglet masqué, il ne peut même pas le montrer. La requête ne part pas,
  *      le journal reste vide. Les valeurs que l'écran pré-remplit doivent donc
  *      toujours passer les contraintes de leur champ (le pas d'un nombre, le
@@ -156,7 +156,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 						</select>
 
 						<p class="description">
-							<?php esc_html_e( 'La section où vos blocs apparaissent quand on clique sur le « + » de l\'éditeur. Choisissez-y une section qui existe déjà — celle d\'un pack, par exemple — plutôt que d\'en créer une du même nom : deux sections identiques dans l\'inséreur, c\'est un rangement coupé en deux.', 'blocs-creator' ); ?>
+							<?php esc_html_e( 'La section où vos blocs apparaissent quand on clique sur le « + » de l\'éditeur. Choisissez-y une section qui existe déjà (celle d\'un pack, par exemple) plutôt que d\'en créer une du même nom : deux sections identiques dans l\'inséreur, c\'est un rangement coupé en deux.', 'blocs-creator' ); ?>
 						</p>
 
 						<p>
@@ -238,7 +238,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 		<section class="bc-onglet" data-bc-panneau="disponibilite" <?php echo 'disponibilite' === $blocs_creator_onglet ? '' : 'hidden'; ?>>
 
 			<p class="bc-chapo">
-				<?php esc_html_e( 'Ce que le « + » de l\'éditeur a le droit de proposer. Décocher un bloc ne touche à aucune page : les blocs déjà posés continuent de s\'afficher et de se modifier — ils ne s\'insèrent simplement plus.', 'blocs-creator' ); ?>
+				<?php esc_html_e( 'Ce que le « + » de l\'éditeur a le droit de proposer. Décocher un bloc ne touche à aucune page : les blocs déjà posés continuent de s\'afficher et de se modifier : ils ne s\'insèrent simplement plus.', 'blocs-creator' ); ?>
 			</p>
 
 			<?php
@@ -387,7 +387,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 			<?php endforeach; ?>
 
 			<p class="description">
-				<?php esc_html_e( 'Deux familles ne se décochent pas : vos propres blocs, et les blocs qui n\'existent qu\'à l\'intérieur d\'un autre — une carte dans une grille de cartes. Les retirer laisserait un conteneur qu\'on ne pourrait plus remplir.', 'blocs-creator' ); ?>
+				<?php esc_html_e( 'Deux familles ne se décochent pas : vos propres blocs, et les blocs qui n\'existent qu\'à l\'intérieur d\'un autre : une carte dans une grille de cartes. Les retirer laisserait un conteneur qu\'on ne pourrait plus remplir.', 'blocs-creator' ); ?>
 			</p>
 		</section>
 
@@ -444,7 +444,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 				<?php
 				printf(
 					/* translators: 1: nom du filtre, 2: exemple de classe CSS. */
-					esc_html__( 'Le filtre %1$s change ces scènes. Pour un seul bloc — dans un modèle du thème, un pied de page, ou par « Classes CSS supplémentaires » dans l\'éditeur —, la classe %2$s lui donne une scène à lui.', 'blocs-creator' ),
+					esc_html__( 'Le filtre %1$s change ces scènes. Pour un seul bloc (dans un modèle du thème, un pied de page, ou par « Classes CSS supplémentaires » dans l\'éditeur), la classe %2$s lui donne une scène à lui.', 'blocs-creator' ),
 					'<code>blocs_creator_apparitions_contenu</code>',
 					'<code>bc-apparition-cascade</code>'
 				);
@@ -479,7 +479,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 									</label>
 									<select id="bc-anim-<?php echo esc_attr( sanitize_key( str_replace( '/', '-', $blocs_creator_bloc_nom ) ) ); ?>"
 										name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[<?php echo esc_attr( $blocs_creator_bloc_nom ); ?>][nom]">
-										<option value=""><?php esc_html_e( '— la retirer —', 'blocs-creator' ); ?></option>
+										<option value=""><?php esc_html_e( '- la retirer -', 'blocs-creator' ); ?></option>
 										<?php foreach ( $blocs_creator_scenarios as $blocs_creator_valeur => $blocs_creator_scenario ) : ?>
 											<option value="<?php echo esc_attr( $blocs_creator_valeur ); ?>" <?php selected( $blocs_creator_reglage['nom'], $blocs_creator_valeur ); ?>>
 												<?php echo esc_html( $blocs_creator_scenario['libelle'] ); ?>
@@ -509,13 +509,13 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 					<td>
 						<select id="bc-anim-ajout-bloc" class="regular-text"
 							name="<?php echo esc_attr( $blocs_creator_opt_anim ); ?>[__ajout][bloc]">
-							<option value=""><?php esc_html_e( '— choisir un bloc —', 'blocs-creator' ); ?></option>
+							<option value=""><?php esc_html_e( '- choisir un bloc -', 'blocs-creator' ); ?></option>
 							<?php foreach ( $blocs_creator_reglables as $blocs_creator_bloc_nom => $blocs_creator_bloc_titre ) : ?>
 								<?php if ( isset( $blocs_creator_apparitions[ $blocs_creator_bloc_nom ] ) ) : ?>
 									<?php continue; ?>
 								<?php endif; ?>
 								<option value="<?php echo esc_attr( $blocs_creator_bloc_nom ); ?>">
-									<?php echo esc_html( $blocs_creator_bloc_titre . ' — ' . $blocs_creator_bloc_nom ); ?>
+									<?php echo esc_html( $blocs_creator_bloc_titre . ' : ' . $blocs_creator_bloc_nom ); ?>
 								</option>
 							<?php endforeach; ?>
 						</select>
@@ -542,7 +542,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 						<?php
 						/*
 						 * Le pas reste à 1, et il le faut : avec `min="200" step="50"`,
-						 * le navigateur n'accepte que 200, 250… 700, 750 — et tient
+						 * le navigateur n'accepte que 200, 250… 700, 750, et tient
 						 * 720, la valeur par défaut, pour invalide. Il bloquait alors
 						 * TOUT le formulaire, depuis un onglet masqué, sans un mot :
 						 * c'était le bouton mort des 4.1 et 4.2.0.
@@ -590,7 +590,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 			?>
 
 			<p class="bc-chapo">
-				<?php esc_html_e( 'L\'IA aide à écrire, elle ne publie rien : tout ce qu\'elle propose se relit avant d\'entrer dans la page. Le plugin ne garde aucune clé — il passe par le client d\'IA de WordPress, branché dans Réglages › Connecteurs (Google, Anthropic, OpenAI).', 'blocs-creator' ); ?>
+				<?php esc_html_e( 'L\'IA aide à écrire, elle ne publie rien : tout ce qu\'elle propose se relit avant d\'entrer dans la page. Le plugin ne garde aucune clé : il passe par le client d\'IA de WordPress, branché dans Réglages › Connecteurs (Google, Anthropic, OpenAI).', 'blocs-creator' ); ?>
 			</p>
 
 			<?php if ( ! Blocs_Creator_Ia::disponible() ) : ?>
@@ -638,7 +638,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 							<input type="checkbox" value="1" name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[sections]" <?php checked( ! empty( $blocs_creator_ia['sections'] ) ); ?>>
 							<?php esc_html_e( 'Panneau « Remplir avec l\'IA » sur les blocs créés ici', 'blocs-creator' ); ?>
 						</label>
-						<p class="description"><?php esc_html_e( 'L\'IA propose le texte des champs du bloc — titre, texte, libellés, lignes d\'un répéteur — d\'après sa définition. Ni les images, ni les adresses, ni les réglages de la colonne de droite. Le filtre blocs_creator_ia_champ_remplissable change ce qu\'elle peut toucher.', 'blocs-creator' ); ?></p>
+						<p class="description"><?php esc_html_e( 'L\'IA propose le texte des champs du bloc (titre, texte, libellés, lignes d\'un répéteur) d\'après sa définition. Ni les images, ni les adresses, ni les réglages de la colonne de droite. Le filtre blocs_creator_ia_champ_remplissable change ce qu\'elle peut toucher.', 'blocs-creator' ); ?></p>
 					</td>
 				</tr>
 
@@ -659,7 +659,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 						<textarea id="bc-ia-consignes" class="large-text" rows="5"
 							name="<?php echo esc_attr( $blocs_creator_opt_ia ); ?>[consignes]"
 							placeholder="<?php echo esc_attr( Blocs_Creator_Ia::consignes_communes() ); ?>"><?php echo esc_textarea( $blocs_creator_ia['consignes'] ); ?></textarea>
-						<p class="description"><?php esc_html_e( 'Les consignes données à l\'IA à chaque demande : ce qu\'est le site, à qui il parle, sur quel ton. Exemple : « Tu écris pour un club d\'éducation canine tenu par des bénévoles. Ton chaleureux et simple ; vouvoie le lecteur. » Vide : la phrase grisée.', 'blocs-creator' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Les consignes données à l\'IA à chaque demande : ce qu\'est le site, à qui il parle, sur quel ton. Exemple : « Tu écris pour un artisan qui travaille seul et répond lui-même à ses clients. Ton chaleureux et concret ; vouvoie le lecteur. » Vide : la phrase grisée.', 'blocs-creator' ); ?></p>
 					</td>
 				</tr>
 
@@ -739,7 +739,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 			<?php
 			/*
 			 * Le diagnostic vit au bas d'une page très longue. Ce lien-ci est
-			 * dans la barre collante, donc toujours sous les yeux — et c'est
+			 * dans la barre collante, donc toujours sous les yeux, et c'est
 			 * précisément quand le bouton d'à côté a l'air de ne rien faire
 			 * qu'on le cherche.
 			 */
@@ -762,7 +762,7 @@ foreach ( $blocs_creator_inventaire as $blocs_creator_groupe_total ) {
 				<summary><?php esc_html_e( 'L\'enregistrement ne passe pas ? Ouvrez ceci.', 'blocs-creator' ); ?></summary>
 
 				<p class="bc-aide">
-					<?php esc_html_e( 'Un écran qui revient inchangé peut avoir quatre causes très différentes — une requête tronquée, une extension qui intercepte l\'écriture, un cache qui ressert l\'ancienne valeur, une base en lecture seule — et elles se ressemblent toutes vues d\'ici. Ce relevé les distingue. Copiez-le et donnez-le à qui vous aide.', 'blocs-creator' ); ?>
+					<?php esc_html_e( 'Un écran qui revient inchangé peut avoir quatre causes très différentes (une requête tronquée, une extension qui intercepte l\'écriture, un cache qui ressert l\'ancienne valeur, une base en lecture seule) et elles se ressemblent toutes vues d\'ici. Ce relevé les distingue. Copiez-le et donnez-le à qui vous aide.', 'blocs-creator' ); ?>
 				</p>
 
 				<p>

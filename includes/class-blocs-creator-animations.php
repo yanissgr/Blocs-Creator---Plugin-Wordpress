@@ -5,7 +5,7 @@
  * Trois décisions tiennent ce fichier, et rien ne doit les entamer.
  *
  * 1. L'APPARITION APPARTIENT AU BLOC, PAS À LA PAGE. Elle se choisit une fois,
- *    là où le bloc se définit — sur son écran pour un bloc que vous avez créé,
+ *    là où le bloc se définit : sur son écran pour un bloc que vous avez créé,
  *    dans les réglages pour un bloc de WordPress ou d'une autre extension.
  *    Toutes ses occurrences entrent donc de la même façon, sur toutes les
  *    pages. Un réglage posé page par page finit toujours par diverger : trois
@@ -14,7 +14,7 @@
  * 2. UNE APPARITION EST UNE SCÈNE, PAS UN GESTE. Un bloc n'est pas une boîte :
  *    c'est un titre, un chapô, une image, des cartes. Chaque scénario dit donc
  *    ce que fait le bloc ET ce que font ses parties, avec un décalage entre
- *    elles. Dix scènes travaillées valent mieux que quinze fondus — dont une,
+ *    elles. Neuf scènes travaillées valent mieux que quinze fondus : dont une,
  *    « Composée », qui laisse le fichier de dessin distribuer les rôles partie
  *    par partie, pour les blocs dont les moitiés n'entrent pas de la même façon.
  *
@@ -26,8 +26,8 @@
  * Deux portes de plus, depuis la 5.0 :
  *
  *   - LES BLOCS DU CONTENU. Une case des réglages donne une apparition à
- *     chaque bloc natif posé dans le contenu d'une page — paragraphe, titre,
- *     image, liste… —, choisie par type (apparitions_contenu()). Un bloc de
+ *     chaque bloc natif posé dans le contenu d'une page (paragraphe, titre,
+ *     image, liste…), choisie par type (apparitions_contenu()). Un bloc de
  *     mise en page (groupe, colonnes) ne s'anime pas : ce sont ses enfants
  *     qui entrent. Un bloc qui entre emmène ses enfants : rien n'entre deux
  *     fois. L'en-tête et le pied de page ne sont pas concernés.
@@ -124,6 +124,19 @@ class Blocs_Creator_Animations {
 	);
 
 	/**
+	 * Les scènes retirées, et celle qui les remplace.
+	 *
+	 * « Signature » (un balayage comme un coup de pinceau) est partie avec la
+	 * 6.0 : elle venait de l'allure d'un site, pas d'un besoin commun. Un bloc
+	 * qui l'avait gardée en base entre en se dépliant.
+	 *
+	 * @var array<string, string>
+	 */
+	const ANCIENNES = array(
+		'signature' => 'deploiement',
+	);
+
+	/**
 	 * Les apparitions en vigueur, par nom de bloc.
 	 *
 	 * @var array<string, array>|null
@@ -151,7 +164,7 @@ class Blocs_Creator_Animations {
 	 *
 	 * Chacun est décrit dans assets/css/animations.css, et nulle part ailleurs :
 	 * ajouter un scénario, c'est ajouter une entrée ici et un bloc de règles
-	 * là-bas. `parties` dit si le scénario anime aussi l'intérieur du bloc —
+	 * là-bas. `parties` dit si le scénario anime aussi l'intérieur du bloc :
 	 * l'aperçu de l'écran d'édition s'en sert pour montrer la bonne scène.
 	 *
 	 * @return array<string, array{libelle:string, description:string, parties:bool}>
@@ -178,11 +191,6 @@ class Blocs_Creator_Animations {
 				'description' => __( 'Le bloc se dévoile du bas, comme un store qu\'on déroule, et son contenu monte derrière.', 'blocs-creator' ),
 				'parties'     => true,
 			),
-			'signature'   => array(
-				'libelle'     => __( 'Signature', 'blocs-creator' ),
-				'description' => __( 'Un balayage de la gauche vers la droite découvre le bloc, comme un coup de pinceau. Le contenu se fond ensuite.', 'blocs-creator' ),
-				'parties'     => true,
-			),
 			'pastilles'   => array(
 				'libelle'     => __( 'Pastilles', 'blocs-creator' ),
 				'description' => __( 'Chaque partie apparaît petite et se pose, en cascade rapide. Ce qu\'il faut pour une grille de cartes.', 'blocs-creator' ),
@@ -204,8 +212,8 @@ class Blocs_Creator_Animations {
 				'parties'     => true,
 			),
 			'composee'    => array(
-				'libelle'     => __( 'Composée — le dessin décide', 'blocs-creator' ),
-				'description' => __( 'Chaque partie entre à sa façon, celle que le fichier de dessin lui donne : le texte monte pendant que l\'image s\'installe, deux colonnes se croisent, un trait se peint. C\'est la plus fidèle quand le bloc a été dessiné pour ça.', 'blocs-creator' ),
+				'libelle'     => __( 'Composée : le dessin décide', 'blocs-creator' ),
+				'description' => __( 'Chaque partie entre à sa façon, celle que le fichier de dessin lui donne : le texte monte pendant que l\'image s\'installe, deux colonnes se croisent. C\'est la plus fidèle quand le bloc a été dessiné pour ça.', 'blocs-creator' ),
 				'parties'     => true,
 			),
 		);
@@ -260,8 +268,8 @@ class Blocs_Creator_Animations {
 	/**
 	 * Retourne les apparitions en vigueur, par nom de bloc.
 	 *
-	 * Deux sources, et l'ordre compte : la définition d'abord — c'est le bloc
-	 * lui-même qui le dit —, l'option ensuite, pour les blocs qu'on n'a pas
+	 * Deux sources, et l'ordre compte : la définition d'abord (c'est le bloc
+	 * lui-même qui le dit), l'option ensuite, pour les blocs qu'on n'a pas
 	 * créés et qui n'ont donc pas de définition où l'inscrire.
 	 *
 	 * @return array<string, array{nom:string, duree:int}>
@@ -329,6 +337,9 @@ class Blocs_Creator_Animations {
 		$reglage = (array) $reglage;
 		$nom     = sanitize_key( (string) ( $reglage['nom'] ?? '' ) );
 		$duree   = (int) ( $reglage['duree'] ?? 0 );
+
+		// Une scène retirée prend celle qui lui ressemble le plus.
+		$nom = self::ANCIENNES[ $nom ] ?? $nom;
 
 		return array(
 			'nom'   => self::scenario_existe( $nom ) ? $nom : '',
@@ -530,8 +541,8 @@ class Blocs_Creator_Animations {
 			'core/heading'       => 'montee',
 			'core/paragraph'     => 'montee',
 			'core/list'          => 'cascade',
-			'core/quote'         => 'signature',
-			'core/pullquote'     => 'signature',
+			'core/quote'         => 'montee',
+			'core/pullquote'     => 'montee',
 			'core/image'         => 'deploiement',
 			'core/gallery'       => 'pastilles',
 			'core/cover'         => 'souffle',
@@ -826,7 +837,7 @@ class Blocs_Creator_Animations {
 		?>
 		<div class="bc-apparition" data-bc-apparition>
 			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $nom ); ?>" class="widefat" data-bc-apparition-choix>
-				<option value=""><?php esc_html_e( 'Aucune — le bloc est là, tout simplement', 'blocs-creator' ); ?></option>
+				<option value=""><?php esc_html_e( 'Aucune : le bloc est là, tout simplement', 'blocs-creator' ); ?></option>
 				<?php foreach ( $scenarios as $blocs_creator_valeur => $blocs_creator_scenario ) : ?>
 					<option value="<?php echo esc_attr( $blocs_creator_valeur ); ?>"
 						data-bc-description="<?php echo esc_attr( $blocs_creator_scenario['description'] ); ?>"

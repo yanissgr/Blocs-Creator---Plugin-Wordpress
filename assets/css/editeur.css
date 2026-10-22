@@ -3,7 +3,7 @@
  *
  * Volontairement discret : ce qu'on veut voir dans le canevas, c'est le bloc
  * tel qu'il sera sur le site, pas l'habillage du plugin. Les seuls décors
- * posés ici entourent le formulaire — c'est-à-dire le moment où l'on saisit,
+ * posés ici entourent le formulaire : c'est-à-dire le moment où l'on saisit,
  * pas celui où l'on regarde.
  */
 
@@ -15,7 +15,7 @@
  * L'aperçu d'un bloc est une image : rien n'y réagit.
  *
  * Le rendu serveur montre de vrais liens, boutons, cases à cocher, questions
- * dépliables. Un clic dessus ne doit rien déclencher — ni quitter l'éditeur
+ * dépliables. Un clic dessus ne doit rien déclencher : ni quitter l'éditeur
  * par un lien, ni cocher une case : il sélectionne le bloc, c'est tout. Le
  * pointeur traverse donc l'aperçu, et assets/js/apercus-inertes.js le rend
  * aussi inerte au clavier. Les blocs imbriqués restent modifiables.

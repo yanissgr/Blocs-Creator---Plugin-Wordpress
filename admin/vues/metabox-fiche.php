@@ -4,7 +4,7 @@
  *
  * Blocs Creator coupe le travail en deux : les champs se déclarent ici, le
  * dessin s'écrit dans un fichier PHP du thème. Quand ces deux moitiés ne sont
- * pas faites par la même personne — ou pas au même moment —, il manque le
+ * pas faites par la même personne (ou pas au même moment), il manque le
  * pont : celui qui dessine doit connaître les clés, les types, et le nom exact
  * du fichier à créer.
  *

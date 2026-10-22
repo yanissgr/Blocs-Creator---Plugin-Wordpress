@@ -115,8 +115,8 @@
  * Le parcours d'un bloc
  *
  * Trois étapes en haut de l'écran d'édition : nommer, déclarer, dessiner.
- * La troisième est la seule qui surprend — un bloc créé ici ne montre rien
- * tant que son fichier de dessin n'existe pas —, elle est donc écrite noir
+ * La troisième est la seule qui surprend (un bloc créé ici ne montre rien
+ * tant que son fichier de dessin n'existe pas), elle est donc écrite noir
  * sur blanc plutôt que découverte en publiant.
  * ------------------------------------------------------------------ */
 

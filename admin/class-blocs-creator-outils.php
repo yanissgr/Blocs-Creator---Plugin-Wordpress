@@ -4,7 +4,7 @@
  *
  * C'est ce qui rend le plugin réutilisable pour de vrai : un bloc mis au point
  * sur un site se rapporte en deux gestes sur le suivant. L'export ne contient
- * que les définitions — le gabarit, lui, est un fichier du thème, et on le
+ * que les définitions : le gabarit, lui, est un fichier du thème, et on le
  * copie comme n'importe quel fichier de thème.
  *
  * Le JSON importé est traité comme une saisie d'utilisateur : il repasse
@@ -229,7 +229,7 @@ class Blocs_Creator_Outils {
 		if ( 0 === $faits ) {
 			$this->retour(
 				'erreur',
-				__( 'Aucun bloc importé. Les blocs du fichier existent peut-être déjà — cochez « Remplacer » pour les écraser.', 'blocs-creator' )
+				__( 'Aucun bloc importé. Les blocs du fichier existent peut-être déjà : cochez « Remplacer » pour les écraser.', 'blocs-creator' )
 			);
 		}
 

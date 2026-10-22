@@ -5,7 +5,7 @@
  * C'est l'objet que l'on saisit dans le back-office : un nom, un identifiant,
  * une icône, et surtout une liste de champs. Il est stocké dans un type de
  * contenu privé (`blocs_creator_bloc`) sous forme de JSON, avec le titre, le slug et la
- * description recopiés dans les colonnes natives — pour que la recherche et
+ * description recopiés dans les colonnes natives : pour que la recherche et
  * les listes de WordPress fonctionnent sans rien réapprendre.
  *
  * Une définition ne sait pas s'enregistrer comme bloc Gutenberg : c'est le
@@ -85,7 +85,7 @@ class Blocs_Creator_Definition {
 	 *
 	 * Blocs Creator coupe le travail en deux : les champs se déclarent ici, le
 	 * dessin s'écrit dans un fichier du thème. Quand ces deux moitiés sont
-	 * faites par deux personnes — ou par une personne et un assistant —, il
+	 * faites par deux personnes (ou par une personne et un assistant), il
 	 * manquait le pont : celui qui dessine doit connaître les clés, les types,
 	 * les valeurs qu'il recevra, et le nom exact du fichier à créer.
 	 *
@@ -108,7 +108,7 @@ class Blocs_Creator_Definition {
 		$lignes[] = sprintf(
 			'- Fichier de dessin : `%s`%s',
 			Blocs_Creator_Gabarits::chemin_court( $cible ),
-			'' !== $gabarit ? '' : ' — **à créer**'
+			'' !== $gabarit ? '' : ' : **à créer**'
 		);
 
 		if ( '' !== (string) $definition['description'] ) {
@@ -409,7 +409,7 @@ class Blocs_Creator_Definition {
 	 * Nettoie les attributs conservés d'un bloc repris au code.
 	 *
 	 * Ils sont réenregistrés tels quels auprès de Gutenberg : on vérifie donc
-	 * leur forme, pas leur contenu — un `default` peut être n'importe quoi,
+	 * leur forme, pas leur contenu : un `default` peut être n'importe quoi,
 	 * c'est le bloc d'origine qui le savait.
 	 *
 	 * @param mixed $attributs Attributs bruts.
@@ -715,7 +715,7 @@ class Blocs_Creator_Definition {
 	 *
 	 * Les clés deviennent des noms d'attributs Gutenberg et des index de
 	 * tableau dans les gabarits : on les veut en minuscules, sans accent, sans
-	 * tiret — `mon_champ`, pas `mon-champ`, pour rester écrivable en PHP.
+	 * tiret : `mon_champ`, pas `mon-champ`, pour rester écrivable en PHP.
 	 *
 	 * @param string $cle     Clé proposée.
 	 * @param string $libelle Libellé, d'où déduire la clé si besoin.
@@ -726,7 +726,7 @@ class Blocs_Creator_Definition {
 		/*
 		 * La casse est conservée. Une clé saisie à la main sera presque
 		 * toujours en minuscules, mais un bloc repris au code arrive avec les
-		 * noms d'attributs qu'il avait — `imageId`, `nouvelOnglet` — et son
+		 * noms d'attributs qu'il avait (`imageId`, `nouvelOnglet`) et son
 		 * fichier de rendu les lit sous cette orthographe-là. Les abaisser
 		 * ici, c'est casser le rendu sans rien dire.
 		 */

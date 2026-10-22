@@ -5,7 +5,7 @@
  * Une seule liste pour deux natures de blocs. C'est le point de l'écran : on
  * ne veut pas savoir si un bloc a été déclaré dans le back-office ou écrit à
  * la main pour répondre à la question « qu'est-ce qui existe sur ce site ? ».
- * La colonne Source le dit, et les actions s'adaptent — un bloc codé ne se
+ * La colonne Source le dit, et les actions s'adaptent : un bloc codé ne se
  * modifie pas ici, il se modifie dans son fichier.
  *
  * @package BlocsCreator
@@ -140,7 +140,7 @@ class Blocs_Creator_Liste_Table extends WP_List_Table {
 	 * Le message affiché quand il n'y a rien.
 	 */
 	public function no_items() {
-		esc_html_e( 'Aucun bloc pour l\'instant. Créez-en un — il vous faudra un nom et au moins un champ.', 'blocs-creator' );
+		esc_html_e( 'Aucun bloc pour l\'instant. Créez-en un : il vous faudra un nom et au moins un champ.', 'blocs-creator' );
 	}
 
 	/**
@@ -344,7 +344,7 @@ class Blocs_Creator_Liste_Table extends WP_List_Table {
 		/*
 		 * La suppression est la même pour tous les blocs générés, repris ou
 		 * non : la définition part, franchement. Le message de confirmation
-		 * change, lui, selon ce qui attend derrière — un dossier de code qui
+		 * change, lui, selon ce qui attend derrière : un dossier de code qui
 		 * reprend la main, ou rien du tout.
 		 */
 		$origine = ! empty( $bloc['adoption']['nom'] )
@@ -443,7 +443,7 @@ class Blocs_Creator_Liste_Table extends WP_List_Table {
 		$nombre = count( $champs );
 
 		if ( 0 === $nombre ) {
-			return '<span class="bc-vide">—</span>';
+			return '<span class="bc-vide">-</span>';
 		}
 
 		return sprintf(
@@ -486,7 +486,7 @@ class Blocs_Creator_Liste_Table extends WP_List_Table {
 		}
 
 		if ( 'genere' !== $bloc['source'] ) {
-			return '<span class="bc-vide">—</span>';
+			return '<span class="bc-vide">-</span>';
 		}
 
 		return sprintf(

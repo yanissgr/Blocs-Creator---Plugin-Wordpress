@@ -1,15 +1,14 @@
 /*
  * Les apparitions : révéler un bloc, et ses parties, quand il entre à l'écran.
  *
- * Le script ne décide de rien visuellement. Il fait cinq choses :
+ * Le script ne décide de rien visuellement. Il fait quatre choses :
  *
- *   1. il désigne les PARTIES d'un bloc — son titre, son texte, ses cartes —
+ *   1. il désigne les PARTIES d'un bloc (son titre, son texte, ses cartes)
  *      et leur donne un rang, pour que le CSS les décale ;
- *   2. il découpe en mots les titres qui le demandent (`data-bc-part="mots"`) ;
- *   3. il guette l'entrée du bloc à l'écran, et pose `is-vu` ;
- *   4. il fait attendre leur tour aux parties encore sous l'écran
+ *   2. il guette l'entrée du bloc à l'écran, et pose `is-vu` ;
+ *   3. il fait attendre leur tour aux parties encore sous l'écran
  *      (`bc-attend`) : sur un téléphone, une section fait deux écrans de haut ;
- *   5. il garde un filet : ce qui est à l'écran finit toujours par entrer.
+ *   4. il garde un filet : ce qui est à l'écran finit toujours par entrer.
  *
  * Tout le dessin est dans assets/css/animations.css, et c'est PHP qui a posé
  * `data-bc-anim` d'après le réglage du bloc.
@@ -106,7 +105,7 @@
 
 		/*
 		 * Un élément qui porte déjà une transformation ou un filtre les tient
-		 * de son dessin — un cercle décalé, un aplat peint. Les lui reprendre
+		 * de son dessin (un décor décalé, une forme inclinée). Les lui reprendre
 		 * le ferait sauter de sa place : on le laisse tranquille, le bloc
 		 * l'emmène avec lui.
 		 */
@@ -124,7 +123,7 @@
 	 * Les parties animables d'un bloc.
 	 *
 	 * On prend ses enfants directs. Si le bloc n'a qu'un enfant, c'est une
-	 * enveloppe — une `<section>` dans un `<div>` — et on descend d'un cran :
+	 * enveloppe (une `<section>` dans un `<div>`) et on descend d'un cran :
 	 * animer une enveloppe unique reviendrait à animer le bloc deux fois.
 	 *
 	 * Puis chaque enfant qui n'est qu'un conteneur cède la place à SES enfants.
@@ -180,7 +179,7 @@
 	 *
 	 * Le rang repart à zéro À CHAQUE CONTENEUR, et non d'un bout à l'autre du
 	 * bloc. Sur une bannière, le titre, l'accroche et le bouton se suivent dans
-	 * leur colonne pendant que l'image entre en même temps que le titre — ce
+	 * leur colonne pendant que l'image entre en même temps que le titre : ce
 	 * qui est le geste voulu, et non une file d'attente de quatre éléments.
 	 *
 	 * Dans une grille, il repart aussi à chaque RANGÉE : sans cela, la
@@ -215,8 +214,8 @@
 
 			paquet.membres.forEach( function ( partie, rang ) {
 				/*
-				 * Un rang déjà posé est un rang voulu : le gabarit — ou le
-				 * thème, qui sait ce que chaque partie doit faire — l'a écrit.
+				 * Un rang déjà posé est un rang voulu : le gabarit (ou le
+				 * thème, qui sait ce que chaque partie doit faire) l'a écrit.
 				 * On ne le recalcule pas, sans quoi deux moitiés qui doivent se
 				 * croiser partiraient l'une après l'autre.
 				 */
@@ -254,7 +253,7 @@
 	/**
 	 * Désigne les parties d'un bloc et leur donne leur rang.
 	 *
-	 * Une scène « au repos » — cascade, pastilles… — ne déplace pas le bloc :
+	 * Une scène « au repos » (cascade, pastilles…) ne déplace pas le bloc :
 	 * elle ne vit que par ses parties. Quand le balisage n'en offre aucune que
 	 * l'on puisse animer sans l'abîmer, la scène ne jouerait rien du tout. Le
 	 * bloc entre alors d'un seul tenant, ce qui vaut toujours mieux qu'un bloc
@@ -285,121 +284,6 @@
 		if ( '' !== repose && '0' !== repose ) {
 			bloc.setAttribute( 'data-bc-anim', 'montee' );
 		}
-	}
-
-	/* ------------------------------------------------------------------ *
-	 * Les titres, mot à mot
-	 * ------------------------------------------------------------------ */
-
-	/**
-	 * Enveloppe chaque mot d'un élément dans deux <span> : le premier cache,
-	 * le second monte. Les balises intérieures (em, br, a…) sont conservées :
-	 * on ne découpe que les nœuds de texte.
-	 *
-	 * Un titre déjà découpé — par ce script, ou par un thème qui le faisait
-	 * avant que le plugin ne sache le faire — n'est pas redécoupé.
-	 *
-	 * @param {Element} element Le titre.
-	 * @return {number} Le nombre de mots.
-	 */
-	function decouper( element ) {
-		if ( element.hasAttribute( 'data-bc-mots' ) || element.hasAttribute( 'data-kahel-mots' ) || element.querySelector( '.bc-mot, .kahel-mot' ) ) {
-			return 0;
-		}
-
-		element.setAttribute( 'data-bc-mots', '' );
-
-		var marcheur = document.createTreeWalker( element, window.NodeFilter.SHOW_TEXT );
-		var textes   = [];
-		var rang     = 0;
-
-		while ( marcheur.nextNode() ) {
-			textes.push( marcheur.currentNode );
-		}
-
-		textes.forEach( function ( noeud ) {
-			var morceaux = noeud.nodeValue.split( /(\s+)/ );
-			var fragment = document.createDocumentFragment();
-
-			morceaux.forEach( function ( morceau ) {
-				if ( '' === morceau ) {
-					return;
-				}
-
-				if ( /^\s+$/.test( morceau ) ) {
-					fragment.appendChild( document.createTextNode( morceau ) );
-					return;
-				}
-
-				var mot    = document.createElement( 'span' );
-				var dedans = document.createElement( 'span' );
-
-				mot.className    = 'bc-mot';
-				dedans.className = 'bc-mot__in';
-				dedans.style.setProperty( '--bc-i', String( rang ) );
-				dedans.textContent = morceau;
-
-				mot.appendChild( dedans );
-				fragment.appendChild( mot );
-				rang++;
-			} );
-
-			noeud.parentNode.replaceChild( fragment, noeud );
-		} );
-
-		return rang;
-	}
-
-	/**
-	 * Appelle `rappel` dès que `test` rend vrai — tout de suite si c'est déjà
-	 * le cas, sinon au premier changement de classe de l'élément qui le rend
-	 * vrai.
-	 *
-	 * @param {Element}  element L'élément surveillé.
-	 * @param {Function} test    Rend vrai quand c'est le moment.
-	 * @param {Function} rappel  Appelé une seule fois.
-	 */
-	function quand( element, test, rappel ) {
-		if ( test() ) {
-			rappel();
-			return;
-		}
-
-		var guetteur = new window.MutationObserver( function () {
-			if ( test() ) {
-				guetteur.disconnect();
-				rappel();
-			}
-		} );
-
-		guetteur.observe( element, { attributes: true, attributeFilter: [ 'class' ] } );
-	}
-
-	/**
-	 * Découpe les titres qui le demandent, et leur rend leurs débords une fois
-	 * les mots posés.
-	 */
-	function titres() {
-		tous( '.bc-anim[data-bc-anim] [data-bc-part="mots"]' ).forEach( function ( titre ) {
-			var nombre = decouper( titre );
-			var bloc   = titre.closest( '.bc-anim[data-bc-anim]' );
-
-			if ( ! nombre || ! bloc ) {
-				return;
-			}
-
-			quand( bloc, function () {
-				return bloc.classList.contains( 'is-vu' );
-			}, function () {
-				quand( titre, function () {
-					return ! titre.classList.contains( 'bc-attend' );
-				}, function () {
-					window.setTimeout( function () {
-						titre.classList.add( 'bc-mots-poses' );
-					}, 1800 + nombre * 55 );
-				} );
-			} );
-		} );
 	}
 
 	/* ------------------------------------------------------------------ *
@@ -482,12 +366,11 @@
 		}
 
 		blocs.forEach( preparer );
-		titres();
 
 		/*
 		 * Le filet posé par le script d'en-tête a couvert le temps de
 		 * chargement de ce fichier. À partir d'ici, c'est le nôtre qui prend la
-		 * suite — et son décompte ne part que quand la page est réellement
+		 * suite, et son décompte ne part que quand la page est réellement
 		 * regardée. Un onglet ouvert en arrière-plan ne reçoit pas d'entrées
 		 * non plus, mais lui les recevra dès qu'on le regardera.
 		 */

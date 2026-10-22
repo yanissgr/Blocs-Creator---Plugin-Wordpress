@@ -3,10 +3,10 @@
  *
  * Des notes en vrac et une longueur ; l'IA écrit un brouillon (titre, chapô,
  * texte en Markdown), l'éditeur le change en blocs, et on le relit dans une
- * fenêtre avant de l'insérer — dans un article vide, ou à la suite du texte.
+ * fenêtre avant de l'insérer : dans un article vide, ou à la suite du texte.
  * Rien n'est publié tout seul. Voir includes/class-blocs-creator-ia.php.
  *
- * JavaScript natif, sans outil de build — comme le reste du plugin.
+ * JavaScript natif, sans outil de build : comme le reste du plugin.
  */
 ( function ( wp ) {
 	'use strict';

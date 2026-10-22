@@ -11,8 +11,8 @@
  */
 
 .bc-brouillon {
-	--bc-brouillon-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
-	--bc-brouillon-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+	--bc-brouillon-texte: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1e1e1e));
+	--bc-brouillon-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #3858e9));
 	--bc-brouillon-ok: #3f7a3a;
 	--bc-brouillon-doux: color-mix(in srgb, var(--bc-brouillon-texte) 70%, transparent);
 

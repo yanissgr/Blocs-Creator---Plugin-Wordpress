@@ -6,7 +6,7 @@
  * toucher : « le bouton Enregistrer ne fait rien » est un symptôme, pas une
  * cause. Il peut venir d'une requête tronquée, d'une extension qui intercepte
  * l'écriture, d'un cache d'objets qui ressert l'ancienne valeur, d'une base en
- * lecture seule — et, vu du navigateur, les quatre se ressemblent : un écran
+ * lecture seule : et, vu du navigateur, les quatre se ressemblent : un écran
  * qui revient inchangé.
  *
  * Deux choses sont donc écrites ici.
@@ -14,7 +14,7 @@
  *   1. UN JOURNAL. Chaque tentative d'enregistrement laisse une trace : quand,
  *      par qui, combien de champs sont arrivés, ce qui a été écrit, ce qui a
  *      résisté. Si le journal reste vide après un clic, la requête n'est jamais
- *      arrivée — et l'on cherche ailleurs que dans le plugin.
+ *      arrivée, et l'on cherche ailleurs que dans le plugin.
  *   2. UN RELEVÉ. L'état de la machine au moment où l'on regarde : version,
  *      limites de PHP, présence de la ligne en base, cache d'objets, extensions
  *      actives. Copiable d'un bouton, pour être lu par quelqu'un d'autre.
@@ -77,7 +77,7 @@ class Blocs_Creator_Diagnostic {
 	 * Dernier recours, appelé seulement quand la voie normale n'a rien écrit.
 	 * Ce n'est pas élégant, et c'est délibéré : un filtre `pre_update_option`,
 	 * un cache d'objets qui ne se vide pas, une extension de sécurité trop
-	 * zélée — autant de choses invisibles depuis ici, et qui font toutes le
+	 * zélée : autant de choses invisibles depuis ici, et qui font toutes le
 	 * même bouton mort. La valeur passée est déjà assainie ; ce qu'on saute,
 	 * ce sont les filtres, pas les gardes.
 	 *
@@ -139,7 +139,7 @@ class Blocs_Creator_Diagnostic {
 
 		return array(
 			'existe'     => null !== $ligne,
-			'autocharge' => null !== $ligne ? (string) $ligne->autoload : '—',
+			'autocharge' => null !== $ligne ? (string) $ligne->autoload : '-',
 			'octets'     => null !== $ligne ? strlen( (string) $ligne->option_value ) : 0,
 		);
 	}
@@ -164,7 +164,7 @@ class Blocs_Creator_Diagnostic {
 			? __( 'la base accepte les écritures', 'blocs-creator' )
 			: sprintf(
 				/* translators: 1: valeur écrite, 2: valeur relue. */
-				__( 'ÉCHEC — écrit « %1$s », relu « %2$s »', 'blocs-creator' ),
+				__( 'ÉCHEC : écrit « %1$s », relu « %2$s »', 'blocs-creator' ),
 				$valeur,
 				is_scalar( $relu ) ? (string) $relu : gettype( $relu )
 			);
@@ -187,7 +187,7 @@ class Blocs_Creator_Diagnostic {
 		$lignes[] = '# Diagnostic Blocs Creator';
 		$lignes[] = '';
 		$lignes[] = sprintf( '- Plugin : %s', BLOCS_CREATOR_VERSION );
-		$lignes[] = sprintf( '- WordPress : %s — PHP %s', $wp_version, PHP_VERSION );
+		$lignes[] = sprintf( '- WordPress : %s : PHP %s', $wp_version, PHP_VERSION );
 		$lignes[] = sprintf(
 			'- PHP : max_input_vars = %s, post_max_size = %s, memory_limit = %s',
 			ini_get( 'max_input_vars' ),
@@ -247,7 +247,7 @@ class Blocs_Creator_Diagnostic {
 		} else {
 			foreach ( $journal as $entree ) {
 				$lignes[] = sprintf(
-					'- %s — %s — %s',
+					'- %s (%s) %s',
 					$entree['date'] ?? '?',
 					$entree['qui'] ?? '?',
 					$entree['quoi'] ?? '?'

@@ -223,7 +223,7 @@ class Blocs_Creator_Champs {
 			'type-publication' => array(
 				'libelle'     => __( 'Type de publication', 'blocs-creator' ),
 				'famille'     => 'lien',
-				'description' => __( 'Un type de contenu du site — Articles, Ateliers… — choisi dans une liste. Ce qu\'il faut pour un bloc qui affiche « les dernières publications de ».', 'blocs-creator' ),
+				'description' => __( 'Un type de contenu du site (Articles, Ateliers…) choisi dans une liste. Ce qu\'il faut pour un bloc qui affiche « les dernières publications de ».', 'blocs-creator' ),
 				'attribut'    => 'string',
 				'defaut'      => '',
 				'reglages'    => array( 'defaut' ),
@@ -484,7 +484,7 @@ class Blocs_Creator_Champs {
 	 *
 	 * Les attributs de bloc passent déjà par la validation de Gutenberg ; ce
 	 * second passage vise le rendu serveur, qui peut être appelé avec des
-	 * attributs venus d'ailleurs — l'aperçu REST, par exemple.
+	 * attributs venus d'ailleurs : l'aperçu REST, par exemple.
 	 *
 	 * @param array $champ  Définition du champ.
 	 * @param mixed $valeur Valeur brute.
@@ -651,7 +651,7 @@ class Blocs_Creator_Champs {
 	 * Retourne les choix d'un champ, normalisés.
 	 *
 	 * Les choix se saisissent une ligne par option, sous la forme
-	 * `valeur : Libellé` — ou juste `Libellé`, la valeur étant alors son slug.
+	 * `valeur : Libellé`, ou juste `Libellé`, la valeur étant alors son slug.
 	 *
 	 * @param array $champ Définition du champ.
 	 * @return array<int, array{valeur:string, libelle:string}>
@@ -860,7 +860,7 @@ class Blocs_Creator_Champs {
 	 * Prépare un lien pour le gabarit.
 	 *
 	 * `attrs` porte les attributs HTML déjà échappés : un gabarit peut les
-	 * poser tels quels sur sa balise `<a>` sans rien oublier — ni le
+	 * poser tels quels sur sa balise `<a>` sans rien oublier : ni le
 	 * `rel="noreferrer noopener"` du nouvel onglet, ni l'échappement de l'URL.
 	 *
 	 * @param array $lien Valeur du champ.

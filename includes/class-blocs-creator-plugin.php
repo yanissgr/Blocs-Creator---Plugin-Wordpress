@@ -147,8 +147,8 @@ final class Blocs_Creator_Plugin {
 	 * Charge les packs de blocs codés.
 	 *
 	 * Un pack est un dossier de `packs/` portant un `pack.php`. Ce fichier est
-	 * inclus une fois, avant `init`, et retourne ses métadonnées. Ses blocs —
-	 * les dossiers de `blocs/` qui ont un `block.json` — sont enregistrés par
+	 * inclus une fois, avant `init`, et retourne ses métadonnées. Ses blocs :
+	 * les dossiers de `blocs/` qui ont un `block.json` : sont enregistrés par
 	 * le registre, pas par le pack : c'est ce qui garantit que l'écran « Tous
 	 * les blocs » montre exactement ce qui tourne.
 	 *
@@ -169,7 +169,7 @@ final class Blocs_Creator_Plugin {
 			 * Filtre le chargement d'un pack.
 			 *
 			 * Permet à un site de désactiver un pack sans supprimer son
-			 * dossier — le temps d'un diagnostic, par exemple.
+			 * dossier : le temps d'un diagnostic, par exemple.
 			 *
 			 * @param bool   $charger Faut-il charger ce pack.
 			 * @param string $slug    Identifiant du pack.

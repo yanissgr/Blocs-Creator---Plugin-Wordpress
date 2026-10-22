@@ -7,9 +7,9 @@
  */
 
 .bc-modifier {
-	--bc-modifier-fond: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1d1b19));
+	--bc-modifier-fond: var(--wp--preset--color--contrast, var(--wp--preset--color--foreground, #1e1e1e));
 	--bc-modifier-texte: var(--wp--preset--color--base, var(--wp--preset--color--background, #fff));
-	--bc-modifier-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #c2410c));
+	--bc-modifier-accent: var(--wp--preset--color--accent, var(--wp--preset--color--primary, #3858e9));
 
 	position: fixed;
 	right: 20px;

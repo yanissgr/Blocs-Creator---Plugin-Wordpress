@@ -9,9 +9,9 @@
  * Les noms viennent des blocs enregistrés : ils restent justes si un bloc est
  * renommé, et un bloc ajouté à la page reçoit le sien.
  *
- * Seules les pages qui le demandent sont concernées — case « Afficher le nom
+ * Seules les pages qui le demandent sont concernées (case « Afficher le nom
  * des blocs » dans la colonne de droite de l'éditeur (méta
- * `_blocs_creator_noms_blocs`, qu'une migration peut aussi poser) — et seuls
+ * `_blocs_creator_noms_blocs`, qu'une migration peut aussi poser)) et seuls
  * les blocs posés à même le contenu : ni l'en-tête, ni le pied de page.
  *
  * @package BlocsCreator

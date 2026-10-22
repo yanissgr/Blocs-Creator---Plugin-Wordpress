@@ -47,7 +47,7 @@ class Blocs_Creator_Reglages {
 	 */
 	public static function defauts() {
 		// Sans soulignés : `sanitize_key()` les garde, mais le champ de l'écran
-		// les refuse — et un champ refusé bloque tout le formulaire.
+		// les refuse, et un champ refusé bloque tout le formulaire.
 		$espace = preg_replace( '/[^a-z0-9-]/', '', sanitize_key( sanitize_title( get_bloginfo( 'name' ) ) ) );
 
 		if ( '' === $espace || is_numeric( $espace ) ) {
@@ -109,7 +109,7 @@ class Blocs_Creator_Reglages {
 	 *
 	 * L'écran n'envoie plus son formulaire à `options.php`. C'est un choix, et
 	 * il a une raison : l'API des réglages de WordPress fait dépendre un
-	 * enregistrement de quatre choses qu'on ne voit pas — le groupe autorisé,
+	 * enregistrement de quatre choses qu'on ne voit pas : le groupe autorisé,
 	 * la capacité filtrée, le jeton, un transitoire de trente secondes pour le
 	 * message. Quand l'une lâche, `options.php` renvoie l'écran à l'identique,
 	 * sans un mot, et le bouton passe pour mort. C'est exactement ce qui se
@@ -134,7 +134,7 @@ class Blocs_Creator_Reglages {
 
 		/*
 		 * L'écriture n'a pas pris. Il reste une porte : écrire la ligne
-		 * directement. Ce n'est pas élégant, et c'est délibéré — un filtre
+		 * directement. Ce n'est pas élégant, et c'est délibéré : un filtre
 		 * `pre_update_option`, un cache d'objets qui ne se vide pas, une
 		 * extension de sécurité trop zélée : autant de choses qu'on ne voit pas
 		 * depuis ici, et qui font toutes le même bouton mort. La valeur est
@@ -243,7 +243,7 @@ class Blocs_Creator_Reglages {
 		$propres['supprimer_donnees'] = ! empty( $valeurs['supprimer_donnees'] );
 
 		/*
-		 * La liste des blocs mis de côté se stocke en négatif — ce qu'on
+		 * La liste des blocs mis de côté se stocke en négatif : ce qu'on
 		 * retire, pas ce qu'on garde. Un bloc qui arrive avec une nouvelle
 		 * extension est donc disponible d'emblée : le contraire obligerait à
 		 * revenir cocher ici à chaque installation, et donnerait un éditeur
@@ -277,7 +277,7 @@ class Blocs_Creator_Reglages {
 
 		/*
 		 * Un envoi qui annonce la liste des blocs montrés mais l'annonce vide
-		 * est un envoi tronqué — `max_input_vars` dépassé, requête coupée. On
+		 * est un envoi tronqué : `max_input_vars` dépassé, requête coupée. On
 		 * ne touche alors à rien : perdre la liste des blocs écartés en
 		 * silence serait le pire des deux maux.
 		 */
@@ -288,7 +288,7 @@ class Blocs_Creator_Reglages {
 			 * L'écran compose lui-même la liste des blocs écartés et l'envoie
 			 * en un seul champ. Ceux qu'il ne montrait pas sont conservés : un
 			 * bloc mis à l'écart, puis dont l'extension est désactivée, doit
-			 * rester à l'écart si on la réactive — sans quoi il reviendrait
+			 * rester à l'écart si on la réactive : sans quoi il reviendrait
 			 * sans prévenir.
 			 */
 			$ecartes  = array_intersect( $noms( $valeurs['blocs_ecartes'] ), $connus );
@@ -318,8 +318,8 @@ class Blocs_Creator_Reglages {
 	 * Retourne les catégories de l'inséreur, telles que l'éditeur les verra.
 	 *
 	 * Sert les deux écrans qui proposent de ranger un bloc : les réglages et
-	 * la métabox d'identité. Ils montrent donc les vraies sections — celles du
-	 * cœur, celles des extensions, celles des packs — plutôt qu'une liste
+	 * la métabox d'identité. Ils montrent donc les vraies sections (celles du
+	 * cœur, celles des extensions, celles des packs) plutôt qu'une liste
 	 * écrite à la main qui finit toujours par dater.
 	 *
 	 * @return array<string, string> Titre, par slug.
@@ -346,7 +346,7 @@ class Blocs_Creator_Reglages {
 	 * Le cas est celui d'un site qui a donné à la catégorie de ses blocs créés
 	 * le titre d'une catégorie qu'un pack déclarait déjà :
 	 * l'inséreur affichait deux sections du même nom. Depuis, le registre
-	 * n'ajoute plus la nôtre quand le titre est pris — mais il reste à faire
+	 * n'ajoute plus la nôtre quand le titre est pris, mais il reste à faire
 	 * déménager les blocs qui pointaient sur l'ancien slug, sans quoi ils
 	 * seraient rangés dans une section qui n'existe plus.
 	 *

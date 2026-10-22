@@ -4,7 +4,7 @@ Tags: blocks, gutenberg, custom blocks, fields, acf
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 5.0.0
+Stable tag: 6.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,13 +26,13 @@ The plugin ships with a French admin interface. Translations are welcome.
 
 = What you get =
 
-* One screen listing **every** block on the site — the ones declared here and
+* One screen listing **every** block on the site - the ones declared here and
   the ones hand-written in a file. Each with its name, its fields, its template
   and the number of pages using it.
 * Twenty-four field types, from plain text to repeaters, including images,
   links, posts, focal point and inner blocks.
 * A render file created for you when the block is published, with a starting
-  point for every declared field — and never rewritten afterwards.
+  point for every declared field - and never rewritten afterwards.
 * A faithful preview in the editor: the block is displayed through its server
   render, exactly the code that will run on the site. A toggle in the toolbar
   switches to the form to fill the fields in.
@@ -41,11 +41,12 @@ The plugin ships with a French admin interface. Translations are welcome.
   definition, its render file is installed in your theme, and its name does not
   change. One button takes over every coded block at once, and the operation
   can be undone block by block.
-* **Inserter housekeeping**: one checkbox per block — those of WordPress, those
-  of other plugins — so that the "+" only offers what is actually used.
-* **Entrances**: ten scroll-triggered scenes, chosen once for the block, with
-  a preview at the moment of choice — headings rising word by word, images
-  unveiled behind a curtain, cards settling one by one.
+* **Inserter housekeeping**: one checkbox per block (those of WordPress, those
+  of other plugins) so that the "+" only offers what is actually used.
+* **Entrances**: nine scroll-triggered scenes, chosen once for the block, with
+  a preview at the moment of choice, and sober part variants (up, down, left,
+  right, zoom, badge, fade, row) for a template to compose its own scene. The
+  look of a site stays in its theme.
 * **AI in the editor** (WordPress 7.0+, through Settings › Connectors): draft a
   post from loose notes, fill a block's text fields from notes, and let the
   WordPress "AI" plugin read the text of your blocks.
@@ -94,7 +95,7 @@ them: drop a folder carrying a `block.json` into `blocs/` of your theme, into
 the same list as the others, marked as coded.
 
 And you can **take them over**, one at a time or all at once. The action
-translates the `block.json` into a definition — its attributes become fields —
+translates the `block.json` into a definition (its attributes become fields)
 copies its `rendu.php` into your theme as a template, and keeps its name, its
 stylesheets and its variations. The block is then edited as if you had created
 it here. "Give back to code" undoes everything: the folder takes over again,
@@ -121,7 +122,7 @@ dropped. The confirmation screen shows the translation before applying it.
 = Available blocks =
 
 **Settings → Available blocks** lists every registered block, grouped by origin,
-with a checkbox. Unchecking a block removes it from the inserter — and from the
+with a checkbox. Unchecking a block removes it from the inserter - and from the
 inserter only: pages already carrying it keep displaying and editing fine.
 
 Two families resist: your own blocks, and blocks that only exist inside another
@@ -131,13 +132,13 @@ right away.
 
 = Entrances =
 
-An entrance belongs to the block, not to the page: it is chosen once — on the
+An entrance belongs to the block, not to the page: it is chosen once (on the
 block screen for the ones you create, in the settings for those of WordPress and
-other plugins — and every occurrence enters the same way, everywhere. A preview
+other plugins) and every occurrence enters the same way, everywhere. A preview
 plays it at the moment of choice.
 
 An entrance is a scene, not a gesture: each of the ten says what the block does
-AND what its parts do — its heading, its text, its cards — with an offset
+AND what its parts do (its heading, its text, its cards) with an offset
 between them.
 
 The class is added at render time, not in the stored content: a static block
@@ -164,7 +165,7 @@ changed in the settings.
 
 = Will the plugin overwrite my file? =
 
-Never. It creates the file if it does not exist, and never touches it again —
+Never. It creates the file if it does not exist, and never touches it again :
 even if you add or remove fields.
 
 = Can I load a stylesheet along with a block? =
@@ -191,6 +192,38 @@ uninstall, if that is what you want.
 4. The help screen for writing a template.
 
 == Changelog ==
+
+= 6.0.0 =
+A plugin with no look of its own. Blocs Creator was born on one site and kept
+its style: very recognisable entrance variants, a maintenance page with its
+kicker and glow, examples taken from that site. Followed to the letter, they
+gave every new project the same face. 6.0 keeps the tools; the look goes back
+to each site's theme.
+
+* **Removed part variants**: `mots` (word-by-word headings), `masque`, `flou`,
+  `trait`, `pop`, `carte`, `pinceau`, and the **Signature** scene. A block set
+  to "Signature" now enters with "Deployment". The sober variants stay: up,
+  down, left, right, zoom, badge, fade, row. A site that relied on the removed
+  ones stays on 5.x or redraws them in its theme.
+* **Maintenance page**: no kicker, no glow; a new **"Get in touch"** box
+  (heading, text, phone numbers, e-mail, social profiles recognised from their
+  address, each part can be hidden), set in Settings › Maintenance. A theme can
+  offer its own contact details for empty fields
+  (`blocs_creator_maintenance_contact_repli`) and its own default texts
+  (`blocs_creator_maintenance_defauts`); its own template reads the box with
+  `blocs_creator_maintenance_contact()`.
+* **Neutral fallback colours**: without colours in `theme.json`, modules and
+  e-mails use WordPress greys and blue. E-mails no longer have an uppercase
+  kicker.
+* **Rich text helpers** for templates: `blocs_creator_paragraphes()`,
+  `blocs_creator_texte_court()`, `blocs_creator_lignes()`. They also read the
+  plain text of a former textarea, so a field switched to rich text displays
+  well before and after its migration.
+* **Rich text migration**: `blocs_creator_migration_texte_riche()` converts
+  fields already written (plain text, `**bold**`, line breaks) to rich text in
+  every post, template and pattern, keeping a revision.
+* Documentation rewritten as a toolbox: no style to copy, no examples from a
+  particular site.
 
 = 5.0.0 =
 What used to be rewritten for every site joins the plugin. On a site
@@ -235,7 +268,7 @@ AI is on by default (as soon as an AI connector is set up).
 
 = 4.2.1 =
 * **Fixed: the settings could not be saved.** The "Duration" field of the
-  Animations tab accepted steps of 50 from 200 — 200, 250… 700, 750 — so its
+  Animations tab accepted steps of 50 from 200 (200, 250… 700, 750) so its
   default value, 720, was invalid. The browser then refused to send the whole
   form, from a hidden tab, without a word: the request never left, and the
   diagnostic log stayed empty. The same field on the block screen had the same
@@ -251,7 +284,7 @@ AI is on by default (as soon as an AI connector is set up).
   from `BC_*` to `Blocs_Creator_*`, and the template helpers from `bc_champ()`
   to `blocs_creator_champ()`. A two-letter prefix is a collision waiting to
   happen, and the WordPress guidelines ask for four characters at least.
-  Existing templates must be updated — the block screen shows the new lines.
+  Existing templates must be updated - the block screen shows the new lines.
 * Option names, post type, hooks, query arguments and CSS classes are
   **unchanged**: nothing stored in the database or in page content moves.
 * `is_writable()` gives way to `wp_is_writable()`, the WordPress wrapper that
@@ -273,7 +306,7 @@ AI is on by default (as soon as an AI connector is set up).
   The report tells them apart: version, PHP limits, presence of the row in the
   database, object cache, active plugins, and above all the **log of the last
   eight attempts**. If it stays empty after a click, the request never reaches
-  the plugin — and hosting is where to look. The whole thing copies with one
+  the plugin - and hosting is where to look. The whole thing copies with one
   button.
 * The diagnostic is reachable from the save bar, which never leaves the screen,
   and opens by itself right after a failed save. At the bottom of a page listing
@@ -288,33 +321,33 @@ and refused things it was asked for.
   it calls its own handler, which writes, READS BACK, compares, and announces
   the result. The open tab comes back with it.
 * **A definition always deletes.** The action is called "Delete", and it
-  deletes — even when the original coded block has vanished from disk, the very
+  deletes - even when the original coded block has vanished from disk, the very
   case where "Give back to code" rightly refused and left the definition stuck
   in the list. The confirmation says what it costs, and how many posts use it. A
   copy of a block no longer remembers being born from a takeover.
 * **A tenth scene: "Composed".** The other nine apply one gesture to every part
   of a block. This one lets the TEMPLATE hand out the roles, part by part:
   `data-bc-part="zoom"` on the image, `"haut"` on the text, `"pinceau"` on a
-  rule. Eight variants — up, down, left, right, zoom, badge, fade, brush.
+  rule. Eight variants - up, down, left, right, zoom, badge, fade, brush.
 * **A part's rank restarts at each container**, and at each row of a grid. Two
   halves meant to cross therefore start together, and the fourth card of a
   three-column grid no longer waits for a fourth delay. A rank already set by
   the template is respected.
 * **The block sheet.** A box on a block screen gathers everything needed to draw
-  it — name, file to write, each field with the line that fetches it — and
+  it (name, file to write, each field with the line that fetches it) and
   copies with one button. It is the bridge between the two halves of the plugin.
 
 = 3.2.0 =
 * The settings screen says what it did: a confirmation is displayed after
   saving, and you come back to the tab you were looking at.
 * The "Available blocks" tab no longer sends one field per block but a single
-  one: on a busy site the form exceeded `max_input_vars` and arrived truncated —
+  one: on a busy site the form exceeded `max_input_vars` and arrived truncated :
   unchecked blocks came back, and saving seemed to have no effect. A truncated
   submission now touches nothing.
 * That same screen finally reads: a summary on top, an All / Available / Removed
   filter, groups that fold, and counters following the clicks.
-* A block screen opens on its three-step path — name it, declare the fields,
-  draw it — with the real state of the drawing file. Each field recalls the line
+* A block screen opens on its three-step path (name it, declare the fields,
+  draw it) with the real state of the drawing file. Each field recalls the line
   that fetches it in the template.
 * A theme folder locked against writing is announced, and the starting code is
   shown to copy rather than a button that fails.

@@ -1,4 +1,4 @@
-# Blocs Creator — consignes pour travailler sur le plugin
+# Blocs Creator : consignes pour travailler sur le plugin
 
 Ce fichier est pour qui **modifie le plugin** (Yanis, ou Claude). Pour
 **construire un site** avec le plugin, lire `docs/guide-theme.md`. Pour la
@@ -13,8 +13,8 @@ jamais de balisage à la place du thème.
 
 Depuis la 5.0, le plugin porte aussi ce qu'on réécrivait à chaque site :
 
-- le **moteur d'apparitions** (scènes, variantes de parties, titres mot à mot,
-  parties qui attendent leur tour, blocs natifs du contenu) ;
+- le **moteur d'apparitions** (scènes, variantes de parties sobres, parties
+  qui attendent leur tour, blocs natifs du contenu) ;
 - l'**IA de l'éditeur** (rédiger un article, remplir une section, extension
   « AI » de WordPress) ;
 - les **outils de thème** (`definitions.json`, migrations, WP-CLI) ;
@@ -23,18 +23,33 @@ Depuis la 5.0, le plugin porte aussi ce qu'on réécrivait à chaque site :
   blocs) et une boîte à outils d'e-mails.
 
 **Ce qui n'entre pas dans le plugin** : tout ce qui est dessin ou comportement
-propre à un projet. Compteurs, cartes inclinables, boutons aimantés,
-parallaxe, accordéons de FAQ, en-tête qui se cache, frise qui se trace, menu
-mobile : Yanis les développe dans le thème, en fonction du projet. Avant de
-remonter quelque chose d'un site dans le plugin, se demander : « est-ce un
-moteur ou une fonction de site, ou est-ce du dessin ? ». Dans le doute,
-demander.
+propre à un projet (variantes d'apparition reconnaissables, micro-interactions,
+en-tête, menu mobile…). Yanis les développe dans le thème, en fonction du
+projet. Avant de remonter quelque chose d'un site dans le plugin, se
+demander : « est-ce un moteur ou une fonction de site, ou est-ce du
+dessin ? ». Dans le doute, demander.
+
+**Le plugin n'a pas d'allure à lui** (6.0). Il est né sur un site client, et
+il en gardait les gestes (titres mot à mot, rideaux sur les photos,
+cartes qui tournent, coup de pinceau, surtitres, halo) : suivis à la lettre,
+ils donnaient à chaque nouveau site le même air. La 6.0 les a retirés. Donc :
+
+- une variante d'apparition du plugin reste un geste sobre, qui va à tous les
+  sites ; ce qui se reconnaît d'un site à l'autre va dans le thème ;
+- les pages que le plugin dessine lui-même (maintenance, bandeau cookies,
+  e-mails) restent neutres et prennent les couleurs de `theme.json` ;
+- les exemples (doc, aides, consignes de l'IA) ne viennent jamais d'un site
+  client, et ne montrent pas de surtitre ;
+- la doc décrit des outils, pas un style à reproduire.
 
 ## Conventions
 
 - **Tout est en français** : noms de fonctions, de variables, de classes CSS,
   commentaires, textes de l'interface. Garder ce ton : des commentaires qui
   disent *pourquoi*, en phrases, souvent avec l'incident qui a appris la règle.
+- **Jamais de tiret long** (cadratin, U+2014) ni de demi-cadratin, nulle part :
+  code, commentaires, textes, doc. Deux-points, virgule, parenthèses, ou « - ».
+  Contrôle : `grep -rn "$(printf '\342\200\224')" --exclude-dir=.git .` ne rend rien.
 - Préfixes : fonctions `blocs_creator_*`, classes `Blocs_Creator_*`, options
   `blocs_creator_*`, crochets `blocs_creator_*`, CSS et attributs `bc-*` /
   `data-bc-*`, domaine de traduction `blocs-creator`. Variables globales des
@@ -59,11 +74,12 @@ C'est écrit en base ou dans le contenu des pages : le changer casse des sites.
   `blocs_creator_ia`, `blocs_creator_modules`, `blocs_creator_maintenance`,
   `blocs_creator_cookies`, `blocs_creator_migrations`…) ;
 - les classes et attributs posés sur le site (`bc-anim`, `data-bc-anim`,
-  `data-bc-part`, `is-vu`, `bc-anim-prete`, `bc-attend`, `bc-mot`…) ;
+  `data-bc-part`, `is-vu`, `bc-anim-prete`, `bc-attend`…) ;
 - les crochets publics et l'API des gabarits (`includes/fonctions.php`) ;
 - le cookie `bc_cookies`, le préfixe `bc-brouillon:` du stockage local.
 
-Une fonction publique qu'on veut renommer garde un alias.
+Une fonction publique qu'on veut renommer garde un alias. Une scène retirée
+garde une remplaçante (`Blocs_Creator_Animations::ANCIENNES`).
 
 ## Carte du code
 
@@ -81,7 +97,7 @@ includes/
   class-blocs-creator-theme.php      definitions.json du thème : état, import, export
   class-blocs-creator-migrations.php Migrations déclarées par le thème
   class-blocs-creator-cli.php        Commandes `wp blocs-creator …`
-  fonctions.php                      API des gabarits (blocs_creator_*)
+  fonctions.php                      API des gabarits (blocs_creator_*), textes enrichis
   emails.php                         Boîte à outils des e-mails
 admin/                               Écrans : liste, bloc, réglages (5 onglets), outils
 assets/js/editeur.js                 L'éditeur commun des blocs générés
@@ -127,8 +143,8 @@ docs/guide-theme.md                  Construire un thème avec le plugin
 ## Tester sans site
 
 Pas de PHP global sur la machine : celui de Local (Flywheel) sert, **sans
-jamais toucher au site Club Canin ni à sa base** (sa `wp-config.php` locale
-porte les identifiants de production).
+jamais toucher aux sites de Local ni à leur base** (une `wp-config.php` locale
+peut porter les identifiants de production).
 
 ```bash
 PHP="$HOME/Library/Application Support/Local/lightning-services/php-8.2.30+1/bin/darwin-arm64/bin/php"
@@ -147,7 +163,7 @@ Pour un vrai essai, un WordPress jetable dans un dossier temporaire :
    (`core install`, `plugin activate blocs-creator`, `blocs-creator …`) ;
 4. `"$PHP" -S 127.0.0.1:8099 -t <tmp>/wp` et le navigateur intégré. Il est
    souvent caché : les transitions n'y avancent pas et `IntersectionObserver`
-   ne s'y déclenche pas — vérifier l'état par script, et forcer
+   ne s'y déclenche pas : vérifier l'état par script, et forcer
    `document.visibilityState` pour faire tourner la ronde.
 
 Tout arrêter et supprimer à la fin.

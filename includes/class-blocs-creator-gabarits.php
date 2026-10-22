@@ -94,7 +94,7 @@ class Blocs_Creator_Gabarits {
 	}
 
 	/**
-	 * Retourne le gabarit à utiliser au rendu — celui du thème, ou le secours.
+	 * Retourne le gabarit à utiliser au rendu : celui du thème, ou le secours.
 	 *
 	 * @param array $definition La définition.
 	 * @return string
@@ -334,7 +334,7 @@ class Blocs_Creator_Gabarits {
 		/*
 		 * Un champ « niveau de titre » ne s'affiche pas seul : il donne la
 		 * balise d'un titre. Quand le bloc porte aussi un champ texte, on
-		 * apparie les deux — c'est ce qu'on aurait écrit à la main, et ça
+		 * apparie les deux : c'est ce qu'on aurait écrit à la main, et ça
 		 * évite de sortir deux fois le même texte dans le fichier de départ.
 		 */
 		$cle_niveau = '';
@@ -399,7 +399,7 @@ class Blocs_Creator_Gabarits {
 		$libelle = $champ['libelle'];
 		$type    = $champ['type'];
 		$bem     = $classe . '__' . str_replace( '_', '-', $cle );
-		$titre   = sprintf( '%s<?php // %s — %s. ?>', $indent, $libelle, Blocs_Creator_Champs::type( $type )['libelle'] );
+		$titre   = sprintf( '%s<?php // %s : %s. ?>', $indent, $libelle, Blocs_Creator_Champs::type( $type )['libelle'] );
 
 		switch ( $type ) {
 			case 'texte':
@@ -587,7 +587,7 @@ class Blocs_Creator_Gabarits {
 
 				foreach ( (array) ( $champ['sous_champs'] ?? array() ) as $enfant ) {
 					$sous[] = sprintf(
-						'%s<?php // $ligne[\'%s\'] — %s ?>',
+						'%s<?php // $ligne[\'%s\'] : %s ?>',
 						$indent . "\t\t",
 						$enfant['cle'],
 						$enfant['libelle']

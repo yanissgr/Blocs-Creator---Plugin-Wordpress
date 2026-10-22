@@ -1,11 +1,17 @@
 # Construire un site avec Blocs Creator
 
-Le guide à lire au début d'un nouveau projet — par Yanis, ou par Claude quand
+Le guide à lire au début d'un nouveau projet : par Yanis, ou par Claude quand
 c'est lui qui écrit le thème. Il dit comment on monte un thème autour du
 plugin, et où chaque chose doit vivre.
 
 Pour modifier le plugin lui-même : `CLAUDE.md`. Pour le détail de l'API des
 gabarits et des types de champs : `README.md`.
+
+> **Le plugin est une boîte à outils, pas une direction artistique.** Chaque
+> site a la sienne, tirée du métier du client et de ses références : on la
+> dessine (une maquette d'abord), puis on prend dans le plugin les outils
+> qui la servent. Rien ici ne dit à quoi un site doit ressembler ; les
+> exemples de ce guide montrent la mécanique, pas un style à reproduire.
 
 ---
 
@@ -14,11 +20,12 @@ gabarits et des types de champs : `README.md`.
 | Le plugin | Le thème |
 |---|---|
 | Les **champs** de chaque bloc (définitions) | Le **dessin** de chaque bloc (`blocs/<id>.php`, `blocs/<id>.css`) |
-| Le moteur d'**apparitions** (scènes, variantes, mot à mot, attente) | Quelles parties entrent, et comment (`data-bc-part` dans les gabarits) |
+| Le moteur d'**apparitions** (scènes, variantes sobres, attente) | Quelles parties entrent, et comment (`data-bc-part` dans les gabarits) ; ses propres variantes |
 | L'**IA** de l'éditeur | Les consignes propres au site (Réglages › IA, ou filtres) |
 | Les **modules** (maintenance, cookies, brouillons…) | Lesquels il impose, et leur allure (variables CSS, gabarit de maintenance) |
+| Les **fonctions des gabarits** (champs, images, liens, textes enrichis) | Le balisage et le style de chaque bloc |
 | Les **outils** : `definitions.json`, migrations, WP-CLI | Le fichier `definitions.json`, ses migrations |
-| — | **Les micro-interactions** : compteurs, cartes inclinables, boutons aimantés, parallaxe, accordéons, en-tête qui se cache, frise, menu mobile |
+| - | **L'allure et les micro-interactions** : variantes d'apparition propres au site, compteurs, carrousels, en-tête, menu mobile… |
 
 La dernière ligne est une règle : ce qui est du dessin ou du comportement
 propre au projet s'écrit dans le thème, à la main, pour ce projet-là.
@@ -105,9 +112,10 @@ C'est le format de l'export de l'écran Outils.
       "animation": "composee",
       "animation_duree": 0,
       "champs": [
-        { "cle": "surtitre", "libelle": "Surtitre", "type": "texte" },
         { "cle": "titre", "libelle": "Titre", "type": "texte-riche",
           "options": { "defaut": "Bienvenue **chez nous**", "placeholder": "Le grand titre" } },
+        { "cle": "chapo", "libelle": "Chapô", "type": "texte-riche",
+          "options": { "defaut": "Une phrase qui dit l'essentiel.\n\nUn second paragraphe, si besoin." } },
         { "cle": "niveau", "libelle": "Niveau du titre", "type": "niveau-titre", "emplacement": "panneau",
           "options": { "defaut_niveau": 1, "niveau_min": 1 } },
         { "cle": "image", "libelle": "Image", "type": "image", "emplacement": "panneau", "options": { "taille": "large" } },
@@ -115,8 +123,8 @@ C'est le format de l'export de l'écran Outils.
         { "cle": "cartes", "libelle": "Cartes", "type": "repeteur",
           "options": { "libelle_ligne": "Carte", "min_lignes": 1, "max_lignes": 6, "lignes_depart": 3 },
           "sous_champs": [
-            { "cle": "titre", "libelle": "Titre", "type": "texte" },
-            { "cle": "texte", "libelle": "Texte", "type": "texte-long" },
+            { "cle": "titre", "libelle": "Titre", "type": "texte-riche" },
+            { "cle": "texte", "libelle": "Texte", "type": "texte-riche" },
             { "cle": "picto", "libelle": "Pictogramme", "type": "liste", "options": { "choix": "coeur : ♥\netoile : ★" } }
           ] }
       ]
@@ -127,7 +135,7 @@ C'est le format de l'export de l'écran Outils.
 
 **Le bloc** : `espace` + `slug` font son nom (`mon-theme/hero`, à ne plus
 jamais changer une fois des pages faites) ; `categorie` est la section de
-l'inséreur — celle des réglages (`blocs-creator` par défaut, titre réglable),
+l'inséreur : celle des réglages (`blocs-creator` par défaut, titre réglable),
 ou une que le thème déclare avec le filtre `block_categories_all` ; `apercu`
 vaut `serveur` (le canevas montre le vrai rendu) ou `formulaire`.
 
@@ -140,7 +148,7 @@ type, ci-dessous), `sous_champs` (groupe et répéteur, un seul niveau).
 |---|---|
 | `texte` | `defaut`, `placeholder`, `maxlength` |
 | `texte-long` | `defaut`, `placeholder`, `lignes` |
-| `texte-riche` | `defaut` (balisage léger : `**gras**`, `_italique_`), `placeholder`, `balise` |
+| `texte-riche` | `defaut` (balisage léger : `**gras**`, `_italique_` ; `\n\n` entre deux paragraphes, les balises y sont effacées), `placeholder`, `balise` |
 | `nombre` | `defaut`, `min`, `max`, `pas`, `curseur` |
 | `bascule` | `defaut_bascule` |
 | `liste`, `boutons` | `choix` (une option par ligne, `valeur : Libellé`), `defaut` |
@@ -156,7 +164,7 @@ type, ci-dessous), `sous_champs` (groupe et répéteur, un seul niveau).
 | `contenu`, `contenus` | `types_contenu`, `max_contenus` |
 | `type-publication` | `defaut` |
 | `taxonomie` | `taxonomie`, `terme_unique` |
-| `groupe` | — (`sous_champs`) |
+| `groupe` | - (`sous_champs`) |
 | `repeteur` | `libelle_ligne`, `min_lignes`, `max_lignes`, `lignes_depart` (+ `sous_champs`) |
 | `blocs-imbriques` | `blocs_autorises`, `gabarit_interne`, `verrou_gabarit`, `orientation` |
 | `message` | `message` (une note pour la rédaction, sans valeur) |
@@ -164,7 +172,7 @@ type, ci-dessous), `sous_champs` (groupe et répéteur, un seul niveau).
 Tout ce qui entre repasse par la normalisation : une option inconnue est
 jetée sans bruit. Après un import, relire `wp blocs-creator definitions etat`.
 
-**Conseils de conception** — un bloc lisible pour la rédaction :
+**Conseils de conception** : un bloc lisible pour la rédaction :
 
 - dans le canevas (`bloc`), ce qu'on **écrit** ; dans la colonne de droite
   (`panneau`), ce qu'on **règle** (image, niveau de titre, variantes). C'est
@@ -183,23 +191,26 @@ jetée sans bruit. Après un import, relire `wp blocs-creator definitions etat`.
 defined( 'ABSPATH' ) || exit;
 ?>
 <section <?php echo blocs_creator_attributs( 'hero' ); ?>>
-	<?php if ( blocs_creator_a_champ( 'surtitre' ) ) : ?>
-		<p class="hero__surtitre" data-bc-part="gauche"><?php echo esc_html( blocs_creator_champ( 'surtitre' ) ); ?></p>
-	<?php endif; ?>
-
 	<?php printf(
-		'<h%1$d class="hero__titre" data-bc-part="mots">%2$s</h%1$d>',
+		'<h%1$d class="hero__titre" data-bc-part="haut">%2$s</h%1$d>',
 		blocs_creator_niveau( 'niveau', 1 ),
-		wp_kses_post( blocs_creator_champ( 'titre' ) )
+		blocs_creator_texte_court( blocs_creator_champ( 'titre' ) )
 	); ?>
 
-	<div class="hero__media" data-bc-part="masque">
+	<div class="hero__chapo" data-bc-part="haut">
+		<?php echo blocs_creator_paragraphes( blocs_creator_champ( 'chapo' ) ); ?>
+	</div>
+
+	<div class="hero__media" data-bc-part="zoom">
 		<?php echo blocs_creator_image( 'image', array( 'class' => 'hero__image' ), 'large' ); ?>
 	</div>
 
 	<ul class="hero__cartes">
-		<?php foreach ( blocs_creator_boucle( 'cartes' ) as $carte ) : ?>
-			<li class="hero__carte" data-bc-part="carte"><?php echo esc_html( $carte['titre'] ); ?></li>
+		<?php foreach ( blocs_creator_boucle( 'cartes' ) as $i => $carte ) : ?>
+			<li class="hero__carte" data-bc-part="pastille" style="--bc-anim-rang: <?php echo (int) $i % 3; ?>">
+				<h3><?php echo blocs_creator_texte_court( $carte['titre'] ); ?></h3>
+				<?php echo blocs_creator_paragraphes( $carte['texte'] ); ?>
+			</li>
 		<?php endforeach; ?>
 	</ul>
 
@@ -214,7 +225,7 @@ defined( 'ABSPATH' ) || exit;
 Règles :
 
 - `blocs_creator_attributs()` sur la balise racine, **toujours** : c'est elle
-  qui porte la classe, l'ancre, l'alignement — et l'apparition.
+  qui porte la classe, l'ancre, l'alignement, et l'apparition.
 - Ce qui sort de `blocs_creator_image()`, `blocs_creator_lien_attrs()`,
   `blocs_creator_attributs()` est déjà échappé. Le texte sort brut :
   `esc_html()`, `esc_attr()`, `wp_kses_post()` selon l'endroit.
@@ -222,7 +233,40 @@ Règles :
   pour un texte qui vient d'un réglage (les défauts des champs enrichis le sont
   déjà).
 - Un seul `<h1>` par page : le niveau du titre d'un héros se règle (champ
-  `niveau-titre`), les autres sections commencent en `h2`.
+  `niveau-titre`, `defaut_niveau`), les autres sections commencent en `h2`.
+  Le second argument de `blocs_creator_niveau()` est le niveau **minimum** :
+  avec 2, un H1 choisi dans l'éditeur serait relevé en H2.
+
+### Les textes enrichis
+
+Tout ce que la rédaction écrit dans un bloc (titre, chapô, texte d'une carte)
+gagne à être un champ `texte-riche` **posé dans le bloc** (`emplacement` :
+`bloc`) : gras, italique et liens à la barre d'outils. Dans la colonne de
+droite, il retombe en simple zone de texte. Trois fonctions l'affichent :
+
+| Fonction | Pour |
+|---|---|
+| `blocs_creator_paragraphes( $texte )` | un texte en paragraphes : deux retours à la ligne en ouvrent un nouveau |
+| `blocs_creator_texte_court( $texte )` | un titre de carte, une légende : gras, italique, liens, sans `<p>` |
+| `blocs_creator_lignes( $texte )` | une liste, un point par ligne (chaque point repasse par `texte_court`) |
+
+Elles acceptent aussi le texte brut d'une ancienne zone de texte : un champ
+passé au texte enrichi s'affiche bien avant comme après sa migration
+(section 10). Les étiquettes et valeurs techniques (nom d'onglet, chiffre,
+auteur, coordonnées) restent en `texte`.
+
+### Pièges
+
+- **Clés réservées** : `style`, `align`, `content`, `className`… sont des
+  attributs de WordPress. Une clé de champ `style` est renommée
+  `champ_style` : choisir un autre nom (`variante`, `couleur_fond`).
+- **Une carte entièrement cliquable** est un `<a>` : elle prend la couleur de
+  survol des liens de `theme.json`, plus forte qu'une simple classe. La fixer
+  avec `a.ma-carte:is(:hover, :focus-visible)`. Le bouton qu'elle montre est
+  un `<span>` habillé, jamais un second lien.
+- **Un modèle enregistré dans l'éditeur de site** (`templates/*.html`,
+  `parts/*.html`) vit ensuite en base : un changement du fichier ne s'y voit
+  plus avant « Effacer les personnalisations ».
 
 ---
 
@@ -235,29 +279,44 @@ Une **apparition appartient au bloc** : elle se choisit dans sa définition
 | Variante | Ce qu'elle fait | Pour |
 |---|---|---|
 | `haut` / `bas` | monte / descend | texte, bouton |
-| `gauche` / `droite` | glisse de côté | moitiés qui se croisent, surtitre |
+| `gauche` / `droite` | glisse de côté | moitiés qui se croisent |
 | `zoom` | grandit d'un rien | une image qui s'installe |
 | `pastille` | petite, puis posée d'un rebond | cartes en grille |
 | `fondu` | l'opacité seule | ce qui ne doit pas attirer l'œil |
-| `pinceau` | une découpe inclinée balaie la largeur | un trait peint, un aplat |
-| `mots` | **chaque mot monte de sous sa ligne** (vaut dans toutes les scènes) | les titres |
-| `masque` | un rideau se lève, l'image dézoome derrière | photos, visuels |
-| `flou` | sort de la brume | un chapô, une citation |
-| `trait` | se tire de gauche à droite | filets, soulignements |
-| `pop` | petit, penché, posé d'un rebond | icône, guillemet, étiquette |
-| `carte` | monte de loin, tournée, se redresse | cartes (une sur deux tourne dans l'autre sens) |
 | `ligne` | glisse depuis la gauche | rangées de liste |
+
+Ces gestes sont sobres à dessein. **Les variantes qui font l'allure du site
+s'écrivent dans le thème**, inventées pour lui : un titre qui se relève, une
+photo qui s'ouvre, un panneau qui s'élargit… Une variante du thème :
+
+```css
+.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="releve"] {
+	--bc-p-y: 0.6em;
+	transition: opacity 600ms var(--bc-anim-courbe-douce) var(--bc-p-delai, 0ms),
+		transform 900ms var(--bc-anim-courbe-expo) var(--bc-p-delai, 0ms);
+}
+
+/* Son état quand elle attend son tour (voir la fin d'animations.css). */
+.bc-anim-prete .bc-anim[data-bc-anim="composee"].is-vu [data-bc-part="releve"].bc-attend {
+	opacity: 0;
+	transform: translate3d(0, 0.6em, 0);
+}
+```
+
+Deux règles : `data-bc-part` sur un enveloppant, jamais sur un élément qui a
+sa propre transformation au survol ; dans une rangée qui défile à
+l'horizontale avec aimantation, une variante qui ne change pas la taille
+(`haut`), sinon l'aimantation se décale.
 
 Le moteur fait le reste : décalage entre parties (le rang repart à chaque
 conteneur et à chaque rangée de grille ; un `style="--bc-anim-rang:3"` posé à
-la main est respecté), titres découpés en mots (les `<strong>`, `<em>`, `<br>`
-restent), parties sous l'écran qui **attendent leur tour** au lieu de jouer
+la main est respecté), parties sous l'écran qui **attendent leur tour** au lieu de jouer
 hors de vue sur mobile, filet qui révèle tout ce qui est à l'écran. Rien n'est
 caché sans JavaScript ni pour qui a demandé moins d'animations.
 
 Trois portes de plus :
 
-- **Les blocs du contenu** — Réglages › Apparitions › « Faire entrer aussi les
+- **Les blocs du contenu** : Réglages › Apparitions › « Faire entrer aussi les
   blocs natifs » : paragraphes, titres, images, listes… entrent chacun avec la
   scène de son type (filtre `blocs_creator_apparitions_contenu`).
 - **La classe `bc-apparition-<scène>`** sur n'importe quel bloc (modèle du
@@ -267,10 +326,7 @@ Trois portes de plus :
 
 Le rythme se règle dans le thème, d'un coup, en redéfinissant sur `:root` :
 `--bc-anim-duree`, `--bc-anim-courbe`, `--bc-anim-courbe-expo`,
-`--bc-anim-courbe-douce`, `--bc-anim-courbe-ressort`, `--bc-anim-cadence-mots`,
-`--bc-anim-ecart`. Une variante propre au thème s'écrit en CSS sur
-`.bc-anim-prete .bc-anim[data-bc-anim="composee"] [data-bc-part="ma-variante"]`
-— avec son état `bc-attend` (voir la fin de `assets/css/animations.css`).
+`--bc-anim-courbe-douce`, `--bc-anim-courbe-ressort`, `--bc-anim-ecart`.
 
 ---
 
@@ -305,13 +361,13 @@ Réglages › Modules, ou imposés par le thème (`add_theme_support(
 
 | Module | Pour le thème |
 |---|---|
-| `maintenance` | Réglages › Maintenance, interrupteur dans la barre d'outils. Le thème peut dessiner la page : `blocs-creator/maintenance.php` (reçoit `$reglages`, `$retour`, `$apercu`), ou ajouter sa feuille : filtre `blocs_creator_maintenance_feuilles`. |
+| `maintenance` | Réglages › Maintenance (titre, message, retour prévu, encadré « Nous joindre »), interrupteur dans la barre d'outils. Le thème peut dessiner la page : `blocs-creator/maintenance.php` (reçoit `$reglages`, `$retour`, `$apercu` ; l'encadré par `blocs_creator_maintenance_contact()`), ou ajouter sa feuille : filtre `blocs_creator_maintenance_feuilles`. Ses textes par défaut : `blocs_creator_maintenance_defauts` ; ses coordonnées pour les champs laissés vides (pied de page…) : `blocs_creator_maintenance_contact_repli`. |
 | `cookies` | Réglages › Cookies. Un lien vers `#gerer-les-cookies` rouvre le bandeau (le mettre sur la page Cookies et en pied de page). `window.blocsCreatorCookies.choix()`, évènement `blocs-creator:cookies`. Couleurs : `--bc-cookies-fond`, `--bc-cookies-texte`, `--bc-cookies-accent` sur `.bc-cookies`. |
 | `brouillons` | `<form data-bc-brouillon="contact">` est suivi tout seul ; `blocs_creator_brouillon_messages()` écrit les petits mots en tête du formulaire. Formulaire envoyé en `fetch` : appeler `form.bcBrouillon.effacer()` après succès. |
 | `sans-auteurs` | Penser aussi à couper « Archives d'auteur » dans Yoast. |
 | `sans-recherche` | Retirer le bloc Rechercher du modèle 404. |
 | `bouton-modifier` | Couleurs : `--bc-modifier-fond`, `--bc-modifier-texte`, `--bc-modifier-accent`. |
-| `noms-blocs` | Une page « Exemple — tous les blocs », case « Afficher le nom des blocs » dans l'éditeur. |
+| `noms-blocs` | Une page « Exemple : tous les blocs », case « Afficher le nom des blocs » dans l'éditeur. |
 
 Les styles des modules prennent les couleurs de `theme.json` quand elles
 s'appellent `base`/`contrast` (ou `background`/`foreground`) et
@@ -339,7 +395,7 @@ $html = blocs_creator_email_html( array(
 ) );
 blocs_creator_email_envoyer( $destinataire, 'Nouveau message', $html, array( 'Reply-To: ' . $email ) );
 
-// Et au visiteur — jamais une copie de ce qu'il a écrit (anti-relais de spam) :
+// Et au visiteur : jamais une copie de ce qu'il a écrit (anti-relais de spam) :
 blocs_creator_email_confirmation( array(
 	'email' => $email, 'nom' => $nom, 'sujet' => 'Message bien reçu', 'titre' => 'Merci !',
 	'message' => $message_de_la_redaction, 'reponse' => $destinataire,
@@ -388,6 +444,24 @@ Pour réécrire une page : `blocs_creator_migration_page( $page, $contenu )`
 (l'état d'avant reste dans les révisions). Ne jamais renuméroter une migration
 déjà en ligne ; une migration devenue inutile rend `array()`.
 
+Des champs passés au texte enrichi (`texte` ou `texte-long` devenus
+`texte-riche` dans `definitions.json`) : après l'import des définitions, les
+textes déjà écrits se convertissent dans tous les contenus (pages, modèles,
+compositions), `**gras**` et retours à la ligne compris.
+
+```php
+$convertis = blocs_creator_migration_texte_riche( array(
+	'mon-theme/hero'   => array( 'chapo' ),
+	'mon-theme/cartes' => array( 'intro', 'cartes.titre', 'cartes.texte' ), // « répéteur.champ »
+) );
+
+if ( is_wp_error( $convertis ) ) {
+	return $convertis;
+}
+
+return array( sprintf( '%d contenu(s) passé(s) au texte enrichi.', $convertis ) );
+```
+
 ---
 
 ## 11. WP-CLI
@@ -403,6 +477,8 @@ wp blocs-creator ia etat
 
 ## 12. Check-list d'un nouveau projet
 
+- [ ] Une direction artistique propre au client (références de son métier,
+      maquette validée) avant d'écrire le thème.
 - [ ] Thème bloc, `theme.json` avec ses couleurs (`base`, `contrast`, `accent`
       au minimum : les modules s'en servent).
 - [ ] Réglages › Général : espace de noms = slug du thème, dossier `blocs`.
@@ -410,10 +486,11 @@ wp blocs-creator ia etat
 - [ ] Apparition de chaque bloc choisie (souvent Composée) et `data-bc-part`
       posés ; « blocs du contenu » coché si le site le veut.
 - [ ] Modules imposés dans `functions.php` ; page Cookies avec un lien
-      `#gerer-les-cookies` ; textes de maintenance relus.
+      `#gerer-les-cookies` ; textes de maintenance et encadré « Nous joindre »
+      relus.
 - [ ] Réglages › IA : « Qui écrit, pour qui » rempli ; une IA branchée dans
       Réglages › Connecteurs (avec le client).
-- [ ] Une page « Exemple — tous les blocs » avec le nom des blocs.
+- [ ] Une page « Exemple : tous les blocs » avec le nom des blocs.
 - [ ] `inc/migrations.php` prêt avant la première mise en ligne.
 - [ ] Les interactions du projet (compteurs, en-tête, FAQ…) dans
       `assets/js/` du thème, branchées sur `blocs-creator:vu` si besoin.

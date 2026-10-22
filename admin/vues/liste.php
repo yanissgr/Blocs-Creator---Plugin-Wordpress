@@ -47,7 +47,7 @@ defined( 'ABSPATH' ) || exit;
 					count( $blocs_creator_a_reprendre )
 				);
 				?>
-				<?php esc_html_e( 'Les reprendre en main en fait des blocs comme les vôtres — mêmes identifiants, même aspect, champs modifiables. L\'opération se défait bloc par bloc.', 'blocs-creator' ); ?>
+				<?php esc_html_e( 'Les reprendre en main en fait des blocs comme les vôtres : mêmes identifiants, même aspect, champs modifiables. L\'opération se défait bloc par bloc.', 'blocs-creator' ); ?>
 			</p>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">

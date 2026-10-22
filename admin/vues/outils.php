@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 	<h1><?php esc_html_e( 'Outils', 'blocs-creator' ); ?></h1>
 
 	<p class="bc-chapo">
-		<?php esc_html_e( 'Emportez vos blocs d\'un site à l\'autre. L\'export ne contient que les définitions — les gabarits sont des fichiers de votre thème, copiez-les comme le reste du thème.', 'blocs-creator' ); ?>
+		<?php esc_html_e( 'Emportez vos blocs d\'un site à l\'autre. L\'export ne contient que les définitions : les gabarits sont des fichiers de votre thème, copiez-les comme le reste du thème.', 'blocs-creator' ); ?>
 	</p>
 
 	<div class="bc-colonnes">
@@ -89,7 +89,7 @@ defined( 'ABSPATH' ) || exit;
 	<?php
 	/*
 	 * Le fichier du thème : blocs-creator/definitions.json. C'est par lui que
-	 * les définitions voyagent avec le thème — Git, FTP, une IA qui écrit le
+	 * les définitions voyagent avec le thème : Git, FTP, une IA qui écrit le
 	 * site. Voir Blocs_Creator_Theme.
 	 */
 	$blocs_creator_etat    = Blocs_Creator_Theme::etat();

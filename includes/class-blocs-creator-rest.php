@@ -7,7 +7,7 @@
  * donc pas en diverger. Restent deux besoins que le cœur ne couvre pas bien :
  *
  *   - chercher une publication dans un type de contenu qui n'est pas exposé en
- *     REST — le cas de beaucoup de types déclarés à la main ;
+ *     REST : le cas de beaucoup de types déclarés à la main ;
  *   - lister les termes d'une taxonomie, pour la même raison.
  *
  * Les deux routes sont réservées à qui peut éditer, et ne renvoient que le

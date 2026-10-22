@@ -306,7 +306,7 @@
 		}, [
 			el( 'span', { class: 'bc-champ-ligne__fleche dashicons dashicons-arrow-' + ( ouvert ? 'down' : 'right' ) + '-alt2', 'aria-hidden': 'true' } ),
 			el( 'span', { class: 'bc-champ-ligne__titre', texte: titre } ),
-			el( 'code', { class: 'bc-champ-ligne__cle', texte: champ.cle || '—' } ),
+			el( 'code', { class: 'bc-champ-ligne__cle', texte: champ.cle || '-' } ),
 			el( 'span', { class: 'bc-champ-ligne__type', texte: def ? def.libelle : champ.type } )
 		] );
 
@@ -473,7 +473,7 @@
 	 *
 	 * C'est le pont entre les deux moitiés du plugin : ici on déclare, là-bas
 	 * on dessine. Sans cette ligne, il faut ouvrir l'aide pour savoir sous quel
-	 * nom la valeur arrive — et c'est le moment précis où l'on décroche.
+	 * nom la valeur arrive, et c'est le moment précis où l'on décroche.
 	 *
 	 * @param {Object} champ Le champ.
 	 * @param {Object} def   Son type dans le catalogue.
@@ -527,7 +527,7 @@
 		}
 
 		ligneDom.querySelector( '.bc-champ-ligne__titre' ).textContent = champ.libelle || __( 'Champ sans nom', 'blocs-creator' );
-		ligneDom.querySelector( '.bc-champ-ligne__cle' ).textContent   = champ.cle || '—';
+		ligneDom.querySelector( '.bc-champ-ligne__cle' ).textContent   = champ.cle || '-';
 	}
 
 	/**

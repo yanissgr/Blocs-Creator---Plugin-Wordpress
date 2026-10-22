@@ -80,7 +80,7 @@ class Blocs_Creator_Rendu {
 		/*
 		 * Le gabarit est inclus dans une fonction anonyme : il ne voit que les
 		 * variables qu'on lui passe, et rien de la mécanique du plugin. Leurs
-		 * noms font partie du contrat — ce sont ceux que WordPress emploie
+		 * noms font partie du contrat : ce sont ceux que WordPress emploie
 		 * pour les blocs à `render` ($attributes, $content, $block), plus
 		 * $champs et $bloc, qui n'ont d'équivalent nulle part ailleurs.
 		 */
@@ -206,8 +206,8 @@ class Blocs_Creator_Rendu {
 	/**
 	 * Retourne un rappel visible des seuls utilisateurs qui peuvent corriger.
 	 *
-	 * Un bloc à moitié rempli ne doit ni disparaître en silence — la rédaction
-	 * croirait l'avoir supprimé — ni s'afficher cassé devant le visiteur.
+	 * Un bloc à moitié rempli ne doit ni disparaître en silence (la rédaction
+	 * croirait l'avoir supprimé) ni s'afficher cassé devant le visiteur.
 	 *
 	 * @param string $message Ce qui manque.
 	 * @return string

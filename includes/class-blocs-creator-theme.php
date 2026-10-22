@@ -12,7 +12,7 @@
  * C'est le même format que l'export de l'écran Outils. Le plugin s'en sert de
  * trois façons :
  *
- *   - à l'activation du thème, il installe les blocs qui manquent — jamais il
+ *   - à l'activation du thème, il installe les blocs qui manquent : jamais il
  *     n'écrase un bloc existant, c'est peut-être vous qui l'avez modifié ;
  *   - l'écran Outils montre ce qui diffère entre le fichier et la base, et
  *     recopie dans un sens ou dans l'autre ;

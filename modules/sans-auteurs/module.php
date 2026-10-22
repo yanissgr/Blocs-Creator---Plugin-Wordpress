@@ -8,7 +8,7 @@
  * ces pages dévoilent l'identifiant de connexion de ceux qui écrivent. Donc :
  *
  *   - une page d'auteur (et son flux) renvoie, pour de bon, vers la page des
- *     articles — à défaut, vers l'accueil ;
+ *     articles : à défaut, vers l'accueil ;
  *   - les liens vers ces pages mènent au même endroit ;
  *   - les auteurs sortent du plan du site de WordPress (celui de Yoast suit
  *     son propre réglage « Archives d'auteur », à couper aussi) ;
